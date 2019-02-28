@@ -66,16 +66,11 @@ new.tbl$wiki <- unlist(lapply(new.tbl$`Link to Synapse Site`, retrieve.wiki))
 
 ## Parse out the project title, center website, and abstract from the Wiki.
 parse.wiki <- function(wiki) {
-    project.title <- NA
     center.title <- NA    
     center.website <- NA
     abstract <- NA
     if(grepl(pattern="Center Title", wiki)) {
         center.title <- gsub(pattern=".+Center Title[^\n]*\n(.+)\n\n\\*\\*Overall Project Title.*", x=wiki,
-                    replacement="\\1")
-    }
-    if(grepl(pattern="Project Title", wiki)) {
-        project.title <- gsub(pattern=".+Project Title[^\n]*\n(.+)\n\n\\*\\*Center Website.*", x=wiki,
                     replacement="\\1")
     }
     if(grepl(pattern="Center Website", wiki)) {
@@ -91,7 +86,7 @@ parse.wiki <- function(wiki) {
         }
         abstract <- sub
     }
-    df <- data.frame(project.title = as.character(project.title),
+    df <- data.frame(center.title = as.character(center.title),
                      center.website = as.character(center.website),
                      abstract = as.character(abstract), stringsAsFactors = FALSE)
     df
