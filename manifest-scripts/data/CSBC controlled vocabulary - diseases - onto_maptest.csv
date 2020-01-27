@@ -1,0 +1,151 @@
+existing,standard_name,GDC_icd10cm,NCIT_term,NCIT_code,onto_link,UMLS_CUI
+Bladder Cancer,Carcinoma in situ of Bladder,Carcinoma in situ of bladder,Bladder Carcinoma,C4912,https://icd.codes/icd10cm/D090,C0699885
+,Childhood Bladder Carcinoma,,Childhood Bladder Carcinoma,C118816,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C118816&key=24503254&m=1&b=1&n=null,C3899675
+,Superficial Bladder Carcinoma,,Superficial Bladder Carcinoma,C27474,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C27474&key=24503254&m=1&b=1&n=null,C1336527
+,Refractory Bladder Carcinoma,,Refractory Bladder Carcinoma,C150316,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C150316&key=24503254&m=1&b=1&n=3,C4725675
+,Bladder Small Cell Carcinoma,,Bladder Small Cell Carcinoma,C9461,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9461&key=24503254&m=1&b=1&n=3,C1332564
+Leukemia,"Leukemia, Unspecified","Leukemia, unspecified",Leukemia,C3161,https://icd.codes/icd10cm/C959,C0023418
+Acute Myeloid Leukemia,Acute Myeloblastic Leukemia,Acute myeloblastic leukemia,Acute Myeloid Leukemia,C3171,https://icd.codes/icd10cm/C920,C0023467
+Juvenile Myelomonocytic Leukemia,Juvenile Myelomonocytic Leukemia,Juvenile myelomonocytic leukemia,Juvenile Myelomonocytic Leukemia,C9233,https://icd.codes/icd10cm/C933,C0349639
+Acute Lymphoblastic Leukemia,T Acute Lymphoblastic Leukemia,,T Acute Lymphoblastic Leukemia,C3183,https://ncit-stage.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3183&key=n250873431&b=1&n=null,C1961099
+,B Acute Lymphoblastic Leukemia,,B Acute Lymphoblastic Leukemia,C8644,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C8644&key=155270141&b=1&n=null,C1292769
+,Lymphoblastic Lymphoma,Lymphoblastic (diffuse) lymphoma,Lymphoblastic Lymphoma,C9360,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9360&key=n1623386843&b=1&n=null,C0079748
+,Burkitt Leukemia,,Burkitt Leukemia,C7400,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7400&key=155270141&b=1&n=1,C4721444
+Chronic Lymphocytic Leukemia,Lymphoid Leukemia,Lymphoid leukemia,Chronic Lymphocytic Leukemia,C3163,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3163&key=61619798&b=1&n=null,C0023434
+Myeloma,Multiple Myeloma,Multiple myeloma,Plasma Cell Myeloma,C3242,https://icd.codes/icd10cm/C900,C0026764
+Breast Cancer,Carcinoma in situ of Breast,Carcinoma in situ of breast,Breast Carcinoma,C4872,https://icd.codes/icd10cm/D05,C0678222
+,Triple-Negative Breast Cancer Finding,,Triple-Negative Breast Cancer Finding,C71428,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C71428&key=1711152384&b=1&n=1,C2348819
+,Papillary Breast Carcinoma,,Papillary Breast Carcinoma,C9134,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9134&key=1711152384&b=1&n=8,C3812899
+,Tubular Breast Carcinoma,,Tubular Breast Carcinoma,C9135,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9135&key=1711152384&b=1&n=8,C1328544
+,Lobular Carcinoma in situ of Breast,Lobular carcinoma in situ of breast,Lobular Breast Carcinoma,C3771,https://icd.codes/icd10cm/D050,C0206692
+,Luminal B Breast Carcinoma,,Luminal B Breast Carcinoma,C53555,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C53555&key=1711152384&b=1&n=8,C3642346
+,Luminal A Breast Carcinoma,,Luminal A Breast Carcinoma,C53554,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C53554&key=242353962&b=1&n=null,C3642345
+Ductal Carcinoma,Intraductal Carcinoma in situ of Breast,Intraductal carcinoma in situ of breast,Ductal Breast Carcinoma,C4017,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C4017&key=n1652378806&b=1&n=null,C1527349
+Colon Cancer,Carcinoma in situ of Colon,Carcinoma in situ of colon,Colon Carcinoma,C4910,https://icd.codes/icd10cm/D010,C0699790
+,Colon Adenosquamous Carcinoma,,Colon Adenosquamous Carcinoma,C5491,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C5491&key=745142415&b=1&n=2,C1333082
+,Colon Squamous Cell Carcinoma,,Colon Squamous Cell Carcinoma,C5490,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C5490&key=745142415&b=1&n=2,C1333100
+,Colon Small Cell Neuroendocrine Carcinoma,,Colon Small Cell Neuroendocrine Carcinoma,C6761,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C6761&key=745142415&b=1&n=2,C1333099
+,Rectal Adenocarcinoma,,Rectal Adenocarcinoma,C9383,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9383&key=413170142&b=1&n=null,C0149978
+,Gastric Adenocarcinoma,,Gastric Adenocarcinoma,C4004,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C4004&key=n861401581&b=1&n=null,C0278701
+Lung Cancer,Carcinoma in situ of Bronchus and Lung,Carcinoma in situ of bronchus and lung,Lung Carcinoma,C4878,https://icd.codes/icd10cm/D022,C0684249
+,Lung Small Cell Carcinoma,,Lung Small Cell Carcinoma,C4917,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C4917&key=n120614580&b=1&n=null,C0149925
+,Lung Non-Small Cell Carcinoma,,Lung Non-Small Cell Carcinoma,C2926,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C2926&key=n120614580&b=1&n=null,C0007131
+Prostate Cancer,Carcinoma in situ of Prostate,Carcinoma in situ of prostate,Prostate Carcinoma,C4863,https://icd.codes/icd10cm/D075,C0600139
+Pancreatic Cancer,Malignant Neoplasm of Pancreas,Malignant neoplasm of pancreas,Pancreatic Carcinoma,C3850,https://icd.codes/icd10cm/C25,C0235974
+,Pancreatic Adenosquamous Carcinoma,,Pancreatic Adenosquamous Carcinoma,C5721,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C5721&key=n1740365400&b=1&n=3,C1335299
+,Pancreatic Neuroendocrine Carcinoma,,Pancreatic Neuroendocrine Carcinoma,C3770,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3770&key=n1740365400&b=1&n=2,C1328479
+,Pancreatic Acinar Cell Carcinoma,,Pancreatic Acinar Cell Carcinoma,C7977,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7977&key=n1740365400&b=1&n=2,C0279661
+,Pancreatic Adenocarcinoma,,Pancreatic Adenocarcinoma,C8294,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C8294&key=729254900&b=1&n=null,C0281361
+Skin Cancer,Carcinoma in situ of Skin,Carcinoma in situ of skin,Skin Carcinoma,C4914,https://icd.codes/icd10cm/D04,C0699893
+,Melanoma,Malignant melanoma of skin,Melanoma,C3224,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3224&key=1696097200&b=1&n=null,C0025202
+,Uveal Melanoma,,Uveal Melanoma,C7712,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7712&key=1600710593&b=1&n=null,C0220633
+Brain Cancer,Malignant Neoplasm of Brain,Malignant neoplasm of brain,Malignant Brain Neoplasm,C3568,https://icd.codes/icd10cm/C71,C0153633
+,Glioma,,Glioma,C3059,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3059&key=150860205&b=1&n=null,C0017638
+,Astrocytoma,,Astrocytoma,C60781,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C60781&key=632095122&b=1&n=null,C0004114
+,Glioblastoma,,Glioblastoma,C3058,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3058&key=n1180462812&b=1&n=null,C0017636
+Ovary Cancer,Malignant Neoplasm of Ovary,Malignant neoplasm of ovary,Malignant Ovarian Neoplasm,C7431,https://icd.codes/icd10cm/C56,C1140680
+Cervical Cancer,Carcinoma in situ of Cervix Uteri,Carcinoma in situ of cervix uteri,Cervical Carcinoma,C9039,https://icd.codes/icd10cm/D06,C0302592
+,Cervical Small Cell Carcinoma,,Cervical Small Cell Carcinoma,C7982,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7982&key=n1935502269&b=1&n=4,C0279674
+,Carcinoma in situ of Esophagus,Carcinoma in situ of esophagus,Esophageal Carcinoma,C3513,https://icd.codes/icd10cm/D001,C0152018
+,Head and Neck Carcinoma,,Head and Neck Carcinoma,C35850,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C35850&key=n17392571&b=1&n=null,C3887461
+,Hodgkin Lymphoma,Hodgkin lymphoma,Hodgkin lymphoma,C9357,https://icd.codes/icd10cm/C819,C0019829
+,Liver and Intrahepatic Bile Duct Carcinoma,"Carcinoma in situ of liver, gallbladder and bile ducts",Liver and Intrahepatic Bile Duct Carcinoma,C7927,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7927&key=n1969326872&b=1&n=null,C0279000
+Adenocarcinoma,Adenocarcinoma,,Adenocarcinoma,C2852,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C2852&key=n940561247&b=1&n=null,C0001418
+Anaplastic Astrocytoma,Astrocytoma,,Astrocytoma,C60781,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C60781&key=n1002098311&b=1&n=null,C0004114
+Carcinoma,Carcinoma in situ,,Carcinoma in Situ,C2917,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.08d&ns=ncit&code=C2917&key=n1418272980&b=1&n=null,C0007099
+"Glioblastoma,Astrocytoma",Astrocytoma,,Astrocytoma,C60781,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C60781&key=n1002098311&b=1&n=null,C0004114
+Malignant Peripheral Nerve Sheath Tumor,Malignant Peripheral Nerve Sheath Tumor,,Malignant Peripheral Nerve Sheath Tumor,C3798,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3798&key=1642179537&b=1&n=null,C0751690
+normal,Normal,,,,,C0205307
+,Acidosis,,,,,C0001122
+,Sickle-cell anemia,,,,,C0002895
+,Aneuploidy,,,,,C0002938
+,Asthma,,,,,C0004096
+,Carcinoma in situ of Bladder,,,,,C0005695
+,Bone Tumor,,,,,C0005967
+,Malignant Neoplasm of Brain,,,,,C0006118
+,Epithelial Carcinoma,,,,,C0007097
+,Intraductal carcinoma in situ of breast,,,,,C0007124
+,Tumor of the Kidney,,,,,C0007134
+,Squamous Cell Cancer,,,,,C0007137
+,Cardiovascular Disease (CVD),,,,,C0007222
+,Tumorigenesis,,,,,C0007621
+,Tumor of Cerebellum,,,,,C0007762
+,Cervical Disorder,,,,,C0007867
+,Carcinoma in situ of Cervix Uteri,,,,,C0007873
+,Chromosome Alterations,,,,,C0008625
+,Carcinoma in situ of Colon,,,,,C0009375
+,Tumor of the Large Bowel,,,,,C0009404
+,Cystic fibrosis,,,,,C0010674
+,Diabetes,,,,,C0011849
+,Type 1 diabetes mellitus,,,,,C0011854
+,Type 2 diabetes mellitus,,,,,C0011860
+,Not Specified,,,,,C0012634
+,Not Specified,,,,,C0012644
+,Atypical Mole Syndrome,,,,,C0013403
+,Glaucoma,,,,,C0017601
+,Head and Neck Carcinoma,,,,,C0018671
+,Huntington's disease,,,,,C0020179
+,Not Specified,,,,,C0020507
+,Allergy,,,,,C0020517
+,High blood pressure,,,,,C0020538
+,Tumor of the Kidney,,,,,C0022665
+,Pre-B Acute Lymphoblastic Leukemia,,,,,C0023485
+,Acute Promyelolitic Leukemia,,,,,C0023487
+,Liver disease,,,,,C0023895
+,Hepatoma,,,,,C0023903
+,Lung Carcinoma,,,,,C0024121
+,Systemic lupus erythematosus (SLE),,,,,C0024141
+,Lymphoma,,,,,C0024299
+,Non-Hodgkin Lymphoma,,,,,C0024305
+,Melanoma,,,,,C0025205
+,Metabolic Disorder,,,,,C0025517
+,Oral Cavity Disorder,,,,,C0026636
+,Mouth Tumor,,,,,C0026640
+,Spinal Muscular Atrophy,,,,,C0026847
+,Cardiac Infarction,,,,,C0027051
+,Nasal polyp,,,,,C0027430
+,Not Specified,,,,,C0027627
+,Not Specified,,,,,C0027651
+,Not Specified,,,,,C0027659
+,Not Specified,,,,,C0027686
+,Neuroblastoma,,,,,C0027819
+,Obesity,,,,,C0028754
+,Sarcoma,,,,,C0029463
+,Malignant Neoplasm of Pancreas,,,,,C0030297
+,Parkinson's disease,,,,,C0030567
+,Premalignant State,,,,,C0032927
+,Hutchinson-Gilford Disease,,,,,C0033300
+,Carcinoma in situ of Prostate,,,,,C0033578
+,sinus infection,,,,,C0037199
+,Carcinoma in situ of Skin,,,,,C0037286
+,Gastric Adenocarcinoma,,,,,C0038356
+,Subarachnoid Hemorrhage,,,,,C0038525
+,Thrombocytopenia,,,,,C0040034
+,Chromosomal Translocation,,,,,C0040715
+,Tumor of Central Nervous System,,,,,C0085136
+,Carcinoma in situ of Bronchus and Lung,,,,,C0152013
+,Sarcoma,,,,,C0206743
+,Neuroendocrine tumor ,,,,,C0206754
+,Not Specified,,,,,C0242184
+,Minimal Residual Disease,,,,,C0242596
+,Extranodal marginal zone B-cell lymphoma of mucosa-associated lymphoid tissue [MALT-lymphoma],,,,,C0242647
+,Not Specified,,,,,C0242656
+,Bone Marrow Tumor,,,,,C0282609
+,Not Specified,,,,,C0314657
+,Human Papilloma Virus Infection,,,,,C0343641
+,Metabolic Syndrome,,,,,C0524620
+,Not Specified,,,,,C0524851
+,Not Specified,,,,,C0596263
+,Central Nervous System Cavernous Hemangioma,,,,,C0752160
+,Malignant Neoplasm of Ovary,,,,,C0919267
+,Not Specified,,,,,C0919532
+,Intraductal carcinoma in situ of breast,,,,,C1134719
+,Not Specified,,,,,C1257806
+,Sarcoma,,,,,C1261473
+,Not Specified,,,,,C1262477
+,Intraductal carcinoma in situ of breast,,,,,C1458155
+,Not Specified,,,,,C1513276
+,Not Specified,,,,,C1516516
+,Coronary Disease,,,,,C1956346
+,Liver and Intrahepatic Bile Duct Carcinoma,,,,,C2239176
+,Myelodysplastic syndromes,,,,,C3463824
