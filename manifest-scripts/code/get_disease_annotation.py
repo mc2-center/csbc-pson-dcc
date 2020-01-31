@@ -74,12 +74,24 @@ def getStdNameAndUnkCUIFromMeSHList(mesh_list):
             unk_cui += [cui]
     return (known_std, unk_cui)
 
+def getAllCUIFromMeSHList(mesh_list):
+    # Returns a list containing CUIs for the MeSHs in mesh_list (provided one exists)
+    if mesh_list == None:
+        return ([],[])
+    cuis = []
+    for mesh in mesh_list:
+        cui = mesh_cui_map.get(mesh)
+        cuis += [cui]
+    return cuis
+
 def getUniqueDiseaseTerms(head_list, keep_nested = False):
     # From a list of MeSH headings, returns those terms which have tree numbers starting with C, and which have no tree numbers which are substrings of any other tree numbers in the list of headings (if keep_nested is False)
     if head_list is None:
         return []
 
     # List of tree_num, term tuples for each term in the heading list
+    # However, this line results in a number of problems. Because of list comprehension,
+    # sometimes this results in HTTP Error 429: Too Many Requests (even with the rate limit increased to 10 with an api_key)
     tree_list = [(getTreeNum(term), term) for term in head_list]
 
     # Filter for terms which have a tree_num list containing at least one tree number starting with C
@@ -144,6 +156,7 @@ if __name__ == "__main__":
         order to access E-utilities. Will be  used if NCBI observes requests that violate their policies. Will give \
         a warning if omitted, and an IP address can be blocked by NCBI if a violating request is made without an email \
         address included")
+    parser.add_argument("-u", "-CUI_column", type=str, help="Name of column where all disease CUIs will be listed for each publication. If not included, the column will not be added to the dataframe")
     #parser.add_argument("-k", "-keep_nested", type=bool, help="Whether or not to keep less specific nested mesh terms \
     #   (i.e. one being a more specific term for another, such as 'Cancer' and 'Breast Cancer'. Default is to remove")
     args = parser.parse_args()
@@ -201,6 +214,9 @@ have defined standard names in your controlled vocabulary. They are the followin
 
     # Add a column with known disease standard names in a string separated by semicolons. If the annotations contain 'Not Specified' along with any other disease, remove all 'Not Specified' annotations
     pub_data[args.o] = known_std.apply(lambda x: ";".join([anno for anno in set(x) if not (len(set(x)) > 1 and anno == 'Not Specified')]))
+
+    if args.u:
+        pub_data[args.u] = disease_series.apply(getAllCUIFromMeSHList).apply(lambda x: ";".join(x))
 
     print("Adding known disease annotations and saving at " + args.output_path)
     pub_data.to_csv(args.output_path, index=False)
