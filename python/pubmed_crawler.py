@@ -10,7 +10,6 @@ import re
 import argparse
 import getpass
 import ssl
-from time import sleep
 from datetime import datetime
 import requests
 
@@ -263,6 +262,10 @@ def scrap_info(pmids, curr_grants, consortium, name):
             consortium_grants = ", ".join(
                 [center.grantType.iloc[0] + " " + grant for grant in grants])
 
+            # KEYWORDS
+            keywords = soup.find(attrs={"class": "keywords"})
+            keywords = keywords.find("p").text if keywords else ""
+
             # RELATED INFORMATION
             related_info = get_related_info(pmid)
 
@@ -286,7 +289,7 @@ def scrap_info(pmids, curr_grants, consortium, name):
                 [[center_id, center_name, url, journal, year, title, authors,
                   consortium_grants, ", ".join(srx), srx_url, ", ".join(srp),
                   srp_url, ", ".join(dbgaps), dbgap_url, gse_url,
-                  "", ""]],
+                  "", keywords]],
                 columns=columns)
             table.append(row)
             session.close()
