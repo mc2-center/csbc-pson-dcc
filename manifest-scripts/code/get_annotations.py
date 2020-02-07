@@ -91,7 +91,7 @@ def getAllCUIFromMeSHList(mesh_list):
         cuis += [cui]
     return cuis
 
-def getUniqueDiseaseTerms(head_list, keep_nested = False):
+def getUniqueRelevantTerms(head_list, keep_nested = False):
     # From a list of MeSH headings, returns those terms which have tree numbers starting with C, and which have no tree numbers which are substrings of any other tree numbers in the list of headings (if keep_nested is False)
     if head_list is None:
         return []
@@ -102,20 +102,20 @@ def getUniqueDiseaseTerms(head_list, keep_nested = False):
     tree_list = [(getTreeNum(term), term) for term in head_list]
 
     # Filter for terms which have a tree_num list containing at least one tree number starting with C
-    diseases = []
+    relevant_meshs = []
     for ind, pair in enumerate(tree_list):
-        if any([x.strip()[0] == 'C' for x in pair[0].split(',')]):
-            diseases += [pair]
+        if any([x.strip().startswith(prefix) for x in pair[0].split(',')]):
+            relevant_meshs += [pair]
     if keep_nested:
-        return [pair[1] for pair in diseases]
+        return [pair[1] for pair in relevant_meshs]
 
     # From this list, return the terms which do not have a tree number which a substring of any other term's tree number
     result = []
-    for ind, pair in enumerate(diseases):
+    for ind, pair in enumerate(relevant_meshs):
         redund = False
 
         # For each term tuple, called 'pair', we check every other 'alt_pair' to see if any of the listed tree numbers in the first element of pair's first element is a substring of any of the listed tree numbers in alt_pair's first element
-        for alt_pair in [x for i, x in enumerate(diseases) if i != ind]:
+        for alt_pair in [x for i, x in enumerate(relevant_meshs) if i != ind]:
             if any([any([sup.strip().startswith(sub.strip()) for sup in alt_pair[0].split(',')]) for sub in pair[0].split(',')]):
                 redund = True
                 break
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     parser.add_argument("data_path", help="location for input file in CSV format with header. Each row corresponds to a manuscript, whose corresponding PubMed ID is provided in column 'input_column'.")
     parser.add_argument("output_path", help="location for output file, will be a CSV with a header row. It will be \
         identical to the input CSV, with an added column containing a String for each row/publication, with the String \
-        containing semicolon-separated (if there is more than one) disease annotations. The column will be named either \
+        containing semicolon-separated (if there is more than one) relevant annotations. The column will be named either \
         'Disease' or the value of the -output_column option.")
     parser.add_argument("cont_vocab_path", help="location for controlled vocabulary CSV file. This has been derived from the Google Sheet at \
         https://docs.google.com/spreadsheets/d/1_Ho4tjgdxSHo19qFhlLJhZAyQSPPDW-W8JN910GizDs/edit?usp=sharing, which \
@@ -139,8 +139,8 @@ if __name__ == "__main__":
         is mapped to the corresponding CUI. The rows/standard names do not all need CUIs, but those terms without CUIs will never be mapped to in this script")
     parser.add_argument("-i", "-input_column", type=str, help="column name containing PubMed IDs (for example, '31442407') of the query articles. \
         Can also contain links to PubMed articles (for example, 'https://www.ncbi.nlm.nih.gov/pubmed/31442407', as the script will extract the PubMed ID from the URL. Will default to 'PubMed'")
-    parser.add_argument("-o", "-output_column", type=str, help="column name for the disease annotation. Will be a \
-        semicolon-separated string containing disease annotation(s) for each row/publication. Will default to 'Disease'")
+    parser.add_argument("-o", "-output_column", type=str, help="column name for the annotation. Will be a \
+        semicolon-separated string containing annotation(s) for each row/publication. Will default to 'Disease'")
     parser.add_argument("-m", "-meshtocui_map_path", type=str, help="relative path of CSV with two columns, one containing \
         possible MeSH terms in a column called 'STR', and their corresponding Concept Unique IDs (according to UMLS \
         metathesaurus) in a column called 'CUI'. Will default to '../data/mesh_cui_map_total.csv'")
@@ -163,27 +163,40 @@ if __name__ == "__main__":
         order to access E-utilities. Will be  used if NCBI observes requests that violate their policies. Will give \
         a warning if omitted, and an IP address can be blocked by NCBI if a violating request is made without an email \
         address included")
-    parser.add_argument("-u", "-CUI_column", type=str, help="Name of column where all disease CUIs will be listed for each publication. If not included, the column will not be added to the dataframe")
+    parser.add_argument("-p", "-mesh_type", type=str, help="Type of MeSH term to consider, or prefix of MeSH tree numbers to consider.\
+        This can be one of 'disease' for Diseases MeSHs (prefix 'C') or 'exp_strat' for Investigative Technique MeSHs \
+        (prefix 'E05'), or it can be any prefix in for a MeSH tree number one would like to filter the MeSH terms for. \
+        These can be viewed in the MeSH Browser Tree View at https://meshb.nlm.nih.gov/treeView by clicking the (+) next \
+        to sections in the tree. This will default to 'disease', with a prefix of 'C'.")
+    parser.add_argument("-u", "-CUI_column", type=str, help="Name of column where all relevant CUIs will be listed for each publication. If not included, the column will not be added to the dataframe")
     #parser.add_argument("-k", "-keep_nested", type=bool, help="Whether or not to keep less specific nested mesh terms \
     #   (i.e. one being a more specific term for another, such as 'Cancer' and 'Breast Cancer'. Default is to remove")
     args = parser.parse_args()
     pub_data = pd.read_csv(args.data_path)
-    if args.i is None:
+    if not args.i:
         args.i = "PubMed"
-    if args.o is None:
+    if not args.o:
         args.o = "Disease"
-    if args.m is None:
+    if not args.m:
         args.m = "../data/mesh_cui_map_total.csv"
-    if args.c is None:
+    if not args.c:
         args.c = "../data/cuitoterms_map.csv"
-    if args.n is None:
+    if not args.n:
         args.n = "needed_cuis.csv"
-    if args.e is not None:
+    if args.e:
         Entrez.email = args.e
-    if args.e is not None:
+    if args.e:
         api_key = args.a
     else:
         api_key = None
+    #Creating a dictionary defining mappings between inputs for -p and prefixes
+    prefix = {'disease':'C', 'exp_strat':'E05'}.get(args.p)
+    # If the argument isn't found in the dicitonary, try using the argument as the prefix (if they enter a prefix rather than a category)
+    # if this doesn't work, default to prefix 'C' for diseases.
+    if not prefix:
+        prefix = args.p
+        if not prefix:
+            prefix = 'C'
 
     cont_vocab_df = pd.read_csv(args.cont_vocab_path)
     cont_vocab_map = dict(zip(cont_vocab_df.UMLS_CUI, cont_vocab_df.standard_name))
@@ -199,11 +212,11 @@ if __name__ == "__main__":
     mesh_series = pub_data[args.i].apply(lambda x: [field for field in x.split("/") if field][-1].split("?term=")[-1])\
         .apply(getMeSHHeadingList)
 
-    # Applies "getUniqueDiseaseTerms" to each PubMed ID's MeSH heading lists, filtering for Disease MeSHs and redundant MeSHs
-    disease_series = mesh_series.apply(getUniqueDiseaseTerms)
+    # Applies "getUniqueRelevantTerms" to each PubMed ID's MeSH heading lists, filtering for relevant MeSHs and removing redundant MeSHs
+    relevant_mesh_series = mesh_series.apply(getUniqueRelevantTerms)
 
-    # Applies "getStdNameAndUnkCUIFromMeSHList" to each PubMed ID's unique disease terms, retrieving both standard names for concepts we know and CUIs for concepts we do not have in our controlled vocabulary
-    translated = disease_series.apply(getStdNameAndUnkCUIFromMeSHList).apply(pd.Series)
+    # Applies "getStdNameAndUnkCUIFromMeSHList" to each PubMed ID's unique relevant mesh terms, retrieving both standard names for concepts we know and CUIs for concepts we do not have in our controlled vocabulary
+    translated = relevant_mesh_series.apply(getStdNameAndUnkCUIFromMeSHList).apply(pd.Series)
     known_std = translated[0]
     unk_cui = set(translated[1].sum())
     if len(unk_cui) > 0:
@@ -219,13 +232,13 @@ have defined standard names in your controlled vocabulary. They are the followin
         cui_pref_terms_df[cui_pref_terms_df['CUI'].apply(lambda x: x in unk_cui)].to_csv(args.n, index=False)
         print("Writing the table of possible terms to " + args.n)
 
-    # Add a column with known disease standard names in a string separated by semicolons. If the annotations contain 'Not Specified' along with any other disease, remove all 'Not Specified' annotations
+    # Add a column with known standard names in a string separated by semicolons. If the annotations contain 'Not Specified' along with any other annotation, remove all 'Not Specified' annotations
     pub_data[args.o] = known_std.apply(lambda x: ";".join([anno for anno in set(x) if not (len(set(x)) > 1 and anno == 'Not Specified')]))
 
     if args.u:
-        pub_data[args.u] = disease_series.apply(getAllCUIFromMeSHList).apply(lambda x: ";".join(x))
+        pub_data[args.u] = relevant_mesh_series.apply(getAllCUIFromMeSHList).apply(lambda x: ";".join(x))
 
-    print("Adding known disease annotations and saving at " + args.output_path)
+    print("Adding known annotations and saving at " + args.output_path)
     pub_data.to_csv(args.output_path, index=False)
 
 
