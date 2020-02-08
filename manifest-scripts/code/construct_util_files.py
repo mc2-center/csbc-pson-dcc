@@ -118,4 +118,4 @@ if __name__ == "__main__":
             print(i)
 
     concept_map = concept_map.drop_duplicates()
-    concept_map.to_csv(args.mc index=False)
+    concept_map.to_csv(args.c index=False)
