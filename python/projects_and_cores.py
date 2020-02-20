@@ -7,6 +7,7 @@ CSBC/PS-ON participating institution on Synapse.
 author: verena.chung
 """
 
+import os
 import re
 
 import synapseclient
@@ -25,45 +26,49 @@ def parse_u01_project(page):
     return description.rstrip("\n\n&nbsp;").strip()
 
 
+def parse_information(center, page):
+    """"""
+
+    all_info = ""
+    sections = re.split(r"\n####\*", page)
+    for section in sections:
+        section = section.replace("**", "").lstrip("&nbsp;")
+        info = re.search(r"(\w+)\s*(\d)?:?\s*(.*?)\n+(.*)", section, re.S)
+        title = info.group(3)
+        all_info += "\t".join([center, info.group(1), info.group(2) or "",
+                               title if title != "&nbsp;" else "",
+                               repr(info.group(4).strip("&nbsp;\n\n").strip())]) + "\n"
+    return all_info
+
+
 def parse_u54_center(center, page):
     """Parse project and core descriptions from U54 center."""
 
-    # Center has only project description. Add '#CORE' to the end so that
+    # Center has only project description. Add '###COR' to the end so that
     # all project descriptions can be captured.
     if not re.search(r"P(ROJECT|roject).*#CORE", page, re.S):
         page += "\n###COR"
 
     project_subpage = re.search(r"(Project.*)###COR", page, re.S).group(1)
-    projects = re.split(r"\n####\*", project_subpage)
-    project_info = parse_information(center, projects)
+    project_info = parse_information(center, project_subpage)
 
     core_info = None
     cores_found = re.search(r"CORE(S)?\s*(.*)", page, re.S)
     if cores_found:
         core_subpage = cores_found.group(2)
-        cores = re.split(r"\n####\*", core_subpage)
-        core_info = parse_information(center, cores)
+        core_info = parse_information(center, core_subpage)
 
     return project_info, core_info
-
-
-def parse_information(center, sections):
-    all_info = ""
-    for section in sections:
-        section = section.replace("**", "").lstrip("&nbsp;")
-        info = re.search(r"(\w+)\s*(\d)?:?\s*(.*?)\n+(.*)", section, re.S)
-        all_info += "\t".join([center, info.group(1), info.group(2) or "",
-                               info.group(3),
-                               repr(info.group(4).strip("&nbsp;\n\n").strip())]) + "\n"
-    return all_info
 
 
 def main():
     """Main function."""
 
-    syn = synapseclient.login()
+    syn = synapseclient.login(silent=True)
 
-    with open("projects_and_cores.tsv", "w") as out:
+    with open("projects_and_cores2.tsv", "w") as out:
+        out.write("\t".join(["Center Name", "Project/Core", "Number",
+                             "Title", "Description Markdown"]) + "\n")
         project_view = syn.tableQuery(
             "select id from syn10142562 where grantType in ('U01', 'U54')").asDataFrame()
         for syn_id in project_view.id:
