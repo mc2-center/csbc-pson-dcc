@@ -66,7 +66,7 @@ def main():
 
     syn = synapseclient.login(silent=True)
 
-    with open("projects_and_cores2.tsv", "w") as out:
+    with open("projects_and_cores.tsv", "w") as out:
         out.write("\t".join(["Center Name", "Project/Core", "Number",
                              "Title", "Description Markdown"]) + "\n")
         project_view = syn.tableQuery(
