@@ -332,9 +332,9 @@ def main():
     args = get_args()
 
     # In order to make >3 Entrez requests/sec, 'email' and 'api_key'
-    # params need to be set. Using Milen's info...
-    Entrez.email = 'milen.nikolov@sagebase.org'
-    Entrez.api_key = '3f8cfef8d4356963e36d145c96b9ca9ece09'
+    # params need to be set.
+    Entrez.email = os.getenv('ENTREZ_EMAIL')
+    Entrez.api_key = os.getenv('ENTREZ_API_KEY')
 
     find_publications(syn, args)
 
