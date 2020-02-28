@@ -47,9 +47,11 @@ def getTreeNum(term, tree_memo={}):
         return None
     s = "".join(Entrez.efetch(db="MeSH", id=term_id, api_key=api_key).readlines())
     if len(term_id) != 0:
-        tree_num = re.search(r'Tree Number\(s\): (.*?)\n', s).group(1)
-        tree_memo[term] = tree_num
-        return tree_num
+        tmp = re.search(r'Tree Number\(s\): (.*?)\n', s)
+        if tmp is not None:
+            tree_num = tmp.group(1)
+            tree_memo[term] = tree_num
+            return tree_num
 
     # If we haven't found any tree numbers for that exact search (possibly due to special characters), do a non-exact search
     else:
@@ -57,9 +59,11 @@ def getTreeNum(term, tree_memo={}):
             .readlines())).get('esearchresult').get('idlist')
         s = "".join(Entrez.efetch(db="MeSH", id=term_id, api_key=api_key).readlines())
         if len(term_id) != 0:
-            tree_num = re.search(r'Tree Number\(s\): (.*?)\n', s).group(1)
-            tree_memo[term] = tree_num
-            return tree_num
+            tmp = re.search(r'Tree Number\(s\): (.*?)\n', s)
+            if tmp is not None:
+                tree_num = tmp.group(1)
+                tree_memo[term] = tree_num
+                return tree_num
 
         # If we don't find any associated tree numbers, return a null
         else:
@@ -104,8 +108,9 @@ def getUniqueDiseaseTerms(head_list, keep_nested = False):
     # Filter for terms which have a tree_num list containing at least one tree number starting with C
     diseases = []
     for ind, pair in enumerate(tree_list):
-        if any([x.strip()[0] == 'C' for x in pair[0].split(',')]):
-            diseases += [pair]
+        if pair[0] is not None:
+            if any([x.strip()[0] == 'C' for x in pair[0].split(',')]):
+                diseases += [pair]
     if keep_nested:
         return [pair[1] for pair in diseases]
 
@@ -115,10 +120,12 @@ def getUniqueDiseaseTerms(head_list, keep_nested = False):
         redund = False
 
         # For each term tuple, called 'pair', we check every other 'alt_pair' to see if any of the listed tree numbers in the first element of pair's first element is a substring of any of the listed tree numbers in alt_pair's first element
-        for alt_pair in [x for i, x in enumerate(diseases) if i != ind]:
-            if any([any([sup.strip().startswith(sub.strip()) for sup in alt_pair[0].split(',')]) for sub in pair[0].split(',')]):
-                redund = True
-                break
+        if pair[0] is not None: 
+            for alt_pair in [x for i, x in enumerate(diseases) if i != ind]:
+                if alt_pair[0] is not None:
+                    if any([any([sup.strip().startswith(sub.strip()) for sup in alt_pair[0].split(',')]) for sub in pair[0].split(',')]):
+                        redund = True
+                        break
         if not redund:
             result += [pair[1]]
     return result
