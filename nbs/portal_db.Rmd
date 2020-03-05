@@ -1,0 +1,638 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(synapser)
+library(syndccutils)
+library(tidyverse)
+
+source("summary_viz.R")
+# source("ncbi_lookup.R")
+
+synapser::synLogin()
+```
+
+```{r}
+use_local <- TRUE
+db_consortium_df <- get_table_df("syn21630133", cache = use_local)
+db_theme_df <- get_table_df("syn21630087", cache = use_local)
+full_synproject_df <- get_table_df("syn10142562", cache = use_local)
+full_project_df <- get_table_df("syn21621978", cache = use_local)
+full_dataset_df <- get_table_df("syn18488466", cache = use_local)
+full_pub_df <- get_table_df("syn10923842", cache = FALSE)
+full_tool_df <- get_table_df("syn21488853", cache = use_local)
+full_file_df <- get_table_df("syn21346411", cache = use_local)
+```
+
+```{r}
+min_consortium_df <- db_consortium_df %>% 
+    select(-createdOn, -createdBy, -modifiedOn, -modifiedBy, -currentVersion)
+
+min_consortium_df
+```
+
+
+```{r}
+min_theme_df <- db_theme_df %>% 
+  select(-createdOn, -createdBy, -modifiedOn, -modifiedBy, -currentVersion)
+
+min_theme_df
+```
+
+
+```{r}
+min_grant_df <- full_synproject_df %>%
+  filter(!is.na(grantNumber)) %>% 
+  filter(!id %in% c("syn11857287", "syn7433743")) %>% 
+  select(-type, -modifiedOn, -grantId, -grantName, -centerName,
+         -teamMembersProfileId, -grantExternalSite, -fundingAgency) %>% 
+  select(id, consortium, name, description = abstract, grantNumber, grantType,
+         keyInvestigator = keyInvestigators, institution,
+         website = centerSite, theme, synapseTeam = teamProfileId) %>% 
+  mutate_all(str_trim)
+
+# min_grant_df %>%
+#   distinct(consortium) %>%
+#   filter(!is.na(consortium)) %>%
+#   pluck("consortium") %>%
+#   map(function(e) {
+#     file_handle = janitor::make_clean_names(e)[[1]]
+#     e_path = fs::path_join(c(tempdir(), file_handle))
+#     write_lines(e, e_path)
+#     e_file <- File(e_path, parent = "syn21630050",
+#                    annotations = list(displayName = e))
+#     synStore(e_file)
+#   })
+
+min_grant_df <- min_grant_df %>% 
+  left_join(select(min_consortium_df, consortiumId = id, consortium = systemName)) %>% 
+  select(-consortium)
+
+person_grant_df <- min_grant_df %>% 
+  select(grantId = id, person = keyInvestigator) %>% 
+  separate_rows(person, sep = ",") %>% 
+  mutate(person = str_trim(person)) %>% 
+  filter(!is.na(person)) %>% 
+  mutate(person = case_when(
+    person == "Jill Mesirov" ~ "Jill P. Mesirov",
+    TRUE ~ person
+  )) %>% 
+  mutate(role = "investigator")
+
+institute_grant_df <- min_grant_df %>% 
+  select(grantId = id, institution) %>% 
+  separate_rows(institution, sep = ",") %>%
+  mutate(institution = str_trim(institution)) %>% 
+  filter(!is.na(institution)) %>% 
+  mutate(institution = case_when(
+    institution == "ASU" ~ "Arizona State University",
+    institution == "Harvard" ~ "Harvard University",
+    institution == "Moffitt Cancer Center & Research Institute" ~ "Moffitt Cancer Center",
+    institution == "DFCI" ~ "Dana Farber Cancer Institute",
+    institution == "Dartmouth" ~ "Dartmouth College",
+    institution == "Duke" ~ "Duke University",
+    institution == "Georgia Tech" ~ "Georgia Institute of Technology",
+    TRUE ~ institution
+  ))
+
+theme_grant_df <- min_grant_df %>% 
+  select(grantId = id, theme) %>% 
+  mutate(theme = str_replace(theme, "geneity/evol", "geneity; evol")) %>% 
+  separate_rows(theme, sep = ";") %>%
+  mutate(theme = str_to_lower(theme)) %>%
+  mutate(theme = str_trim(theme)) %>%
+  filter(!is.na(theme)) %>%
+  filter(theme != "") %>%
+  mutate(theme = case_when(
+    theme == "drug resistance/senstivity" ~ "drug resistance/sensitivity",
+    theme == "tumor evolution" ~ "evolution",
+    TRUE ~ theme
+  ))
+
+# theme_grant_df %>% 
+#   distinct(theme) %>% 
+#   pluck("theme") %>%
+#   map(function(e) {
+#     file_handle = janitor::make_clean_names(e)[[1]]
+#     e_path = fs::path_join(c(tempdir(), file_handle))
+#     write_lines(e, e_path)
+#     e_file <- File(e_path, parent = "syn21630049")
+#     synStore(e_file)
+#   })
+
+theme_grant_df <- theme_grant_df %>% 
+  left_join(select(min_theme_df, themeId = id, theme = systemName)) %>% 
+  select(-theme)
+
+min_grant_df <- min_grant_df %>%
+  select(id, consortiumId, name, description, grantNumber, grantType,
+         website, synapseTeam) 
+```
+
+```{r}
+# grant_df <- min_grant_df %>% 
+#   left_join(select(full_synproject_df, 
+#                    id, createdOn, createdBy, modifiedOn, modifiedBy, 
+#                    currentVersion)) %>% 
+#   mutate(id = str_replace(id, "syn", "")) %>% 
+#   mutate(consortiumId = str_replace(consortiumId, "syn", ""))
+# 
+# grant_syntable <- synBuildTable("grant", "syn21498902", grant_df)
+# grant_syntable <- synStore(grant_syntable)
+```
+
+```{r}
+# person_grant_syntable <- synBuildTable("person_grant", "syn21498902", person_grant_df)
+# person_grant <- synStore(person_grant_syntable)
+```
+
+```{r}
+# theme_grant_syntable <- theme_grant_df %>% 
+#   mutate_all(~ str_replace(., "syn", "")) %>% 
+#   synBuildTable("theme_grant", "syn21498902", .)
+# theme_grant_syntable <- synStore(theme_grant_syntable)
+```
+
+
+```{r}
+min_project_df <- full_project_df %>% 
+  left_join(select(min_grant_df, grantId = id, grant = name)) %>% 
+  mutate(id = str_c("proj", row_number(), sep = "_")) %>% 
+  mutate(projectType = str_replace(projectNumber, " [0-9]", "")) %>% 
+  select(id, grantId, name = projectName, description, 
+         projectLabel = projectNumber, projectType,
+         investigator = principalInvestigators) %>% 
+  mutate_all(str_trim)
+
+person_project_df <- min_project_df %>% 
+  select(id, person = investigator) %>%
+  separate_rows(person, sep = "(,| and )") %>% 
+  mutate(person = str_trim(person)) %>%
+  filter(!is.na(person))
+
+min_project_df <- min_project_df %>% 
+  select(-investigator)
+
+# min_project_df %>%
+#   distinct(grantId, projectLabel) %>%
+#   mutate(projectLabel = str_to_lower(str_replace(projectLabel, " ", "_"))) %>% 
+#   transmute(project = str_c(grantId, projectLabel, sep = "_")) %>% 
+#   pluck("project") %>% 
+#   map(function(e) {
+#     file_handle = e
+#     e_path = fs::path_join(c(tempdir(), file_handle))
+#     write_lines(e, e_path)
+#     e_file <- File(e_path, parent = "syn21645004")
+#     synStore(e_file)
+#   })
+```
+
+```{r}
+project_view_df <- synTableQuery("select * from syn21645147") %>% 
+  as.data.frame()
+```
+
+```{r}
+project_df <- project_view_df %>% 
+  select(-description, -grantId, -projectType, -projectLabel,
+         -displayName, -fullName) %>% 
+  mutate(name_tmp = name) %>% 
+  separate(name_tmp, c("grantId", "projectType", "number")) %>% 
+
+  mutate(projectLabel = str_c(snakecase::to_upper_camel_case(projectType), 
+                              number, sep = " ")) %>% 
+  select(-projectType, -number) %>% 
+  left_join(select(min_project_df, -id, displayName = name), 
+            by = c("grantId", "projectLabel")) %>% 
+  mutate(grantId = str_replace(grantId, "syn", "")) %>% 
+  mutate(description = "") %>% 
+  mutate(fullName = displayName)
+
+project_df
+# t <- (synTable("syn21645147", project_df))
+# project_syntable <- synStore(t)
+```
+
+
+```{r}
+# projectGrants <- min_project_df %>% 
+#   filter(!is.na(grantId)) %>% 
+#   distinct(grantId) %>% 
+#   pluck("grantId") %>% 
+#   set_names(.)
+# 
+# projectLabels <- min_project_df %>% 
+#   pluck("projectLabel")
+# 
+# projects_data <- map_dfr(projectGrants, function(x) {
+#   project_folders <- as.list(synGetChildren(x)) %>% 
+#     keep(~ .$type == "org.sagebionetworks.repo.model.Folder") %>% 
+#     keep(~ .$name %in% projectLabels)
+#   if (length(project_folders) == 0) {
+#     project_props <- synGet(x)$properties
+#     project_folders <- as.list(jsonlite::fromJSON(project_props))
+#   }
+#   
+#   project_folders %>% 
+#     map_dfr(as_tibble)
+# }, .id = "grantId") %>% 
+#   select(grantId, id, name)
+# projects_data
+```
+
+
+```{r}
+min_dataset_df <- full_dataset_df %>%
+  filter(is.dataset == "TRUE") %>% 
+  select(-datasets, -tumorType, -species, -consortium, -is.dataset, -is.study,
+         -createdOn, -createdBy, -modifiedOn, -modifiedBy, -etag,
+         -grantType, -platform, -num.files, -featured, -dataset,
+         -Theme, -studies, -centerName, -Title, -PubMed, -publicationTitle, 
+         -theme, -datasetId, -experimentalStrategy) %>% 
+  left_join(select(min_grant_df, grantId = id, grantName = name)) %>% 
+  select(-grantName) %>% 
+  select(id, grantId, name, displayName = portalDisplayName,
+         description, overallDesign, externalLink) %>% 
+  mutate_all(str_trim) %>% 
+  filter(str_detect(name, "GSE"))
+```
+
+```{r, warning=FALSE}
+dataset_files <- min_dataset_df %>% 
+  distinct(id) %>% 
+  pluck("id") %>% 
+  as.list() %>% 
+  set_names() %>% 
+  map_dfr(function(dset) {
+    print(dset)
+    files <- as.list(synGetChildren(dset))
+    if (length(files) > 0) {
+      files %>% 
+        map_dfr(as_tibble) %>% 
+        select(one_of(c("id", "name"))) %>% 
+        mutate(data = map(id, function(synId) {
+          synGetAnnotations(synId) %>% 
+            as_tibble() %>% 
+            select(one_of(c("dataset.name", "datasets", "assay", 
+                            "experimentalStrategy",
+                            "species", "tumorType", "diagnosis",
+                            "tissue", "cellType", "dataType"))) %>% 
+            mutate_all(flatten_chr)
+        })) %>% 
+        unnest(data)
+    }
+  }, .id = "datasetId")
+dataset_files
+```
+
+
+```{r}
+multi_datasets <- dataset_files %>% 
+  group_by(datasetId, dataType, assay, species,
+           diagnosis, tumorType, tissue, cellType) %>%
+  # group_by(assay, experimentalStrategy) %>%
+  tally() %>% 
+  group_by(datasetId) %>% 
+  tally() %>% 
+  filter(n > 2) %>% 
+  pluck("datasetId")
+
+dataset_files %>% 
+  group_by(datasetId, dataType, assay, species,
+           diagnosis, tumorType, tissue, cellType) %>%
+  # group_by(assay, experimentalStrategy) %>%
+  tally() %>% 
+  # filter(datasetId %in% multi_datasets) %>% 
+  I
+```
+
+
+```{r}
+dataset_files %>% 
+  filter(datasetId == "syn13858921") %>% 
+  filter(tumorType == "Not Applicable")
+```
+
+
+```{r}
+min_tool_df <- full_tool_df %>% 
+  select(-PublicationTitle, -grantType, -consortium, -pubMedLink, -grantName,
+         -publicationTitle, -PubMed, -study, -projectId, -methodID) %>% 
+  mutate(id = str_c("tool", row_number(), sep = "_")) %>% 
+  select(id, grantId, name = toolId, displayName = toolName, description,
+         inputDataType, outputDataType, softwareLanguage, softwareType,
+         externalLinkUrl = externalLink) %>% 
+  mutate_all(str_trim)
+
+datatype_tool_df <- min_tool_df %>%
+  select(-id) %>% 
+  left_join(select(db_tool_df, id, name)) %>% 
+  select(id, inputDataType, outputDataType) %>%
+  gather(role, dataType, -id) %>%
+  mutate(role = str_replace(role, "DataType", "")) %>%
+  select(toolId = id, dataType, role) %>%
+  separate_rows(dataType, sep = ",") %>% 
+  mutate(dataType = str_trim(dataType)) %>%
+  filter(!is.na(dataType))
+
+# datatype_tool_df %>% 
+#   mutate(toolId = str_replace(toolId, "syn", "")) %>% 
+#   update_table("syn21683485", .)
+
+language_tool_df <- min_tool_df %>% 
+  select(-id) %>% 
+  left_join(select(db_tool_df, id, name)) %>% 
+  select(toolId = id, softwareLanguage) %>% 
+  filter(!is.na(softwareLanguage)) %>% 
+  separate_rows(softwareLanguage, sep = ",") %>% 
+  mutate(softwareLanguage = str_trim(softwareLanguage)) %>%
+  mutate(softwareLanguage = case_when(
+    str_detect(softwareLanguage, "C++") ~ "C++",
+    TRUE ~ softwareLanguage
+  ))
+
+language_tool_df %>%
+  mutate(toolId = str_replace(toolId, "syn", "")) %>%
+  update_table("syn21683497", .)
+
+tool_links <- min_tool_df %>% 
+  select(externalLinkUrl)
+  
+min_tool_df <- min_tool_df %>%
+  select(-inputDataType, -outputDataType, -softwareLanguage, -externalLinkUrl)
+
+# min_tool_df %>%
+#   distinct(name) %>%
+#   pluck("name") %>%
+#   map(function(e) {
+#     file_handle = e
+#     e_path = fs::path_join(c(tempdir(), file_handle))
+#     write_lines(e, e_path)
+#     e_file <- File(e_path, parent = "syn21645176")
+#     synStore(e_file)
+#   })
+
+# create_entities(min_tool_df, "syn21645176")
+```
+
+
+```{r}
+tool_view_df <- synTableQuery("select * from syn21645208") %>% 
+  as.data.frame()
+```
+
+```{r}
+tool_df <- tool_view_df %>% 
+  select(-description, -grantId, -toolType, -displayName) %>% 
+  mutate(name_tmp = name) %>% 
+  separate(name_tmp, c("grantId", "projectType", "number")) %>% 
+  left_join(select(min_tool_df, -id, name), 
+            by = "name") %>% 
+  mutate(grantId = str_replace(grantId, "syn", "")) %>% 
+  rename(toolType = softwareType) %>% 
+  mutate(description = "")
+  
+tool_df
+
+# t <- (synTable("syn21645208", tool_df))
+# tool_syntable <- synStore(t)
+```
+
+
+```{r}
+min_pub_df <- full_pub_df %>% 
+  select(-consortium, -grantType, -grantName, -theme) %>%
+  mutate(pubMedId = str_extract(pubMedLink,
+                                "[0-9].*")) %>%
+  mutate(id = str_c("pmid_", pubMedId)) %>% 
+  select(id, grantNumber, title = publicationTitle, journal,
+         publicationYear, doi, pubMedLink,
+         keywords,
+         author = authors,
+         tissue, assay, tumorType,
+         annotatedBy = `annotated.by`) %>%
+  separate_rows(grantNumber, sep = ",") %>% 
+  # filter(grantNumber %in% min_grant_df$grantNumber) %>% 
+  left_join(select(min_grant_df, grantId = id, grantNumber)) %>% 
+  select(id, grantId, grantNumber, title, journal,
+         publicationYear, doi, pubMedLink,
+         keywords, author, tissue, assay, tumorType, annotatedBy) %>%
+  select(-grantNumber) %>% 
+  mutate_all(str_trim)
+
+person_pub_df <- min_pub_df %>% 
+  select(id, person = author) %>% 
+  separate_rows(person, sep = "(,| and )") %>% 
+  mutate(person = str_trim(person)) %>% 
+  mutate(role = "author")
+
+grant_pub_df <- min_pub_df %>% 
+  select(name = id, grantId) %>% 
+  distinct() %>%
+  left_join(select(db_pub_df, id, name)) %>% 
+  select(publicationId = id, grantId) %>% 
+  mutate_all(~ as.integer(str_replace(., "syn", ""))) %>% 
+  filter(!is.na(grantId)) %>% 
+  I
+
+min_pub_df <- min_pub_df %>% 
+  select(-author, -grantId) %>% 
+  distinct()
+```
+
+```{r}
+grant_pub_syntable <- update_table("syn21682660", grant_pub_df)
+```
+
+
+```{r}
+create_entities(min_pub_df, "syn21645243")
+```
+
+```{r}
+min_pub_df %>% 
+  separate_rows(assay, sep = ";") %>% 
+  separate_rows(assay, sep = ",") %>% 
+  mutate(assay = str_trim(assay)) %>% 
+  filter(!is.na(assay)) %>% 
+  distinct(assay) %>% 
+  I
+```
+
+
+```{r}
+pub_synview <- min_pub_df %>% 
+  # filter(!(id %in% c("syn21645251", "syn21648867") & is.na(doi))) %>% 
+  update_view("syn21650536", .)
+
+pub_synview
+```
+
+```{r}
+map_int(min_pub_df$title, str_length) %>% max(na.rm = TRUE)
+```
+
+
+```{r}
+tool_cols <- c(
+  "softwareType",
+  "inputDataType",
+  "outputDataType",
+  "softwareAuthor",
+  "softwareLanguage",
+  "softwareRepository"
+)
+```
+
+```{r}
+experiment_cols <- c(
+  "compoundName",
+  "compoundDose",
+  "experimentalCondition"
+)
+```
+
+```{r}
+assay_cols <- c(
+  "assay",
+  "experimentalStrategy",
+  "nucleicAcidSource",
+  "libraryPrep",
+  "isStranded",
+  "platform",
+  "runType"
+)
+```
+
+```{r}
+biospecimen_cols <- c(
+  "Title",
+  "cellLine",
+  "cellSubType",
+  "cellType",
+  "individualID",
+  "individualIdSource",
+  "isCellLine",
+  "isPrimaryCell",
+  "modelSystem",
+  "transplantationDonorSpecies",
+  "transplantationDonorTissue",
+  "transplantationRecipientTissue",
+  "transplantationType",
+  "diseaseSubtype",
+  "diagnosis",
+  "tumorType",
+  "organ",
+  "sex",
+  "specimenID",
+  "specimenIdSource",
+  "tissue",
+  "species"
+)
+```
+
+```{r}
+method_cols <- c(
+  "alignmentMethod",
+  "peakCallingMethod",
+  "transcriptQuantificationMethod"
+)
+```
+
+```{r}
+min_datafile_df <- full_file_df %>% 
+  filter(is.na(softwareType)) %>%
+  select(-tool_cols) %>% 
+  # select(-experiment_cols) %>%
+  # select(-biospecimen_cols) %>%
+  # select(-method_cols) %>%
+  select_if(function(x){ !all(is.na(x)) }) %>% 
+  select(-consortium, -fundingAgency, -modifiedOn, -createdOn, -dataset,
+         -study_name1, -centerName, -datasetname, -grantType, -resourceType,
+         -PIInstitution, -analysisType, -concreteType, -study, -studies,
+         -principalInvestigator, -networkEdgeType, -Theme) %>% 
+  select(id, grantId = projectId, parentId, datasetId = parentId, name, 
+         dataType, dataSubtype, fileFormat, isMultiIndividual, isMultiSpecimen,
+         externalLink = geo_accession, everything()) %>% 
+  mutate_all(str_trim) %>% 
+  filter(!grantId %in% c("syn7248578"))
+
+assay_datafile_df <- min_datafile_df %>% 
+  select(id, dataType, one_of(assay_cols)) %>% 
+  mutate(dataType = case_when(
+    assay == "rnaArray" ~ "geneExpression",
+    assay == "rnaSeq" ~ "geneExpression",
+    assay == "ATACSeq" ~ "chromatinActivity",
+    experimentalStrategy == "Whole Transcriptome Sequencing" ~ "geneExpression",
+    assay == "migration" ~ "?",
+    assay == "widefieldFluorescenceMicroscopy" ~ "?",
+    assay == "tractionForceMicroscopy" ~ "?",
+    assay == "simulation" ~ "?",
+    assay == "cellViabilityAssay" ~ "drugScreen",
+    assay == "methylationArray" ~ "chromatinActivity", 
+    TRUE ~ dataType
+  )) %>% 
+    mutate(assay = case_when(
+    experimentalStrategy == "Whole Transcriptome Sequencing" ~ "rnaSeq",
+    TRUE ~ assay
+  )) %>% 
+  mutate(experimentalStrategy = case_when(
+    assay == "rnaArray" ~ "cDNA Array",
+    assay == "rnaSeq" ~ "Whole Transcriptome Sequencing",
+    assay == "ATACSeq" ~ "ATAC-Seq",
+    assay == "bisulfiteSeq" ~ "Bisulfite Sequencing",
+    assay == "RPPA" ~ "Ribosomal P Protein Antibody Measurement",
+    assay == "migration" ~ "Cell Migration Assay",
+    TRUE ~ experimentalStrategy
+  )) %>% 
+  select(-id) %>%
+  filter(!experimentalStrategy == "NA") %>% 
+  select(dataType, assay, experimentalStrategy) %>%
+  distinct()
+
+```
+
+```{r}
+min_team_df <- min_grant_df %>% 
+  distinct(synapseTeam) %>% 
+  filter(!is.na(synapseTeam)) %>% 
+  rename(id = synapseTeam) %>% 
+  mutate(name = map_chr(id, ~ synGetTeam(.)$name))
+```
+
+```{r}
+team_syntable <- synBuildTable("team", "syn21498902", min_team_df)
+team_syntable <- synStore(team_syntable)
+```
+
+
+```{r}
+as_user_df <- function(user_obj) {
+  user_obj$member$json() %>% 
+    jsonlite::fromJSON() %>% 
+    as_tibble() %>% 
+    mutate(isAdmin = user_obj$isAdmin,
+           teamId = user_obj$teamId)
+}
+
+flatten_user_dfr <- function(team_member_list) {
+  team_member_list %>% 
+    map_dfr(as_user_df)
+}
+
+person_team_df <- min_team_df$id %>% 
+  map_dfr(function(team_id) {
+    synGetTeamMembers(team_id)$asList() %>% 
+      flatten_user_dfr()
+  })
+```
+
+
+```{r}
+person_team_df %>% 
+  select(-isAdmin, -teamId) %>% 
+  distinct() %>% 
+  arrange(lastName)
+```

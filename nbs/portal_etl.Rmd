@@ -1,0 +1,285 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+**grant schema**
+
+| Grant Name | grantName |
+| Grant Number | grantNumber |
+| Consortium | consortium |
+| Key Investigators | keyInvestigators |
+| Institution	| institution |
+| Link | grantId |
+| Abstract | abstract |
+| Grant Type | grantType |
+
+```{r}
+db_consortium_df <- get_table_df("syn21630133", cache = FALSE)
+db_theme_df <- get_table_df("syn21630087", cache = FALSE)
+db_grant_df <- get_table_df("syn21639712", cache = FALSE)
+
+db_theme_grant <- get_table_df("syn21639726", cache = FALSE)
+
+property_cols <- c("createdOn", "createdBy",
+                   "modifiedOn", "modifiedBy",
+                   "currentVersion")
+```
+
+```{r}
+min_grant_df %>% 
+  head()
+```
+
+
+**project schema**
+
+| Project Name | projectName |
+| Description	| description	|
+| Theme | theme |
+| Grant Name | grantName |
+| Consortium | consortium |
+| Grant Type	| grantType |
+
+```{r}
+db_project_df <- get_table_df("", cache = FALSE)
+
+```
+
+
+**dataset schmema**
+
+| Dataset Name | datasetName |
+|  | id |
+|  | datasets |
+| Description	| description	|
+| Publication Title | publicationTitle |
+| Overall Design | overallDesign |
+| Theme | theme |
+| Tumor Type | tumorType |
+| Assay | assay |
+| Species | species |
+| External Link | externalLink |
+| Grant Name | grantName |
+| Consortium | consortium |
+| Grant Type	| grantType |
+
+
+**publication schmema**
+
+|  | authors |
+| DOI	| DOI |
+| Journal	| journal |
+| PubMed Link	| pubMedLink |
+| Publication Title	| publicationTitle |
+| Publication Year	| publicationYear |
+| Keywords | keywords |
+| Theme | theme |
+| Tumor Type | tumorType |
+| Tissue | tissue |
+| Assay | assay |
+| Grant Name | grantName |
+| Consortium | consortium |
+| Grant Type | grantType |
+| Datasets | datasets |
+
+```{r}
+db_pub_df <- get_table_df("syn21650536", cache = FALSE)
+
+db_grant_pub <- get_table_df("syn21682660", cache = FALSE)
+```
+
+
+```{r}
+merged_pub_df <- db_pub_df %>% 
+  select(-one_of(property_cols)) %>% 
+  rename(publicationId = id, publicationTitle = title) %>%
+  left_join(db_grant_pub, by = "publicationId") %>% 
+  left_join(
+    db_grant_df %>% 
+      select(grantId = id, grantName = name, grantType, consortiumId), 
+    by = "grantId"
+  ) %>% 
+  left_join(db_theme_grant, by = "grantId") %>% 
+  left_join(
+    db_theme_df %>% 
+      select(themeId = id, theme = displayName),
+    by = "themeId"
+  ) %>% 
+  left_join(
+    db_consortium_df %>% 
+      select(consortiumId = id, consortium = displayName)
+  ) %>% 
+  select(doi, journal, pubMedLink, publicationTitle, publicationYear, keywords, 
+         theme,
+         tumorType, tissue, assay, grantName, consortium, grantType) %>% 
+  distinct()
+
+merged_pub_df <- merged_pub_df %>% 
+  filter(!is.na(grantName)) %>% 
+  group_by(publicationTitle) %>% 
+  mutate(theme_array = jsonlite::toJSON(unique(theme))) %>% 
+  mutate(grant_array = str_c(unique(grantName), collapse = ", ")) %>%
+  mutate(grant_type_array = str_c(unique(grantType), collapse = ", ")) %>%
+  mutate(consortium_array = str_c(unique(consortium), collapse = ",")) %>%
+  # mutate(grant_array = jsonlite::toJSON(unique(grantName))) %>% 
+  # mutate(grant_type_array = jsonlite::toJSON(unique(grantType))) %>% 
+  # mutate(consortium_array = jsonlite::toJSON(unique(consortium))) %>% 
+  ungroup() %>% 
+  select(-theme, -grantName, -grantType, -consortium) %>% 
+  rename(theme = theme_array, 
+         grantName = grant_array, grantType = grant_type_array,
+         consortium = consortium_array) %>% 
+  mutate(theme = ifelse(theme == "[null]", NA, theme)) %>% 
+  distinct() 
+
+merged_pub_df <- merged_pub_df %>% 
+  mutate(authors = "", datasets = "") %>% 
+  select(authors, doi, pubMedLink, publicationTitle, publicationYear,
+         keywords, theme, tumorType, assay, grantName, consortium,
+         grantType, datasets)
+
+merged_pub_df %>% 
+  select(theme)
+```
+
+```{r}
+map_int(merged_pub_df$consortium, str_length) %>% max()
+```
+
+
+```{r}
+merged_pub_cols <- list(
+  Column(name = 'authors', columnType = 'STRING', maximumSize = 50),
+  Column(name = 'doi', columnType = 'STRING', maximumSize = 50),
+  Column(name = 'journal', columnType = 'STRING', maximumSize = 50),
+  Column(name = 'pubMedLink', columnType = 'LINK', maximumSize = 1000),
+  Column(name = 'publicationTitle', columnType = 'STRING', maximumSize = 250),
+  Column(name = 'publicationYear', columnType = 'INTEGER', maximumSize = 20),
+  Column(name = 'keywords', columnType = 'LARGETEXT'),
+  Column(name = 'theme', columnType = 'STRING_LIST', maximumSize = 50),
+  Column(name = 'tumorType', columnType = 'STRING', maximumSize = 200),
+  Column(name = 'tissue', columnType = 'STRING', maximumSize = 100),
+  Column(name = 'assay', columnType = 'STRING', maximumSize = 250),
+  Column(name = 'grantName', columnType = 'STRING', maximumSize = 600),
+  Column(name = 'consortium', columnType = 'STRING', maximumSize = 30),
+  Column(name = 'grantType', columnType = 'STRING', maximumSize = 10),
+  Column(name = 'datasets', columnType = 'STRING', maximumSize = 20)
+)
+
+```
+
+
+
+```{r}
+merged_pub_schema <- Schema(name = "Portal - Publications Merged", 
+                            columns = merged_pub_cols, 
+                            parent = "syn7080714")
+merged_pub_schema
+```
+
+```{r}
+merged_pub_table <- Table(merged_pub_schema, merged_pub_df)
+merged_pub_table <- synStore(merged_pub_table)
+```
+
+**tool schema**
+
+Tool Name | toolName
+Input Data Type | inputDataType
+Output Data Type | outputDataType
+Software Language | softwareLanguage
+Link | id
+externalLink |
+Description |
+| PubMed
+Publication Title |publicationTitle
+Grant Name | grantName	
+Consortium | consortium
+Grant Type | grantType
+
+```{r}
+db_tool_df <- get_table_df("syn21645208", cache = FALSE)
+
+db_datatype_tool <- get_table_df("syn21683485", cache = FALSE)
+db_language_tool <- get_table_df("syn21683497", cache = FALSE)
+```
+
+```{r}
+merged_tool_df <- db_tool_df %>% 
+  select(-one_of(property_cols)) %>% 
+  rename(toolId = id, toolName = name) %>%
+  left_join(db_datatype_tool, by = "toolId") %>% 
+  left_join(db_language_tool, by = "toolId") %>% 
+  left_join(
+    db_grant_df %>% 
+      select(grantId = id, grantName = name, grantType, consortiumId), 
+    by = "grantId"
+  ) %>% 
+  left_join(db_theme_grant, by = "grantId") %>% 
+  left_join(
+    db_theme_df %>% 
+      select(themeId = id, theme = displayName),
+    by = "themeId"
+  ) %>% 
+  left_join(
+    db_consortium_df %>% 
+      select(consortiumId = id, consortium = displayName)
+  ) %>% 
+  select(toolName, dataType, role, softwareLanguage, toolId,
+         theme, grantName, consortium, grantType) %>%
+  distinct()
+
+merged_tool_df <- merged_tool_df %>% 
+  filter(!is.na(grantName)) %>% 
+  pivot_wider(names_from = role, values_from = dataType) %>% 
+  select(-`NA`) %>% 
+  mutate(input = map_chr(input, ~ jsonlite::toJSON(unique(.)))) %>%
+  mutate(output = map_chr(output, ~ jsonlite::toJSON(unique(.)))) %>%
+  group_by(toolName) %>%
+  mutate(theme_array = jsonlite::toJSON(unique(theme))) %>%
+  mutate(language_array = jsonlite::toJSON(unique(softwareLanguage))) %>%
+  ungroup() %>% 
+  select(-theme, -softwareLanguage) %>% 
+  rename(theme = theme_array, softwareLanguage = language_array) %>% 
+  mutate(softwareLanguage = ifelse(softwareLanguage == "[null]",
+                                   NA, softwareLanguage)) %>% 
+  mutate(theme = ifelse(theme == "[null]",
+                        NA, theme)) %>% 
+  mutate(input = ifelse(input == "{}",
+                        NA, input)) %>% 
+  mutate(output = ifelse(output == "{}",
+                         NA, output)) %>% 
+  rename_at(c("input", "output"), ~ str_c(., "DataType", sep = "")) %>% 
+  distinct() %>% 
+  select(toolName, inputDataType, outputDataType, softwareLanguage,
+         theme, grantName, consortium, grantType)
+
+merged_tool_df
+```
+
+```{r}
+merged_tool_cols <- list(
+  Column(name = 'toolName', columnType = 'STRING', maximumSize = 30),
+  Column(name = 'inputDataType', columnType = 'STRING_LIST', maximumSize = 30),
+  Column(name = 'outputDataType', columnType = 'STRING_LIST', maximumSize = 30),
+  Column(name = 'softwareLanguage', columnType = 'STRING_LIST', maximumSize = 20),
+  Column(name = 'theme', columnType = 'STRING_LIST', maximumSize = 50),
+  Column(name = 'grantName', columnType = 'STRING', maximumSize = 160),
+  Column(name = 'consortium', columnType = 'STRING', maximumSize = 30),
+  Column(name = 'grantType', columnType = 'STRING', maximumSize = 10)
+)
+```
+
+```{r}
+merged_tool_schema <- Schema(name = "Portal - Tools Merged", 
+                            columns = merged_tool_cols, 
+                            parent = "syn7080714")
+merged_tool_schema
+```
+
+```{r}
+merged_tool_table <- Table(merged_tool_schema, merged_tool_df)
+merged_tool_table <- synStore(merged_tool_table)
+```
+
