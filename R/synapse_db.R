@@ -10,8 +10,12 @@ create_entities <- function(entity_df, parent_id) {
   existing_entities <- as.list(synGetChildren(parent_id)) %>% 
     map_chr("name")
   
+  if (length(existing_entities)) {
+    entity_df <- entity_df %>% 
+      filter(!id %in% existing_entities)
+  }
+  
   entity_names <- entity_df %>% 
-    filter(!id %in% existing_entities) %>% 
     distinct(id) %>% 
     pluck("id")
   
@@ -21,7 +25,7 @@ create_entities <- function(entity_df, parent_id) {
 
 update_view <- function(view_id, update_df) {
   view_df <- as.data.frame(synTableQuery(glue::glue("select * from {view_id}")))
-  view_df
+  
   property_cols <- c("id", "name", "ROW_ID", "ROW_VERSION", "ROW_ETAG",
                      "createdOn", "createdBy",
                      "modifiedOn", "modifiedBy",
@@ -34,4 +38,22 @@ update_view <- function(view_id, update_df) {
 
   synview <- synTable(view_id, view_df)
   synStore(synview)
+}
+
+update_table <- function(table_id, update_df) {
+  current_rows <- synTableQuery(glue::glue("SELECT * FROM {table_id}"))
+  synDelete(current_rows)
+  update_rows <- Table(table_id, update_df)
+  synStore(update_rows)
+}
+
+csv_str_to_json <- function(str) {
+  json_str <- str_split(str, ",")[[1]] %>% 
+    str_trim() %>% 
+    jsonlite::toJSON()
+  if (json_str == "[null]") {
+    NA
+  } else {
+    json_str
+  }
 }
