@@ -367,11 +367,11 @@ link_cols <- c(
 
 min_pub_df <- full_pub_df %>% 
   select(-consortium, -grantType, -grantName, -theme) %>%
-  mutate(pubMedId = str_extract(pubMedUrl,
+  mutate(pubMedId = str_extract(pubMedLink,
                                 "[0-9].*")) %>%
   mutate(id = str_c("pmid_", pubMedId)) %>% 
   select(id, grantNumber, title = publicationTitle, journal,
-         publicationYear, doi, pubMedUrl,
+         publicationYear, doi, pubMedUrl = pubMedLink,
          keywords,
          author = authors,
          tissue, assay, tumorType,
@@ -574,7 +574,7 @@ dataset_pub_df
 
 ```{r}
 publication_df <- min_pub_df %>%
-  select(id, title, journal, publicationYear, doi, keywords) %>% 
+  select(id, title, journal, publicationYear, pubMedUrl, doi, keywords) %>% 
   distinct()
 
 # create publication entities in publications folder
@@ -582,7 +582,7 @@ pub_entities <- create_entities(publication_df, "syn21645243")
 
 # manually create the view in Synapse and download (NOTE: need to add placeholder
 # columns for addtiional annotations as well), then update the view
-pub_synview <- update_view("syn21650536", publication_df)
+pub_synview <- update_view("syn21650536", publication_df %>% mutate(pubMedLink = pubMedUrl))
 
 # fetch the project db table for mapping project IDs below
 db_pub_df <- get_table_df("syn21650536")
