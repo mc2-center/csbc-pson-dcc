@@ -367,11 +367,11 @@ link_cols <- c(
 
 min_pub_df <- full_pub_df %>% 
   select(-consortium, -grantType, -grantName, -theme) %>%
-  mutate(pubMedId = str_extract(pubMedLink,
+  mutate(pubMedId = str_extract(pubMedUrl,
                                 "[0-9].*")) %>%
   mutate(id = str_c("pmid_", pubMedId)) %>% 
   select(id, grantNumber, title = publicationTitle, journal,
-         publicationYear, doi, pubMedLink,
+         publicationYear, doi, pubMedUrl,
          keywords,
          author = authors,
          tissue, assay, tumorType,
@@ -381,7 +381,7 @@ min_pub_df <- full_pub_df %>%
   filter(grantNumber %in% min_grant_df$grantNumber) %>%
   left_join(select(min_grant_df, grantId = id, grantNumber)) %>% 
   select(id, grantId, grantNumber, title, journal,
-         publicationYear, doi, pubMedLink,
+         publicationYear, doi, pubMedUrl,
          keywords, author, tissue, assay, tumorType, annotatedBy,
          one_of(link_cols)) %>%
   select(-grantNumber) %>% 
@@ -713,7 +713,7 @@ min_dataset_df <- full_dataset_df %>%
   left_join(select(min_grant_df, grantId = id, grantName = name)) %>% 
   select(-grantName) %>% 
   select(id, grantId, name, displayName = portalDisplayName,
-         description, overallDesign, externalLink, pubMedLink = PubMed) %>% 
+         description, overallDesign, externalLink, pubMedUrl = PubMed) %>% 
   mutate(synapseLocation = id,  id = name) %>% 
   mutate_all(str_trim) %>% 
   filter(str_detect(name, "GSE"))
@@ -727,7 +727,7 @@ db_link_pub <- get_table_df("syn21868571", cache = TRUE)
 # (many-to-many relationship)
 # NOTE: only using this locally for now
 pub_dataset_df <- min_dataset_df %>% 
-  mutate(pubMedId = str_extract(pubMedLink, "[0-9].*")) %>% 
+  mutate(pubMedId = str_extract(pubMedUrl, "[0-9].*")) %>% 
   select(id, pubMedId)
   
 pub_dataset_df <- full_join(pub_dataset_df, db_link_pub, 
@@ -813,6 +813,16 @@ db_dataset_df <- get_table_df("syn21889931")
 ```
 
 #### Store association tables
+
+```{r}
+# add the correct reference/FK for datasetId
+dataset_pub_df <- dataset_pub_df %>% 
+  rename(dataset = datasetId) %>% 
+  left_join(select(db_dataset_df, datasetId = id, dataset = name)) %>% 
+  select(publicationId, datasetId)
+
+dataset_pub_syntable <- update_table("syn21895676", dataset_pub_df)
+```
 
 ```{r}
 # add the correct reference/FK for datasetId
@@ -912,9 +922,29 @@ language_tool_df <- min_tool_df %>%
   ))
 
 language_tool_df
-# tool_links <- min_tool_df %>% 
-#   select(externalLinkUrl)
 ```
+
+#### Link-Tool
+
+```{r}
+# pull out links to create link-tool association 
+# table (one-to-one relationship for tool -> links)
+link_tool_df <- min_tool_df %>% 
+  mutate(source = "") %>% 
+  select(tool = id, source, url = externalLinkUrl) %>% 
+  mutate(source = case_when(
+    str_detect(url, "github") ~ "GitHub",
+    str_detect(url, "bitbucket") ~ "Bitbucket",
+    str_detect(url, "readthedocs") ~ "ReadTheDocs",
+    str_detect(url, "bioconductor") ~ "Bioconductor",
+    TRUE ~ source
+  )) %>%
+  mutate(source = ifelse(!is.na(url) & source == "", "Website", source)) %>% 
+  filter(source != "")
+
+link_tool_df
+```
+
 
 #### Build/store Tool table (view)
 
@@ -986,6 +1016,23 @@ language_tool_df <- language_tool_df %>%
 
 # update/overwrite the table
 language_tool_syntable <- update_table("syn21683497", language_tool_df)
+```
+
+```{r}
+# add the correct reference/FK for toolId
+link_tool_df <- link_tool_df %>%
+  inner_join(select(db_tool_df, toolId = id, tool = name), .) %>%
+  select(-tool) %>%
+  distinct()
+
+# # initial table creation (synIDs need to be integers)
+link_tool_syntable <- link_tool_df %>%
+  mutate_at(c("toolId"), ~ str_replace(., "syn", "")) %>%
+  synBuildTable("link_tool", "syn21498902", .) %>%
+  synStore()
+
+# update/overwrite the table
+link_tool_syntable <- update_table("syn21930556", link_tool_df)
 ```
 
 ---
