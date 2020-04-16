@@ -71,7 +71,7 @@ merged_grant_df
 ```{r}
 merged_formatted_grant_df <- merged_grant_df %>%
   filter(!is.na(grantName)) %>%
-  group_by(grantId, grantName, abstract, grantType) %>%
+  group_by(grantId, grantName, grantNumber, abstract, grantType) %>%
   summarize(institution = str_c(unique(institution), collapse = " | "),
             investigator = str_c(unique(investigator), collapse = ", "),
             theme = str_c(unique(theme), collapse = ", "),
@@ -173,8 +173,8 @@ db_pub_df <- get_table_df("syn21650536", cache = FALSE)
 ```{r}
 merged_dataset_df <- db_dataset_df %>% 
   select(-one_of(property_cols)) %>% 
-  rename(datasetId = id, datasetName = fullName) %>%
-  mutate(datasetName = ifelse(datasetName == "NA", displayName, datasetName)) %>% 
+  rename(datasetId = id, datasetName = fullName, datasetAlias = displayName) %>%
+  mutate(datasetName = ifelse(datasetName == "NA", datasetAlias, datasetName)) %>% 
   left_join(db_description_dataset, by = "datasetId") %>% 
   left_join(db_link_dataset, by = "datasetId") %>%
   left_join(db_dataset_pub, by = "datasetId") %>% 
@@ -199,11 +199,12 @@ merged_dataset_df <- db_dataset_df %>%
   ) %>% 
   mutate(pubMedId = str_extract(pubMedUrl, "[0-9].*")) %>%
   mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>% 
-  mutate(externalLink = glue::glue("[{source}:{displayName}]({url})")) %>% 
+  mutate(externalLink = glue::glue("[{source}:{datasetAlias}]({url})")) %>% 
   mutate(pubMedLink = glue::glue("[{publicationTitle} (PMID:{pubMedId})]({pubMedUrl})")) %>% 
   mutate(tumorType = "", assay = "", species = "") %>% 
   mutate(overallDesign = ifelse(overallDesign == "NA", NA, overallDesign)) %>% 
-  select(datasetId, datasetName, description, publicationTitle, overallDesign, 
+  select(datasetId, datasetName, datasetAlias,
+         description, publicationTitle, overallDesign, 
          tumorType, assay, species, externalLink, 
          publicationId, publication = pubMedLink,
          grantId, grantName, consortium, grantType, theme) %>% 
@@ -216,7 +217,8 @@ merged_dataset_df
 ```{r}
 merged_formatted_dataset_df <- merged_dataset_df %>%
   filter(!is.na(grantName)) %>%
-  group_by(datasetId, datasetName, description, overallDesign, externalLink, 
+  group_by(datasetId, datasetName, datasetAlias,
+           description, overallDesign, externalLink, 
            publicationId, publicationTitle, publication, ) %>%
   summarize(grantId = str_c(unique(grantId), collapse = ", "),
             grantName = str_c(unique(grantName), collapse = ", "),
