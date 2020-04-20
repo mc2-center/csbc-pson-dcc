@@ -424,33 +424,27 @@ merged_tool_df <- db_tool_df %>%
   select(toolId, toolName, dataType, role, softwareLanguage,
          homepageUrl = url, toolType,
          theme, grantId, grantName, consortium) %>%
-  distinct() %>% 
-  pivot_wider(names_from = role, values_from = dataType) %>% 
-  select(-`NA`) %>% 
-  unnest(c("input")) %>% 
-  unnest("output") %>% 
-  rename_at(c("input", "output"), ~ str_c(., "DataType", sep = "")) 
-    
+  distinct() 
+
 merged_tool_df
 ```
 
 ```{r}
 merged_formatted_tool_df <- merged_tool_df %>%
-  group_by(toolId, toolName, homepageUrl, toolType) %>%
+  group_by(toolId, toolName, homepageUrl, toolType, role) %>%
   summarize(
+    dataType = str_c(unique(dataType), collapse = ", "),
     grantId = str_c(unique(grantId), collapse = ", "),
     grantName = str_c(unique(grantName), collapse = ", "),
-    inputDataType = str_c(unique(inputDataType), collapse = ", "),
-    outputDataType = str_c(unique(outputDataType), collapse = ", "),
     softwareLanguage = str_c(unique(softwareLanguage), collapse = ", "),
     theme = str_c(unique(theme), collapse = ", "),
     consortium = str_c(unique(consortium), collapse = ", ")
   ) %>%
   ungroup() %>%
-  # rowwise() %>%
-  # mutate_at(tool_list_cols, ~ csv_str_to_json(.)) %>%
-  # ungroup() %>%
-  distinct()
+  distinct() %>% 
+  pivot_wider(names_from = role, values_from = dataType) %>% 
+  select(-`NA`) %>% 
+  rename_at(c("input", "output"), ~ str_c(., "DataType", sep = "")) 
 
 merged_formatted_tool_df
 ```
