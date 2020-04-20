@@ -441,6 +441,8 @@ merged_formatted_tool_df <- merged_tool_df %>%
     consortium = str_c(unique(consortium), collapse = ", ")
   ) %>%
   ungroup() %>%
+  # rowwise() %>%
+  # mutate_at(tool_list_cols, ~ csv_str_to_json(.)) %>%
   distinct() %>% 
   pivot_wider(names_from = role, values_from = dataType) %>% 
   select(-`NA`) %>% 
