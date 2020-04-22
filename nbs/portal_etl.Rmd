@@ -387,6 +387,9 @@ db_description_tool <- get_table_df("syn21918273", cache = FALSE)
 db_datatype_tool <- get_table_df("syn21683485", cache = FALSE)
 db_language_tool <- get_table_df("syn21683497", cache = FALSE)
 db_link_tool <- get_table_df("syn21930556", cache = FALSE)
+db_publication_tool <- get_table_df("syn21967106", cache = FALSE)
+
+db_pub_df <- get_table_df("syn21650536", cache = FALSE)
 ```
 
 ```{r}
@@ -403,9 +406,11 @@ tool_list_cols <- c(
 merged_tool_df <- db_tool_df %>% 
   select(-one_of(property_cols)) %>% 
   rename(toolId = id, toolName = displayName) %>%
+  left_join(db_description_tool, by = "toolId") %>% 
   left_join(db_datatype_tool, by = "toolId") %>% 
   left_join(db_language_tool, by = "toolId") %>% 
   left_join(db_link_tool, by = "toolId") %>% 
+  left_join(db_publication_tool, by = "toolId") %>% 
   left_join(
     db_grant_df %>% 
       select(grantId = id, grantName = name, grantType, consortiumId), 
@@ -421,9 +426,17 @@ merged_tool_df <- db_tool_df %>%
     db_consortium_df %>% 
       select(consortiumId = id, consortium = displayName)
   ) %>% 
-  select(toolId, toolName, dataType, role, softwareLanguage,
+    left_join(
+    db_pub_df %>% 
+      select(publicationId = id, publicationTitle = title, pubMedUrl)
+  ) %>% 
+  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>% 
+  mutate(pubMedLink = glue::glue("[{publicationTitle} (PMID:{pubMedId})]({pubMedUrl})")) %>% 
+  select(toolId, toolName, description, dataType, role, softwareLanguage,
          homepageUrl = url, toolType,
+         publicationId, publication = pubMedLink,
          theme, grantId, grantName, consortium) %>%
+  mutate(publication = ifelse(str_detect(publication, "^\\[NA"), NA, publication)) %>% 
   distinct() 
 
 merged_tool_df
@@ -431,11 +444,13 @@ merged_tool_df
 
 ```{r}
 merged_formatted_tool_df <- merged_tool_df %>%
-  group_by(toolId, toolName, homepageUrl, toolType, role) %>%
+  group_by(toolId, toolName, description, homepageUrl, toolType, role) %>%
   summarize(
     dataType = str_c(unique(dataType), collapse = ", "),
     grantId = str_c(unique(grantId), collapse = ", "),
     grantName = str_c(unique(grantName), collapse = ", "),
+    publicationId = str_c(unique(publicationId), collapse = ", "),
+    publication = str_c(unique(publication), collapse = ", "),
     softwareLanguage = str_c(unique(softwareLanguage), collapse = ", "),
     theme = str_c(unique(theme), collapse = ", "),
     consortium = str_c(unique(consortium), collapse = ", ")
