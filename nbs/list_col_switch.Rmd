@@ -1,0 +1,141 @@
+---
+title: "List Column Switch"
+output: html_notebook
+---
+
+```{r}
+library(reticulate)
+library(dccvalidator)
+library(tidyverse)
+
+
+synLogin()
+use_condaenv("csbc-pson-dcc", required = TRUE)
+synapseclient <- reticulate::import("synapseclient")
+syn <- synapseclient$Synapse()
+syn$login()
+```
+
+
+```{r}
+update_synapse_table <- function(table_id, update_df, syn, syntab) {
+  current_rows <- syn$tableQuery(glue::glue("SELECT * FROM {table_id}"))
+  syn$delete(current_rows)
+  tmpfile <- fs::file_temp("rows.csv")
+  write_csv(update_df, tmpfile)
+  update_rows <- syntab$Table(table_id, tmpfile)
+  syn$store(update_rows)
+}
+
+csv_str_to_json <- function(str) {
+  json_str <- str_split(str, ",")[[1]] %>% 
+    str_trim() %>% 
+    jsonlite::toJSON()
+  if (json_str == "[null]") {
+    NA
+  } else {
+    json_str
+  }
+}
+
+add_list_column <- function(table_id, column_name, delimiter = ",", 
+                            syn, syntab) {
+  df <- dccvalidator::get_synapse_table(table_id, syn)
+  
+  old_name <- str_c(column_name, "asCsv", sep = "_")
+  column_name <- rlang::ensym(column_name)
+  old_name <- rlang::ensym(old_name)
+  
+  df <- df %>% 
+    mutate(!!old_name := str_trim(!!column_name)) %>% 
+    rowwise() %>% 
+    mutate(!!column_name := csv_str_to_json(!!column_name)) %>% 
+    ungroup()
+  df
+  
+  col_id <-reticulate::iterate(syn$getTableColumns(table_id))  %>% 
+    map(~ jsonlite::fromJSON(.$json())) %>% 
+    keep(~ .$name == column_name) %>% 
+    map_chr("id")
+  old_column <- syn$getColumn(col_id)
+  
+  new_column <- syn$store(
+    syntab$Column(
+      name = rlang::as_string(column_name), 
+      columnType = "STRING_LIST", 
+      maximumSize = 20,
+      facetType = "enumeration"
+    )
+  )
+  
+  schema <- syn$get(table_id)
+  schema$removeColumn(old_column)
+  schema$addColumn(new_column)
+  
+  old_column_data <- jsonlite::fromJSON(old_column$json())
+  old_column <- syn$store(
+    syntab$Column(
+      name = rlang::as_string(old_name),
+      columnType = old_column_data$columnType,
+      maximumSize = old_column_data$maximumSize
+    )
+  )
+  schema$addColumn(old_column)
+  
+  schema <- syn$store(schema)
+  
+  update_synapse_table(table_id, df, syn, syntab)
+}
+
+remove_list_column <- function(table_id, column_name, delimiter = ",", 
+                               syn, syntab) {
+  df <- dccvalidator::get_synapse_table(table_id, syn)
+  
+  new_name <- str_c(column_name, "asCsv", sep = "_")
+  column_name <- rlang::ensym(column_name)
+  new_name <- rlang::ensym(new_name)
+  
+  df <- df %>% 
+    select(-!!column_name) %>% 
+    rename(!!column_name := !!new_name)
+
+  col_id <-reticulate::iterate(syn$getTableColumns(table_id))  %>% 
+    map(~ jsonlite::fromJSON(.$json())) %>% 
+    keep(~ .$name == column_name) %>% 
+    map_chr("id")
+  old_column <- syn$getColumn(col_id)
+  
+  new_col_id <-reticulate::iterate(syn$getTableColumns(table_id))  %>% 
+    map(~ jsonlite::fromJSON(.$json())) %>% 
+    keep(~ .$name == rlang::as_string(new_name)) %>% 
+    map_chr("id")
+  new_column <- syn$getColumn(new_col_id)
+  
+  schema <- syn$get(table_id)
+  schema$removeColumn(old_column)
+  schema$removeColumn(new_column)
+  schema <- syn$store(schema)
+  
+  new_column_data <- jsonlite::fromJSON(new_column$json())
+  new_column <- syn$store(
+    syntab$Column(
+      name = rlang::as_string(column_name),
+      columnType = new_column_data$columnType,
+      maximumSize = new_column_data$maximumSize,
+      facetType = "enumeration"
+    )
+  )
+  schema$addColumn(new_column)
+  
+  schema <- syn$store(schema)
+  
+  update_synapse_table(table_id, df, syn, syntab)
+}
+
+# add_list_column("syn21980893", column_name = "list_col_1", ",", syn, syntab)
+# remove_list_column("syn21980893", column_name = "list_col_1", ",", syn, syntab)
+```
+
+
+
+
