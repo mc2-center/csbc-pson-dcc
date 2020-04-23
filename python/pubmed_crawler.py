@@ -48,9 +48,9 @@ def get_args():
         + " and put the results into a CSV file.  Table ID can be provided"
         + " if interested in only scrapping for new publications.")
     parser.add_argument("-g", "--grantview_id",
-                        type=str, default="syn10142562",
+                        type=str, default="syn21918972",
                         help="Synapse table/view ID containing grant numbers in"
-                        + " 'grantNumber' column. (Default: syn10142562)")
+                        + " 'grantNumber' column. (Default: syn21918972)")
     parser.add_argument("-t", "--table_id",
                         type=str,
                         help="Current Synapse table holding PubMed info.")
@@ -257,7 +257,7 @@ def scrap_info(pmids, curr_grants, consortium, name):
             center_id = center_name = consortium_grants = ""
             if grants:
                 center = consortium.loc[consortium['grantNumber'].isin(grants)]
-                center_id = ", ".join(list(set(center.id)))
+                center_id = ", ".join(list(set(center.grantId)))
                 center_name = ", ".join(list(set(center.consortium)))
             consortium_grants = ", ".join(
                 [center.grantType.iloc[0] + " " + grant for grant in grants])
