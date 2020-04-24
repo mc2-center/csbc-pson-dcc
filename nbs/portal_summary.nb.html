@@ -1769,188 +1769,47 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB0aGVtZV9ncmFudHMgPC0gbWluX2dyYW50X2RmICU+JSBcbiMgICBzZWxlY3QoaWQpICU+JSBcbmdyYW50X3RoZW1lIDwtIGRiX3RoZW1lX2dyYW50ICU+JSBcbiAgbGVmdF9qb2luKHNlbGVjdChkYl9ncmFudF9kZiwgZ3JhbnRJZCA9IGlkLCBjb25zb3J0aXVtSWQpKSAlPiUgXG4gIGxlZnRfam9pbihzZWxlY3QoZGJfY29uc29ydGl1bV9kZiwgY29uc29ydGl1bUlkID0gaWQsIGNvbnNvcnRpdW0gPSBkaXNwbGF5TmFtZSkpICU+JSBcbiAgbGVmdF9qb2luKHNlbGVjdChkYl90aGVtZV9kZiwgdGhlbWVJZCA9IGlkLCB0aGVtZSA9IGRpc3BsYXlOYW1lKSAlPiUgXG4gICAgICAgICAgICAgIG11dGF0ZShkZXNjcmlwdGlvbiA9IGdsdWU6OmdsdWUoXCJEZXNjcmlwdGlvbiBmb3IgJ3t0aGVtZX0nXCIpKSkgJT4lIFxuICBzZWxlY3QoLWNvbnNvcnRpdW1JZCwgLXRoZW1lSWQpICU+JSBcbiAgZmlsdGVyKCFpcy5uYSh0aGVtZSkpXG5cbmdyYW50X3RoZW1lXG5gYGAifQ== -->
-<pre class="r"><code># theme_grants &lt;- min_grant_df %&gt;% 
-#   select(id) %&gt;% 
-grant_theme &lt;- db_theme_grant %&gt;% 
-  left_join(select(db_grant_df, grantId = id, consortiumId)) %&gt;% 
-  left_join(select(db_consortium_df, consortiumId = id, consortium = displayName)) %&gt;% 
-  left_join(select(db_theme_df, themeId = id, theme = displayName) %&gt;% 
-              mutate(description = glue::glue(&quot;Description for '{theme}'&quot;))) %&gt;% 
-  select(-consortiumId, -themeId) %&gt;% 
-  filter(!is.na(theme))
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVyZ2VkX2dyYW50c19kZiA8LSBkY2N2YWxpZGF0b3I6OmdldF9zeW5hcHNlX3RhYmxlKFwic3luMjE5MTg5NzJcIiwgc3luKVxubWVyZ2VkX3Byb2plY3RzX2RmIDwtIGRjY3ZhbGlkYXRvcjo6Z2V0X3N5bmFwc2VfdGFibGUoXCJzeW4yMTg2ODYwMlwiLCBzeW4pXG5tZXJnZWRfZGF0YXNldHNfZGYgPC0gZGNjdmFsaWRhdG9yOjpnZXRfc3luYXBzZV90YWJsZShcInN5bjIxODk3OTY4XCIsIHN5bilcbm1lcmdlZF9wdWJsaWNhdGlvbnNfZGYgPC0gZGNjdmFsaWRhdG9yOjpnZXRfc3luYXBzZV90YWJsZShcInN5bjIxODY4NTkxXCIsIHN5bilcbm1lcmdlZF90b29sc19kZiA8LSBkY2N2YWxpZGF0b3I6OmdldF9zeW5hcHNlX3RhYmxlKFwic3luMjE5MzA1NjZcIiwgc3luKVxuXG5wcm9wZXJ0eV9jb2xzIDwtIGMoXCJjcmVhdGVkT25cIiwgXCJjcmVhdGVkQnlcIixcbiAgICAgICAgICAgICAgICAgICBcIm1vZGlmaWVkT25cIiwgXCJtb2RpZmllZEJ5XCIsXG4gICAgICAgICAgICAgICAgICAgXCJjdXJyZW50VmVyc2lvblwiKVxuYGBgIn0= -->
+<pre class="r"><code>merged_grants_df &lt;- dccvalidator::get_synapse_table(&quot;syn21918972&quot;, syn)
+merged_projects_df &lt;- dccvalidator::get_synapse_table(&quot;syn21868602&quot;, syn)
+merged_datasets_df &lt;- dccvalidator::get_synapse_table(&quot;syn21897968&quot;, syn)
+merged_publications_df &lt;- dccvalidator::get_synapse_table(&quot;syn21868591&quot;, syn)
+merged_tools_df &lt;- dccvalidator::get_synapse_table(&quot;syn21930566&quot;, syn)
 
-grant_theme</code></pre>
+property_cols &lt;- c(&quot;createdOn&quot;, &quot;createdBy&quot;,
+                   &quot;modifiedOn&quot;, &quot;modifiedBy&quot;,
+                   &quot;currentVersion&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfcHJvanMgPC0gbWluX3Byb2plY3RfZGYgJT4lIFxuICBzZWxlY3QoaWQsIGdyYW50SWQpICU+JSBcbiAgbGVmdF9qb2luKGdyYW50X3RoZW1lKSAlPiUgXG4gIGZpbHRlcighaXMubmEodGhlbWUpKSAlPiUgXG4gIGdyb3VwX2J5KHRoZW1lLCBkZXNjcmlwdGlvbikgJT4lIFxuICB0YWxseShuYW1lID0gXCJwcm9qZWN0c1wiKVxuXG50aGVtZV9wcm9qc1xuYGBgIn0= -->
-<pre class="r"><code>theme_projs &lt;- min_project_df %&gt;% 
-  select(id, grantId) %&gt;% 
-  left_join(grant_theme) %&gt;% 
-  filter(!is.na(theme)) %&gt;% 
-  group_by(theme, description) %&gt;% 
-  tally(name = &quot;projects&quot;)
-
-theme_projs</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3RfcHJvanMgPC0gbWluX3Byb2plY3RfZGYgJT4lIFxuICBzZWxlY3QoaWQsIGdyYW50SWQpICU+JSBcbiAgbGVmdF9qb2luKGdyYW50X3RoZW1lKSAlPiUgXG4gIGZpbHRlcighaXMubmEodGhlbWUpKSAlPiUgXG4gIG11dGF0ZShncm91cEJ5ID0gXCJwcm9qZWN0c1wiKSAlPiUgXG4gIGdyb3VwX2J5KHRoZW1lLCBkZXNjcmlwdGlvbiwgY29uc29ydGl1bSwgZ3JvdXBCeSkgJT4lIFxuICB0YWxseShuYW1lID0gXCJ0b3RhbENvdW50XCIpICU+JSBcbiAgcmVuYW1lKHRoZW1lRGVzY3JpcHRpb24gPSBkZXNjcmlwdGlvbilcbiAgXG5cbmN0X3Byb2pzXG5gYGAifQ== -->
-<pre class="r"><code>ct_projs &lt;- min_project_df %&gt;% 
-  select(id, grantId) %&gt;% 
-  left_join(grant_theme) %&gt;% 
-  filter(!is.na(theme)) %&gt;% 
-  mutate(groupBy = &quot;projects&quot;) %&gt;% 
-  group_by(theme, description, consortium, groupBy) %&gt;% 
-  tally(name = &quot;totalCount&quot;) %&gt;% 
-  rename(themeDescription = description)
-  
-
-ct_projs</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudXBkYXRlX3RhYmxlIDwtIGZ1bmN0aW9uKHRhYmxlX2lkLCB1cGRhdGVfZGYpIHtcbiAgY3VycmVudF9yb3dzIDwtIHN5blRhYmxlUXVlcnkoZ2x1ZTo6Z2x1ZShcIlNFTEVDVCAqIEZST00ge3RhYmxlX2lkfVwiKSlcbiAgc3luRGVsZXRlKGN1cnJlbnRfcm93cylcbiAgdXBkYXRlX3Jvd3MgPC0gVGFibGUodGFibGVfaWQsIHVwZGF0ZV9kZilcbiAgc3luU3RvcmUodXBkYXRlX3Jvd3MpXG59XG5gYGAifQ== -->
-<pre class="r"><code>update_table &lt;- function(table_id, update_df) {
-  current_rows &lt;- synTableQuery(glue::glue(&quot;SELECT * FROM {table_id}&quot;))
-  synDelete(current_rows)
-  update_rows &lt;- Table(table_id, update_df)
-  synStore(update_rows)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuanNvbl90b19saXN0IDwtIGZ1bmN0aW9uKGpzb25fc3RyKSB7XG4gIGlmICghaXMubmEoanNvbl9zdHIpKSB7XG4gICAganNvbmxpdGU6OmZyb21KU09OKGpzb25fc3RyKVxuICB9IGVsc2Uge1xuICAgIHZlY3Rvcihtb2RlID0gXCJjaGFyYWN0ZXJcIilcbiAgfVxufVxuYGBgIn0= -->
+<pre class="r"><code>json_to_list &lt;- function(json_str) {
+  if (!is.na(json_str)) {
+    jsonlite::fromJSON(json_str)
+  } else {
+    vector(mode = &quot;character&quot;)
+  }
 }</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3RfY291bnRzX3N5bnRhYmxlIDwtIHVwZGF0ZV90YWJsZShcInN5bjIxNjQ5MjgxXCIsIGN0X3Byb2pzKVxuYGBgIn0= -->
-<pre class="r"><code>ct_counts_syntable &lt;- update_table(&quot;syn21649281&quot;, ct_projs)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfcHVicyA8LSBkYl9wdWJfZGYgJT4lIFxuICByZW5hbWUocHVibGljYXRpb25JZCA9IGlkKSAlPiUgXG4gIGxlZnRfam9pbihkYl9ncmFudF9wdWIpICU+JSBcbiAgc2VsZWN0KHB1YmxpY2F0aW9uSWQsIGdyYW50SWQpICU+JSBcbiAgbGVmdF9qb2luKGdyYW50X3RoZW1lKSAlPiVcbiAgZmlsdGVyKCFpcy5uYSh0aGVtZSkpICU+JSBcbiAgZ3JvdXBfYnkodGhlbWUsIGRlc2NyaXB0aW9uKSAlPiUgXG4gIHRhbGx5KG5hbWUgPSBcInB1YmxpY2F0aW9uc1wiKVxuXG50aGVtZV9wdWJzXG5gYGAifQ== -->
-<pre class="r"><code>theme_pubs &lt;- db_pub_df %&gt;% 
-  rename(publicationId = id) %&gt;% 
-  left_join(db_grant_pub) %&gt;% 
-  select(publicationId, grantId) %&gt;% 
-  left_join(grant_theme) %&gt;%
-  filter(!is.na(theme)) %&gt;% 
-  group_by(theme, description) %&gt;% 
-  tally(name = &quot;publications&quot;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5jb25zb3J0aXVtX2dyYW50cyA8LSBtZXJnZWRfZ3JhbnRzX2RmICU+JSBcbiAgc2VsZWN0KGdyYW50SWQsIGNvbnNvcnRpdW0pICU+JSBcbiAgZ3JvdXBfYnkoY29uc29ydGl1bSkgJT4lIFxuICB0YWxseShuYW1lID0gXCJncmFudHNcIilcblxuY29uc29ydGl1bV9ncmFudHNcbmBgYCJ9 -->
+<pre class="r"><code>
+consortium_grants &lt;- merged_grants_df %&gt;% 
+  select(grantId, consortium) %&gt;% 
+  group_by(consortium) %&gt;% 
+  tally(name = &quot;grants&quot;)
 
-theme_pubs</code></pre>
+consortium_grants</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfZHNldHMgPC0gbWluX2RhdGFzZXRfZGYgJT4lIFxuICBzZWxlY3QoaWQsIGdyYW50SWQpICU+JSBcbiAgbGVmdF9qb2luKGdyYW50X3RoZW1lKSAlPiUgXG4gIGZpbHRlcighaXMubmEodGhlbWUpKSAlPiUgXG4gIGdyb3VwX2J5KHRoZW1lLCBkZXNjcmlwdGlvbikgJT4lXG4gIHRhbGx5KG5hbWUgPSBcImRhdGFzZXRzXCIpXG5cbnRoZW1lX2RzZXRzXG5gYGAifQ== -->
-<pre class="r"><code>theme_dsets &lt;- min_dataset_df %&gt;% 
-  select(id, grantId) %&gt;% 
-  left_join(grant_theme) %&gt;% 
-  filter(!is.na(theme)) %&gt;% 
-  group_by(theme, description) %&gt;%
-  tally(name = &quot;datasets&quot;)
-
-theme_dsets</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfdG9vbHMgPC0gbWluX3Rvb2xfZGYgJT4lIFxuICBzZWxlY3QoaWQgLCBncmFudElkKSAlPiUgXG4gIGxlZnRfam9pbihncmFudF90aGVtZSkgJT4lIFxuICBmaWx0ZXIoIWlzLm5hKHRoZW1lKSkgJT4lIFxuICBncm91cF9ieSh0aGVtZSwgZGVzY3JpcHRpb24pICU+JVxuICB0YWxseShuYW1lID0gXCJ0b29sc1wiKVxuXG50aGVtZV90b29sc1xuYGBgIn0= -->
-<pre class="r"><code>theme_tools &lt;- min_tool_df %&gt;% 
-  select(id , grantId) %&gt;% 
-  left_join(grant_theme) %&gt;% 
-  filter(!is.na(theme)) %&gt;% 
-  group_by(theme, description) %&gt;%
-  tally(name = &quot;tools&quot;)
-
-theme_tools</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfY291bnRzIDwtIGdyYW50X3RoZW1lICU+JSBcbiAgZ3JvdXBfYnkodGhlbWUsIGRlc2NyaXB0aW9uKSAlPiUgXG4gIHRhbGx5KG5hbWUgPSBcImdyYW50c1wiKSAlPiUgXG4gIGxlZnRfam9pbih0aGVtZV9wcm9qcykgJT4lIFxuICBsZWZ0X2pvaW4odGhlbWVfZHNldHMpICU+JSBcbiAgbGVmdF9qb2luKHRoZW1lX3B1YnMpICU+JSBcbiAgbGVmdF9qb2luKHRoZW1lX3Rvb2xzKSAlPiUgXG4gIHJlcGxhY2VfbmEobGlzdCh0b29scyA9IDApKSAlPiUgXG4gIGdhdGhlcihncm91cEJ5LCB0b3RhbENvdW50LCAtdGhlbWUsIC1kZXNjcmlwdGlvbikgJT4lIFxuICBmaWx0ZXIodGhlbWUgIT0gXCJDb21wdXRhdGlvbmFsIFJlc291cmNlXCIpICU+JSBcbiAgcmVuYW1lKHRoZW1lRGVzY3JpcHRpb24gPSBkZXNjcmlwdGlvbilcblxudGhlbWVfY291bnRzXG5gYGAifQ== -->
-<pre class="r"><code>theme_counts &lt;- grant_theme %&gt;% 
-  group_by(theme, description) %&gt;% 
-  tally(name = &quot;grants&quot;) %&gt;% 
-  left_join(theme_projs) %&gt;% 
-  left_join(theme_dsets) %&gt;% 
-  left_join(theme_pubs) %&gt;% 
-  left_join(theme_tools) %&gt;% 
-  replace_na(list(tools = 0)) %&gt;% 
-  gather(groupBy, totalCount, -theme, -description) %&gt;% 
-  filter(theme != &quot;Computational Resource&quot;) %&gt;% 
-  rename(themeDescription = description)
-
-theme_counts</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGVhbV9jb3VudHNfc3ludGFibGUgPC0gdXBkYXRlX3RhYmxlKFwic3luMjE2Mzk1ODRcIiwgdGhlbWVfY291bnRzKVxuYGBgIn0= -->
-<pre class="r"><code>team_counts_syntable &lt;- update_table(&quot;syn21639584&quot;, theme_counts)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uc29ydGl1bV9jb3VudHMgPC0gbWluX3Byb2plY3RfZGYgJT4lIFxuICBzZWxlY3QocHJvamVjdElkID0gaWQsIGdyYW50SWQpICU+JSBcbiAgbGVmdF9qb2luKHNlbGVjdChtaW5fZ3JhbnRfZGYsIGdyYW50SWQgPSBpZCwgY29uc29ydGl1bUlkKSkgJT4lIFxuICBncm91cF9ieShjb25zb3J0aXVtSWQpICU+JSBcbiAgc3VtbWFyaXplX2FsbCh+IG5fZGlzdGluY3QoLiwgbmEucm0gPSBUUlVFKSkgJT4lIFxuICBmaWx0ZXIoIWlzLm5hKGNvbnNvcnRpdW1JZCkpICU+JSBcbiAgbGVmdF9qb2luKHNlbGVjdChtaW5fY29uc29ydGl1bV9kZiwgY29uc29ydGl1bUlkID0gaWQsIGRpc3BsYXlOYW1lKSkgJT4lIFxuICBzZWxlY3QoY29uc29ydGl1bSA9IGRpc3BsYXlOYW1lLCBwcm9qZWN0cyA9IHByb2plY3RJZCwgZ3JhbnRzID0gZ3JhbnRJZCkgJT4lIFxuICBnYXRoZXIoZ3JvdXBCeSwgdG90YWxDb3VudCwgLWNvbnNvcnRpdW0pXG4gIFxuY29uc29ydGl1bV9jb3VudHNcbmBgYCJ9 -->
-<pre class="r"><code>consortium_counts &lt;- min_project_df %&gt;% 
-  select(projectId = id, grantId) %&gt;% 
-  left_join(select(min_grant_df, grantId = id, consortiumId)) %&gt;% 
-  group_by(consortiumId) %&gt;% 
-  summarize_all(~ n_distinct(., na.rm = TRUE)) %&gt;% 
-  filter(!is.na(consortiumId)) %&gt;% 
-  left_join(select(min_consortium_df, consortiumId = id, displayName)) %&gt;% 
-  select(consortium = displayName, projects = projectId, grants = grantId) %&gt;% 
-  gather(groupBy, totalCount, -consortium)
-  
-consortium_counts</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uc29ydGl1bV9jb3VudHNfc3ludGFibGUgPC0gc3luQnVpbGRUYWJsZShcIlBvcnRhbCAtIENvbnNvcnRpdW0gQ291bnRzXCIsIFwic3luNzA4MDcxNFwiLCBjb25zb3J0aXVtX2NvdW50cylcbmNvbnNvcnRpdW1fY291bnRzX3N5bnRhYmxlIDwtIHN5blN0b3JlKGNvbnNvcnRpdW1fY291bnRzX3N5bnRhYmxlKVxuYGBgIn0= -->
-<pre class="r"><code>consortium_counts_syntable &lt;- synBuildTable(&quot;Portal - Consortium Counts&quot;, &quot;syn7080714&quot;, consortium_counts)
-consortium_counts_syntable &lt;- synStore(consortium_counts_syntable)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXVsdGl0aGVtZXMgPC0gZnVsbF9wdWJfZGYgJT4lIFxuICBmaWx0ZXIoc3RyX2RldGVjdChUaGVtZSwgXCIsXCIpKSAlPiUgXG4gIG11dGF0ZShpZCA9IHJvd19udW1iZXIoKSkgJT4lIFxuICBzZWxlY3QoaWQsIHRoZW1lID0gVGhlbWUpICU+JSBcbiAgc2VwYXJhdGVfcm93cyh0aGVtZSwgc2VwID0gXCIsXCIpICU+JSBcbiAgbmVzdCh0aGVtZSA9IFwidGhlbWVcIikgJT4lIFxuICBtdXRhdGUodGhlbWUgPSBtYXAodGhlbWUsIGZ1bmN0aW9uKG11bHRpX2RmKSB7XG4gICAgbXVsdGlfZGYgJT4lIFxuICAgICAgcGx1Y2soXCJ0aGVtZVwiKSAlPiUgXG4gICAgICBqc29ubGl0ZTo6dG9KU09OKClcbiAgfSkpICU+JSBcbiAgdW5uZXN0KHRoZW1lKVxuXG5tdWx0aXRoZW1lcyBcbmBgYCJ9 -->
-<pre class="r"><code>multithemes &lt;- full_pub_df %&gt;% 
-  filter(str_detect(Theme, &quot;,&quot;)) %&gt;% 
-  mutate(id = row_number()) %&gt;% 
-  select(id, theme = Theme) %&gt;% 
-  separate_rows(theme, sep = &quot;,&quot;) %&gt;% 
-  nest(theme = &quot;theme&quot;) %&gt;% 
-  mutate(theme = map(theme, function(multi_df) {
-    multi_df %&gt;% 
-      pluck(&quot;theme&quot;) %&gt;% 
-      jsonlite::toJSON()
-  })) %&gt;% 
-  unnest(theme)
-
-multithemes </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MiwibnJvdyI6NH0sInJkZiI6Ikg0c0lBQUFBQUFBQUE3VlJ5MDdFSUJTOWhhbG1tbWcwL29BaExtMFRkZU1IK0FXdUpqR3pZRnAwaU9VeUFhb3UvWEF6RlNoc2NHMUM0RDdPT2R3RHowK2IrMmJUQUFBQldsTWcxSWNyNHJjS1ZyQU81eGNBdllvQWdMUFFqYzBscHltL2lPZEN1SGxoU3ZaR0MveVFScU1TNk5ndHUzYVQwcWFWU2swbzJQYWZzY3hqaGVQV0wya0Q2Zzl6Vzlpc2tTdGhreFdTaWtRT3VlMzJRb21Dc3piNnM4dTg4RFRrMjIvelBQK1U0djNJYlJiUHhXYmdqbmV2aGdkZE9CYVVVMzF3VXFNbmtmRDRkVUd1VEZHNG5EQk1NclQ5ZnNMMzl1N2hNVnlSdmdyU2ZGWDZyaHlUNVZJeUo3RTZpWjBJZkpNbzh2UWozNGt4SmVmZWM3VGNIWXhFbDczNHF1MmNkanpqbWw2UHVSTGR3ZkVYY2JMNlJXd0NBQUE9In0= -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MiwibnJvdyI6Mn0sInJkZiI6Ikg0c0lBQUFBQUFBQUExMVFRVzdDTUJCY25MaUlTRlNSK0VLdmlRUVg3c0NaVnMwbFZ6Y0VpREEyc2gzUlkxK2VkTzNZcW1wTDhVN0c0OWtkZng3cVRWWm5BRUFnb1FtUUJHRktjSnRCQ2d0YnZ3R1NsUk1BNUs1T0IrbSsydTA5cGg5VjhYNUVzUFRDTi94V2tSTVY3TjdxeUNWcnBOQlNtYTYvZStibG9wZ3dPcjdjY0tiRDVVQm1KMlpZZVZib0c4a1hTajdMME04TjlZUGJPSTREbGlFU3orWERkRGdHcW14UUduV1pxWWpJZTJHdFQwVno3Y1d0Mks3dEtPNThXa3VQeVg5c2U1TFJlOUdRdGhXWFRyUWhKV2RmTGZjL3I1akJSU2dmcWhNbVpFWldsMFlheHYrZWtBZkdoWVBoRjJkcWxoVFhBUUFBIn0= -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["theme"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"[\"microenvironment\",\" tumor-immune\"]"},{"1":"2","2":"[\"microenvironment\",\" tumor-immune\"]"},{"1":"3","2":"[\"microenvironment\",\" tumor-immune\"]"},{"1":"4","2":"[\"metastasis\",\" microenvironment\"]"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[4]},"pages":{}}}
+{"columns":[{"label":["consortium"],"name":[1],"type":["chr"],"align":["left"]},{"label":["grants"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"CSBC","2":"36"},{"1":"PS-ON","2":"19"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[2]},"pages":{}}}
   </script>
 </div>
 <!-- rnb-frame-end -->
@@ -1958,97 +1817,254 @@ multithemes </code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXVsdGl0aGVtZXNfc3ludGFibGUgPC0gc3luQnVpbGRUYWJsZShcIm11bHRpdmFsdWVfdGVzdFwiLCBcInN5bjIxNDk4OTAyXCIsIG11bHRpdGhlbWVzKVxuXG5gYGAifQ== -->
-<pre class="r"><code>multithemes_syntable &lt;- synBuildTable(&quot;multivalue_test&quot;, &quot;syn21498902&quot;, multithemes)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfZ3JhbnRzIDwtIG1lcmdlZF9ncmFudHNfZGYgJT4lIFxuIHNlbGVjdChncmFudElkLCB0aGVtZSkgJT4lIFxuICBmaWx0ZXIodGhlbWUgIT0gXCJbXVwiKSAlPiUgXG4gIG11dGF0ZSh0aGVtZSA9IG1hcCh0aGVtZSwganNvbl90b19saXN0KSkgJT4lIFxuICB1bm5lc3QoXCJ0aGVtZVwiKSAlPiUgXG4gIGxlZnRfam9pbihzZWxlY3QoZGJfdGhlbWVfZGYsIHRoZW1lID0gZGlzcGxheU5hbWUsIFxuICAgICAgICAgICAgICAgICAgIHRoZW1lRGVzY3JpcHRpb24gPSBkZXNjcmlwdGlvbikpICU+JSBcbiAgZmlsdGVyKCFpcy5uYSh0aGVtZURlc2NyaXB0aW9uKSkgJT4lICBcbiAgZ3JvdXBfYnkodGhlbWUsIHRoZW1lRGVzY3JpcHRpb24pICU+JSBcbiAgdGFsbHkobmFtZSA9IFwiZ3JhbnRzXCIpICU+JSBcbiAgdW5ncm91cCgpXG5gYGAifQ== -->
+<pre class="r"><code>theme_grants &lt;- merged_grants_df %&gt;% 
+ select(grantId, theme) %&gt;% 
+  filter(theme != &quot;[]&quot;) %&gt;% 
+  mutate(theme = map(theme, json_to_list)) %&gt;% 
+  unnest(&quot;theme&quot;) %&gt;% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %&gt;% 
+  filter(!is.na(themeDescription)) %&gt;%  
+  group_by(theme, themeDescription) %&gt;% 
+  tally(name = &quot;grants&quot;) %&gt;% 
+  ungroup()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXVsdGl0aGVtZXNfc3ludGFibGUkc2NoZW1hXG5cbmBgYCJ9 -->
-<pre class="r"><code>multithemes_syntable$schema
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiU2NoZW1hOiBtdWx0aXZhbHVlX3Rlc3QgKC0pXG4gIGNvbHVtbnNfdG9fc3RvcmU9W3snY29uY3JldGVUeXBlJzogJ29yZy5zYWdlYmlvbmV0d29ya3MucmVwby5tb2RlbC50YWJsZS5Db2x1bW5Nb2RlbCcsICduYW1lJzogJ2lkJywgJ2NvbHVtblR5cGUnOiAnSU5URUdFUid9LCB7J2NvbmNyZXRlVHlwZSc6ICdvcmcuc2FnZWJpb25ldHdvcmtzLnJlcG8ubW9kZWwudGFibGUuQ29sdW1uTW9kZWwnLCAnbmFtZSc6ICd0aGVtZScsICdkZWZhdWx0VmFsdWUnOiAnJywgJ21heGltdW1TaXplJzogNDUsICdjb2x1bW5UeXBlJzogJ1NUUklORyd9XVxucHJvcGVydGllczpcbiAgY29sdW1uSWRzPVtdXG4gIGNvbmNyZXRlVHlwZT1vcmcuc2FnZWJpb25ldHdvcmtzLnJlcG8ubW9kZWwudGFibGUuVGFibGVFbnRpdHlcbiAgbmFtZT1tdWx0aXZhbHVlX3Rlc3RcbiAgcGFyZW50SWQ9c3luMjE0OTg5MDJcbmFubm90YXRpb25zOlxuIn0= -->
-<pre><code>Schema: multivalue_test (-)
-  columns_to_store=[{'concreteType': 'org.sagebionetworks.repo.model.table.ColumnModel', 'name': 'id', 'columnType': 'INTEGER'}, {'concreteType': 'org.sagebionetworks.repo.model.table.ColumnModel', 'name': 'theme', 'defaultValue': '', 'maximumSize': 45, 'columnType': 'STRING'}]
-properties:
-  columnIds=[]
-  concreteType=org.sagebionetworks.repo.model.table.TableEntity
-  name=multivalue_test
-  parentId=syn21498902
-annotations:</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcInRoZW1lXCJcbiJ9 -->
+<pre><code>Joining, by = &quot;theme&quot;</code></pre>
 <!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfZ3JhbnRzXG5gYGAifQ== -->
+<pre class="r"><code>theme_grants</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6OH0sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVVUVzhUTVJCMWs2YTBnVUlsTGlBdTV0NEV4SVVqcXRSS1ZLSVNhbnVveE1ueFRuY3RiTS9LOXFic2paL05xV0hzdGRObzFVaTdzY2VlZWUvTngxNmYzMzJaMzgwWll4TTJuVTNaWkVyTC9RbTk5dGcrTzRyL2Z4aWJ2cVZGUERtaDV6QWZmRGgzWGMydndTc2ZoSlh3NlFhc1YwR3RWZWp6bFpjWHJhckJRbERTWjlQUnhScDFGeFRhYkRqK0RnRWN4bXRQanZNckNHS0ZXbm16YXlFZ1FzdVdreXNsSFlKZEs0ZldnQTNaL3VxMk0rZ1dsOFowRmthYzhTWjBsUUxQNzFGMkhpcU9scHRPQjFVcEwxV3JsUld1NTZKdEhRclowTDJBdkNLRnRlWENWaHpXUW5jaUFGZlc0bHFRVnVBeWFuYzhOT0JFQzZSTWNoOGNYYW9KSjhOK2V3YVdITGhERFJ6dk9UeWxpVUtYa0cwREZrUGZic1BjbmxtaGU4cEE5UEdnUVNZR3JRUHZPM3B4ZER6SElhcVVFZUxmaU1BckY2OUZRQ2pKanhGQ3pGT0ovYU5RVEI0R0s5Q25VYnAwYWdWSlBNRlVTZ1lpU1BWYUpCTXRTV2tNdzV0bnFuajVqT3pPVnVCaXcxVEsxb21UUklxaVZsdGFabHY2bVAwaEY0WGsyVTVsSWsvUW5WUlZyRWlNWkVBMndwS2pIMkIwSHpHSTVacmFCb2NTbW5FYi9hUU9CdUZrRTlWZ2lsUDFWaGpLWVZMYWF0SHpGWVFIZ0tGb1p0UjJLZXlRQkFsYWw3aS9kb3UxVzJ5VkdwTmtteFp0S3RKVHlaV2xBUkl4RTZlVWI2eGpaZE5tUkozR0puVTFZKy9TNkRMMmhwNlA5Qnprcy9keDFrYWpQQ05aNFBOSVRJdVJ1QmtvTTVVMjU2bnM3YzZRSHRST0VOTlJ2Q09IRDhzU000Sk8vdEpyczluOEd3TkxMWHdCTHNZNTFVMHM3eDM1MCs1eDVQSUNFejQ1VGVMSFp6Wnkzbk1qdzBsbkk1TnFJWnZPL2w1OC9Sd1Iwdm53Tzg3cnc1MzFkTUNjYkhLc1dWRUx0bGEyNUdTbXhRcDAzcndteVVueHNuVnErOG1aazlVdkF3WlI3czBsNm1KSjR0ampmNzcrZ1hWckJRQUEifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["theme"],"name":[1],"type":["chr"],"align":["left"]},{"label":["themeDescription"],"name":[2],"type":["chr"],"align":["left"]},{"label":["grants"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"24"},{"1":"Epigenetics","2":"Studies focused on the role of epigenetics in cancer phenotypes","3":"2"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"15"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"33"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"6"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"13"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"25"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"9"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[8]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXVsdGl0aGVtZXNfY29scyA8LSBsaXN0KFxuICBDb2x1bW4obmFtZSA9ICdpZCcsIGNvbHVtblR5cGUgPSAnSU5URUdFUicsIG1heGltdW1TaXplID0gMjApLFxuICBDb2x1bW4obmFtZSA9ICd0aGVtZScsIGNvbHVtblR5cGUgPSAnU1RSSU5HX0xJU1QnLCBtYXhpbXVtU2l6ZSA9IDIwKVxuKVxuYGBgIn0= -->
-<pre class="r"><code>multithemes_cols &lt;- list(
-  Column(name = 'id', columnType = 'INTEGER', maximumSize = 20),
-  Column(name = 'theme', columnType = 'STRING_LIST', maximumSize = 20)
-)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXVsdGl0aGVtZXNfY29sc1xuYGBgIn0= -->
-<pre class="r"><code>multithemes_cols</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiW1sxXV1cbntcbiAgXCJjb2x1bW5UeXBlXCI6IFwiSU5URUdFUlwiLFxuICBcImNvbmNyZXRlVHlwZVwiOiBcIm9yZy5zYWdlYmlvbmV0d29ya3MucmVwby5tb2RlbC50YWJsZS5Db2x1bW5Nb2RlbFwiLFxuICBcIm1heGltdW1TaXplXCI6IDIwLjAsXG4gIFwibmFtZVwiOiBcImlkXCJcbn1cblxuW1syXV1cbntcbiAgXCJjb2x1bW5UeXBlXCI6IFwiU1RSSU5HX0xJU1RcIixcbiAgXCJjb25jcmV0ZVR5cGVcIjogXCJvcmcuc2FnZWJpb25ldHdvcmtzLnJlcG8ubW9kZWwudGFibGUuQ29sdW1uTW9kZWxcIixcbiAgXCJtYXhpbXVtU2l6ZVwiOiAyMC4wLFxuICBcIm5hbWVcIjogXCJ0aGVtZVwiXG59XG4ifQ== -->
-<pre><code>[[1]]
-{
-  &quot;columnType&quot;: &quot;INTEGER&quot;,
-  &quot;concreteType&quot;: &quot;org.sagebionetworks.repo.model.table.ColumnModel&quot;,
-  &quot;maximumSize&quot;: 20.0,
-  &quot;name&quot;: &quot;id&quot;
-}
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uc29ydGl1bV9wcm9qcyA8LSBtZXJnZWRfcHJvamVjdHNfZGYgJT4lIFxuICBzZWxlY3QocHJvamVjdElkLCBjb25zb3J0aXVtKSAlPiUgXG4gIGdyb3VwX2J5KGNvbnNvcnRpdW0pICU+JSBcbiAgdGFsbHkobmFtZSA9IFwicHJvamVjdHNcIilcblxuY29uc29ydGl1bV9wcm9qc1xuYGBgIn0= -->
+<pre class="r"><code>consortium_projs &lt;- merged_projects_df %&gt;% 
+  select(projectId, consortium) %&gt;% 
+  group_by(consortium) %&gt;% 
+  tally(name = &quot;projects&quot;)
 
-[[2]]
-{
-  &quot;columnType&quot;: &quot;STRING_LIST&quot;,
-  &quot;concreteType&quot;: &quot;org.sagebionetworks.repo.model.table.ColumnModel&quot;,
-  &quot;maximumSize&quot;: 20.0,
-  &quot;name&quot;: &quot;theme&quot;
-}</code></pre>
-<!-- rnb-output-end -->
+consortium_projs</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MiwibnJvdyI6Mn0sInJkZiI6Ikg0c0lBQUFBQUFBQUExMVFQVy9ESUJSOHdTWWZsaEpGeWwvSWFnOVp1blJxT3JkUnNtUWxEbW1kRXJBQXF4Mzd5KzA4Q0tncVNPYWRqK1BlTy9hdngwMXhMQUNBUUVZeklCbkNuT0EyZ2h4bXJ2NEFaQ3N2QUZqNitqakl0NGVYYmNCMGR5amYzeERNZy9BWnYzWGlSQ1c3Y1pPNEZMV1NSbW5iZExmQVRGdXRycnkySnIxZUMyYmk5VWdXWjJaWmRkSG9uTWhuV24xWHNhTWY2eGUzWVJoNkxIMGlucWpXTmpnSXFseFVtblFaNllSWWR0SlpuOHY2czVOZjVkUEdqZUxQSDJzZU1QbVBYVTh5QkM4YXZNWmNmalNTeDVTQ25iZ0lQd3ZNNENOVXJXNmtqWm1STlpWVmxvbS9SeFNSOGVHZ3Z3TTRLNmt3MlFFQUFBPT0ifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["consortium"],"name":[1],"type":["chr"],"align":["left"]},{"label":["projects"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"CSBC","2":"60"},{"1":"PS-ON","2":"36"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[2]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXVsdGl0aGVtZXNfc2NoZW1hXG5cbmBgYCJ9 -->
-<pre class="r"><code>multithemes_schema
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uc29ydGl1bXRoZW1lX3Byb2pzIDwtIG1lcmdlZF9wcm9qZWN0c19kZiAlPiUgXG4gc2VsZWN0KHByb2plY3RJZCwgY29uc29ydGl1bSwgdGhlbWUpICU+JSBcbiAgZmlsdGVyKHRoZW1lICE9IFwiW11cIikgJT4lIFxuICBtdXRhdGUodGhlbWUgPSBtYXAodGhlbWUsIGpzb25fdG9fbGlzdCkpICU+JSBcbiAgdW5uZXN0KFwidGhlbWVcIikgJT4lIFxuICBsZWZ0X2pvaW4oc2VsZWN0KGRiX3RoZW1lX2RmLCB0aGVtZSA9IGRpc3BsYXlOYW1lLCBcbiAgICAgICAgICAgICAgICAgICB0aGVtZURlc2NyaXB0aW9uID0gZGVzY3JpcHRpb24pKSAlPiUgXG4gIGZpbHRlcighaXMubmEodGhlbWVEZXNjcmlwdGlvbikpICU+JSAgXG4gIG11dGF0ZShncm91cEJ5ID0gXCJwcm9qZWN0c1wiKSAlPiUgXG4gIGdyb3VwX2J5KHRoZW1lLCB0aGVtZURlc2NyaXB0aW9uLCBjb25zb3J0aXVtLCBncm91cEJ5KSAlPiUgXG4gIHRhbGx5KG5hbWUgPSBcInRvdGFsQ291bnRcIikgJT4lIFxuICB1bmdyb3VwKClcbmBgYCJ9 -->
+<pre class="r"><code>consortiumtheme_projs &lt;- merged_projects_df %&gt;% 
+ select(projectId, consortium, theme) %&gt;% 
+  filter(theme != &quot;[]&quot;) %&gt;% 
+  mutate(theme = map(theme, json_to_list)) %&gt;% 
+  unnest(&quot;theme&quot;) %&gt;% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %&gt;% 
+  filter(!is.na(themeDescription)) %&gt;%  
+  mutate(groupBy = &quot;projects&quot;) %&gt;% 
+  group_by(theme, themeDescription, consortium, groupBy) %&gt;% 
+  tally(name = &quot;totalCount&quot;) %&gt;% 
+  ungroup()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcInRoZW1lXCJcbiJ9 -->
+<pre><code>Joining, by = &quot;theme&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uc29ydGl1bXRoZW1lX3Byb2pzXG5gYGAifQ== -->
+<pre class="r"><code>consortiumtheme_projs</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6NSwibnJvdyI6MTV9LCJyZGYiOiJINHNJQUFBQUFBQUFBOTFXUzJ2YlFCQlc3Q2dQTnc5REM2WDBzdEJiaVYwb2hSNUxYdEJBMG9ZNGgwSlA2OVZFMm5hMUsvYmhWTGYrNWY2QnVMTXJ5UytjTmhlblVNUEl1NlBaYjNhZW1xdVRMMjg3WHpwUkZMV2lkdHlPV20xY3JyZndzUmF0Ujl2Ky8wY1V0Wi9pSWticUl1M1hMMTZlYUplU0t6RGNXQ29adkJtQU5OenlFYmZsdzBXZW5CWThCUW1XTTFPenRrOUhTampMbGJ5UHNmc1JMR2psejAyUmxqSTdGMkRwVUFsdThqOXo4SUo0eTNzNTNRdk90QUk1NGxySkhLVDlDMy9uMnVWSzk4N3kzRWxZeXB0M3BocFlsM0F3NUVZeFp5QWhTcExjQ2NzVGJoZ3ZCSmRVbDRRV2hWYVVaU2huRlVuUXI2a2tWQ1lFUmxRNGFvRndLZFdJb29lQk1POXhUV3dHbWhhQTdtUEVXSTFDS2VyNXQyby9MRkdMQjRoV0FvaTZJVEROQ1lSdUlJc01wTEpsTVlHNVBwUlVsQmdrZjhhQUFCWnVVR2d3eHVHREtFMXFITHdxQmdmdm4xRkxFdTNGdkVKb0Vzc2pXQitleDhBK2I4d1BKM0tWZ0Rqd2JtV2FEeUU0RnRVa25GazBIbE82RjFpNFJDOTZHSkl0U2ZSVllKNHRDWk9UQ1doZnpRbVhhYkNUS1VUaHc0bXArYVMrZkxaVXNWc1Y0UG5oVEdwNncwRTR4aE9ma2g0cEI1WlJpUWROcFVhVVhnZWFQY0xTVmxVTzU0dWx2Z3JNUyt5QlFEWEx2TXRWd0VsS1NYTk1uaENPUXRDU0RNSGVBbFNWa0MrMGxRQmJSWXFCRUt2Ry9UcWIvYk9WeVVQendoRGxoWkloNjZmMXlTVzJkdXFqZG9ESnBsSmZLbUd6MUNVclZUSGZYTmVQQjBmSDlUcStIUFErZjFyeTRrRkNqL2hpM29RdHRQWWI5aUR6MysveFF4N3NqcUxYU0J0SW0waDdTTStSWGlFOVEvSmppcDlhZG1vL3ZhaHBxNks1Q1NiR2dvQW1KK0tHaVNtWE4xL21idGljaEc1WnpNd1pIV3hGUm1uTFhUTXJiS1phdWVKb01sNVlaYWs0Vmc0Ly9BdEttYUNtVWRvd085aEZhUDlHNDMwV3hMZTF1dTAzOS9RT2FQM0V4M2c4L29WL2R3dkNteXBjRWtWYnM0UFpaR0xUQzR5dWt4NDY2YkhNeWUrOTkrOXE1NjFGMVcrM1h1L1ByT05LWjJ1ODRMY05rQ21makRTeG9FTVE5V1lQYlFnbTlBdk5KNU5RQjdtbUgvdzA5YXBvT01HNDZPNDNoalllVm9jS0FBQT0ifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["theme"],"name":[1],"type":["chr"],"align":["left"]},{"label":["themeDescription"],"name":[2],"type":["chr"],"align":["left"]},{"label":["consortium"],"name":[3],"type":["chr"],"align":["left"]},{"label":["groupBy"],"name":[4],"type":["chr"],"align":["left"]},{"label":["totalCount"],"name":[5],"type":["int"],"align":["right"]}],"data":[{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"CSBC","4":"projects","5":"42"},{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"PS-ON","4":"projects","5":"6"},{"1":"Epigenetics","2":"Studies focused on the role of epigenetics in cancer phenotypes","3":"CSBC","4":"projects","5":"7"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"CSBC","4":"projects","5":"14"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"PS-ON","4":"projects","5":"23"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"CSBC","4":"projects","5":"35"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"PS-ON","4":"projects","5":"20"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"CSBC","4":"projects","5":"3"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"PS-ON","4":"projects","5":"10"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"CSBC","4":"projects","5":"12"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"PS-ON","4":"projects","5":"16"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"CSBC","4":"projects","5":"25"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"PS-ON","4":"projects","5":"25"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"CSBC","4":"projects","5":"8"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"PS-ON","4":"projects","5":"8"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[15]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3RfY291bnRzX3N5bnRhYmxlIDwtIHVwZGF0ZV9zeW5hcHNlX3RhYmxlKFwic3luMjE2NDkyODFcIiwgY29uc29ydGl1bXRoZW1lX3Byb2pzLCBzeW4sIHB1YilcblxuYGBgIn0= -->
+<pre class="r"><code>ct_counts_syntable &lt;- update_synapse_table(&quot;syn21649281&quot;, consortiumtheme_projs, syn, pub)
 </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiU2NoZW1hOiBtdWx0aXRoZW1lcyAoLSlcbiAgY29sdW1uc190b19zdG9yZT1beydjb25jcmV0ZVR5cGUnOiAnb3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkNvbHVtbk1vZGVsJywgJ25hbWUnOiAnaWQnLCAnY29sdW1uVHlwZSc6ICdJTlRFR0VSJywgJ21heGltdW1TaXplJzogMjAuMH0sIHsnY29uY3JldGVUeXBlJzogJ29yZy5zYWdlYmlvbmV0d29ya3MucmVwby5tb2RlbC50YWJsZS5Db2x1bW5Nb2RlbCcsICduYW1lJzogJ3RoZW1lJywgJ2NvbHVtblR5cGUnOiAnU1RSSU5HX0xJU1QnLCAnbWF4aW11bVNpemUnOiAyMC4wfV1cbnByb3BlcnRpZXM6XG4gIGNvbHVtbklkcz1bXVxuICBjb25jcmV0ZVR5cGU9b3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLlRhYmxlRW50aXR5XG4gIG5hbWU9bXVsdGl0aGVtZXNcbiAgcGFyZW50SWQ9c3luMjE0OTg5MDJcbmFubm90YXRpb25zOlxuIn0= -->
-<pre><code>Schema: multithemes (-)
-  columns_to_store=[{'concreteType': 'org.sagebionetworks.repo.model.table.ColumnModel', 'name': 'id', 'columnType': 'INTEGER', 'maximumSize': 20.0}, {'concreteType': 'org.sagebionetworks.repo.model.table.ColumnModel', 'name': 'theme', 'columnType': 'STRING_LIST', 'maximumSize': 20.0}]
-properties:
-  columnIds=[]
-  concreteType=org.sagebionetworks.repo.model.table.TableEntity
-  name=multithemes
-  parentId=syn21498902
-annotations:</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gdXBkYXRlX3N5bmFwc2VfdGFibGUoXCJzeW4yMTY0OTI4MVwiLCBjb25zb3J0aXVtdGhlbWVfcHJvanMsIHN5biwgIDogXG4gIG9iamVjdCAncHViJyBub3QgZm91bmRcbiJ9 -->
+<pre><code>Error in update_synapse_table(&quot;syn21649281&quot;, consortiumtheme_projs, syn,  : 
+  object &#39;pub&#39; not found</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXVsdGl0aGVtZXNfdGFibGUgPC0gVGFibGUobXVsdGl0aGVtZXNfc2NoZW1hLCBtdWx0aXRoZW1lcylcbmBgYCJ9 -->
-<pre class="r"><code>multithemes_table &lt;- Table(multithemes_schema, multithemes)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfcHVicyA8LSBtZXJnZWRfcHVibGljYXRpb25zX2RmICU+JSBcbiBzZWxlY3QocHVibGljYXRpb25JZCwgdGhlbWUpICU+JSBcbiAgZmlsdGVyKHRoZW1lICE9IFwiW11cIikgJT4lIFxuICBtdXRhdGUodGhlbWUgPSBtYXAodGhlbWUsIGpzb25fdG9fbGlzdCkpICU+JSBcbiAgdW5uZXN0KFwidGhlbWVcIikgJT4lIFxuICBsZWZ0X2pvaW4oc2VsZWN0KGRiX3RoZW1lX2RmLCB0aGVtZSA9IGRpc3BsYXlOYW1lLCBcbiAgICAgICAgICAgICAgICAgICB0aGVtZURlc2NyaXB0aW9uID0gZGVzY3JpcHRpb24pKSAlPiUgXG4gIGZpbHRlcighaXMubmEodGhlbWVEZXNjcmlwdGlvbikpICU+JSAgXG4gIGdyb3VwX2J5KHRoZW1lLCB0aGVtZURlc2NyaXB0aW9uKSAlPiUgXG4gIHRhbGx5KG5hbWUgPSBcInB1YmxpY2F0aW9uc1wiKSAlPiUgXG4gIHVuZ3JvdXAoKVxuYGBgIn0= -->
+<pre class="r"><code>theme_pubs &lt;- merged_publications_df %&gt;% 
+ select(publicationId, theme) %&gt;% 
+  filter(theme != &quot;[]&quot;) %&gt;% 
+  mutate(theme = map(theme, json_to_list)) %&gt;% 
+  unnest(&quot;theme&quot;) %&gt;% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %&gt;% 
+  filter(!is.na(themeDescription)) %&gt;%  
+  group_by(theme, themeDescription) %&gt;% 
+  tally(name = &quot;publications&quot;) %&gt;% 
+  ungroup()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXVsdGl0aGVtZXNfdGFibGUgPC0gc3luU3RvcmUobXVsdGl0aGVtZXNfdGFibGUpXG5gYGAifQ== -->
-<pre class="r"><code>multithemes_table &lt;- synStore(multithemes_table)</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcInRoZW1lXCJcbiJ9 -->
+<pre><code>Joining, by = &quot;theme&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfcHVic1xuYGBgIn0= -->
+<pre class="r"><code>theme_pubs</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5VcGxvYWRpbmcgWy0tLS0tLS0tLS0tLS0tLS0tLS0tXTAuMDAlICAgMC4wYnl0ZXMvMTk5LjBieXRlcyAgZmlsZTUzYjYzNzkyMzZmMiAgICAgXG5VcGxvYWRpbmcgWyMjIyMjIyMjIyMjIyMjIyMjIyMjXTEwMC4wMCUgICAxOTkuMGJ5dGVzLzE5OS4wYnl0ZXMgKDI3Ni43Ynl0ZXMvcykgZmlsZTUzYjYzNzkyMzZmMiBEb25lLi4uICAgIFxuIFsjIyMjIyMjIyMjIyMjIyMjIyMjI10xMDAuMDAlICAgMS8xICAgRG9uZS4uLiAgICBcbiJ9 -->
-<pre><code>
-Uploading [--------------------]0.00%   0.0bytes/199.0bytes  file53b6379236f2     
-Uploading [####################]100.00%   199.0bytes/199.0bytes (276.7bytes/s) file53b6379236f2 Done...    
- [####################]100.00%   1/1   Done...    </code></pre>
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6OH0sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVVUV3NiTVJEZDJIRWJ1MGtKOU5pTHppVjJvWWYyV0FJSk5OQkFTVklJOUNScko3dWkra0lmVHZiV1g5WmovMG1oUDZDSG51S090SkpqRmh1OE94cHAzcnczbzltcnM5dDNzOXRaVlZXamFqd1pWNk14bXZzamZPeFYrOVUwdmgrcWF2d0tqYmh6alArRHZQSDZ6SWFHWElIanpsUEY0TzAxS01jOVgzSGY1U012emcxdlFJSG56R1hYOUh5bFJmQmNxK3c0K2dRZXJJN0huZ0pubCtEcFVndnU1TFlIRTJHMjdEbSs1TXhxVUN0dXRaS2dmUFlmM2dTcDdmeEN5cUJnd0ZsZisxQnpjT1JPcytDZ0psb1JHWVRuTlhlTUc4RVZ0UjJoeGxoTldZdm52Q1kxS213VW9hb21zS0lpVUErRUs2VlhGTFVDWVZHN0piNEZTdzJnTWthY3QzaW93VHc1N2NjZGFUR0FXQzJBNkRzQ1QyVkM2QUpwV2xEYWQyWURjM09xcU9pd0FqSEdnUUNXR0JnTHpnVjhFRzFKeGtHcVdCSGszMUpQYWh1UHhZUlFpaDhSZkt4VHdmNWNLS1lJcVdzUUoxRTZzM3dKU1R5bXFUbnpTQkQ3TlU4dU5GRnBoQ0h0amk1ZTdKQWRWQTAyWHBpYXF5WnhZaHBSK0hKRFMyNWFINnZmMTZLUVBOM3FUT1FKSWpCZXg0NUVKQW1zcFFvRFhaOUdkREVIc2x6aHRkRjlDK1h3R24zQkd3elVzamFxMFFtbjdoU1ZXTU9rMUFqYWtTWDRlNEMrYVhKdzdSSnNYd1FHUWhUY2I5dk4ybTQyVHhjVFpVdWpWV3JTVTh1NXdnR2lzUkluV0cvZHhNNm14WUE2amsyNjFkWGVWM3kvd2Zjdm5PQUx0SCtqL1JmdFAyai9ISXp5QkdXQnl5TXhMazdrSnFITVZGcWNwYmFiclNFOU5HRXBPRXZNM0FCMWF2WDlvaUJIV3FNZitGaXYxLytHNlptZ3JxUXZ6aGwyank3dUxNYmo2bkVROGx5Ym5ISVVQMEdUUWZDZUhUaU9nNHBNNmpscmcvbysvL0ErWmtqNy9lOG8yd2RiOXJqUE9WcG5yRW5HZWdhcTRhcFVaaUxvRWtSZXZFVEpTZkhDV0w3NThNelE2eFplZTFyT3paZ1d4WlBFVlkvL0FSSS9nek54QlFBQSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["theme"],"name":[1],"type":["chr"],"align":["left"]},{"label":["themeDescription"],"name":[2],"type":["chr"],"align":["left"]},{"label":["publications"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"341"},{"1":"Epigenetics","2":"Studies focused on the role of epigenetics in cancer phenotypes","3":"42"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"454"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"585"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"229"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"500"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"744"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"190"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[8]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfZHNldHMgPC0gbWVyZ2VkX2RhdGFzZXRzX2RmICU+JSBcbiBzZWxlY3QocHVibGljYXRpb25JZCwgdGhlbWUpICU+JSBcbiAgZmlsdGVyKHRoZW1lICE9IFwiW11cIikgJT4lIFxuICBtdXRhdGUodGhlbWUgPSBtYXAodGhlbWUsIGpzb25fdG9fbGlzdCkpICU+JSBcbiAgdW5uZXN0KFwidGhlbWVcIikgJT4lIFxuICBsZWZ0X2pvaW4oc2VsZWN0KGRiX3RoZW1lX2RmLCB0aGVtZSA9IGRpc3BsYXlOYW1lLCBcbiAgICAgICAgICAgICAgICAgICB0aGVtZURlc2NyaXB0aW9uID0gZGVzY3JpcHRpb24pKSAlPiUgXG4gIGZpbHRlcighaXMubmEodGhlbWVEZXNjcmlwdGlvbikpICU+JSAgXG4gIGdyb3VwX2J5KHRoZW1lLCB0aGVtZURlc2NyaXB0aW9uKSAlPiUgXG4gIHRhbGx5KG5hbWUgPSBcImRhdGFzZXRzXCIpICU+JSBcbiAgdW5ncm91cCgpXG5gYGAifQ== -->
+<pre class="r"><code>theme_dsets &lt;- merged_datasets_df %&gt;% 
+ select(publicationId, theme) %&gt;% 
+  filter(theme != &quot;[]&quot;) %&gt;% 
+  mutate(theme = map(theme, json_to_list)) %&gt;% 
+  unnest(&quot;theme&quot;) %&gt;% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %&gt;% 
+  filter(!is.na(themeDescription)) %&gt;%  
+  group_by(theme, themeDescription) %&gt;% 
+  tally(name = &quot;datasets&quot;) %&gt;% 
+  ungroup()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcInRoZW1lXCJcbiJ9 -->
+<pre><code>Joining, by = &quot;theme&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfZHNldHNcbmBgYCJ9 -->
+<pre class="r"><code>theme_dsets</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6OH0sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVVUV3NiTVJEZDJIRWJ1MDBKOU5pTERvVkNpVjNvSmNjU1NLQ0JCa3FTUTJpaElHdkh1NktTWnRHSGs3MzFUL1RTdjlBLzJGUGNrWGJsbUNXR1dVdXptamZ2ell6MjZ1ejI0K3gyVmhURnFCaFB4c1ZvVE12OUVUMzJpdjFpR3YvdmkyTDhtaGJ4elJIWlFmL2l6WmtORmJzQ0o1M25Sc0NIYXpCT2VybVd2dTJQdkRodlpBVUd2QlN1ZDAzUDE2aUNsMmg2eCtGbjhHQXhIbnNNbkYyQzUwdFUwdWxkRHlXaWJMM242RklLaTJEVzBxTFJZSHp2ZjNrVE5OcjVoZGJCd0lBelh2dFFTbkJzaFNJNEtCa2Fwb1B5c3BST3lFWkp3MjNMZU5OWTVLS21jeDVaU1Fvcnc3Z3BHYXk1Q3R3RGs4YmdtcE5XWUNKcXQ4elhZSGtEcEV3dzV5MGRxaWhQbi9iVEUya3BnRmxVd0hERjRMRk1CSjBobXhvTStyYlp3dHljR3E1YXFrQ01jYUJBSkFhTkJlY0NQUmhhMXVNUVZhb0k4YSs1WjZXTngySkN5TVdQQ0Q3V0tXTi95UlJUaE1ZUzFIR1VMcXhjUWhKUGFVb3BQQkdrZnMyVGk1YWtOTUt3K29rdVhqd2hPNWdTYkJ5WVVwb3FjUkpJS0hLNXBhVzNyWS9WNzJxUlNaN3VkQ2J5QkJXRUxHTkhJcElHVVhORGdhNUxvOXFZZzFpdWFXeXdhNkVlanRGWG1tRGdWdFJSRFNhY3NqVmNVdzJUMGtieGxpM0Izd0YwVGRPRHNVdXdYUkVFS0pWeHYrODJhN2ZaTWcwbXlkWU5tdFNreDVaTFF4ZUl4MG9jVTcyeGlwMU5td0YxdWpacHFvdmlMOWxic2g5a3Y4bmVrMzBqKzBQMmJuQ1ZKeVFMWEg4bHh0bEozRFRrTzVVMlo2bnR6YzRsUGFBYWN3ZmVEUkNuRnU4V0dUVlNHdjJpeDJheitUZE1MUlIzT1hWMnppTHFZbVVwbm5ZUGc1RG5tQmhRMENoK2ZpYUQ0RDA3Y0J3RkU1bVVjMUVIODNOK2NoSXpwUGZkNzdCZkgreXN4MTNPMGFiSG12Ull6OEJVMHVTcVRCUmZndW8zcjBoeVVyeG9yTngrZEdia2RRdVBudWR6TTRFcWU1SzQ0dUUvRitrM1lXMEZBQUE9In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["theme"],"name":[1],"type":["chr"],"align":["left"]},{"label":["themeDescription"],"name":[2],"type":["chr"],"align":["left"]},{"label":["datasets"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"171"},{"1":"Epigenetics","2":"Studies focused on the role of epigenetics in cancer phenotypes","3":"36"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"94"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"149"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"42"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"90"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"154"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"39"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[8]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfdG9vbHMgPC0gbWVyZ2VkX3Rvb2xzX2RmICU+JSBcbiBzZWxlY3QocHVibGljYXRpb25JZCwgdGhlbWUpICU+JSBcbiAgZmlsdGVyKHRoZW1lICE9IFwiW11cIikgJT4lIFxuICBtdXRhdGUodGhlbWUgPSBtYXAodGhlbWUsIGpzb25fdG9fbGlzdCkpICU+JSBcbiAgdW5uZXN0KFwidGhlbWVcIikgJT4lIFxuICBsZWZ0X2pvaW4oc2VsZWN0KGRiX3RoZW1lX2RmLCB0aGVtZSA9IGRpc3BsYXlOYW1lLCBcbiAgICAgICAgICAgICAgICAgICB0aGVtZURlc2NyaXB0aW9uID0gZGVzY3JpcHRpb24pKSAlPiUgXG4gIGZpbHRlcighaXMubmEodGhlbWVEZXNjcmlwdGlvbikpICU+JSAgXG4gIGdyb3VwX2J5KHRoZW1lLCB0aGVtZURlc2NyaXB0aW9uKSAlPiUgXG4gIHRhbGx5KG5hbWUgPSBcInRvb2xzXCIpICU+JSBcbiAgdW5ncm91cCgpXG5gYGAifQ== -->
+<pre class="r"><code>theme_tools &lt;- merged_tools_df %&gt;% 
+ select(publicationId, theme) %&gt;% 
+  filter(theme != &quot;[]&quot;) %&gt;% 
+  mutate(theme = map(theme, json_to_list)) %&gt;% 
+  unnest(&quot;theme&quot;) %&gt;% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %&gt;% 
+  filter(!is.na(themeDescription)) %&gt;%  
+  group_by(theme, themeDescription) %&gt;% 
+  tally(name = &quot;tools&quot;) %&gt;% 
+  ungroup()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcInRoZW1lXCJcbiJ9 -->
+<pre><code>Joining, by = &quot;theme&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfdG9vbHNcbmBgYCJ9 -->
+<pre class="r"><code>theme_tools</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6Nn0sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVRUVzhUTVJCMWtxYVFpS0lpNE1URlA2QUpFaGU0VmdvU1NLMkUyaDRxY1hLOTAxMEw3OHpLSDF0eTQzZHphQmc3WGtoWFJQTEdudlc4ZWUvTjdOWG05c1B5ZGltRW1JclpmQ2FtTTk0ZVRma3hFVWRpa2Y1L0NqRjd6WnYwNXBUWGNYbnhidU5pTGEvQUd4OFVhbmgvRGVoTk1MMEoyM0psOGJrbkc0TWhMSUdUTHhEQVVRMEkvMjR0THlFb3htQ2dFam05Tk5vUllHOGNZUXNZU3Z6RlRXekpyYjYyYlVRWTBhSHJFQ3NEWHQ2VGpoNHFTU2piYUlPcGpOZW1zd2FWMjByVmRZNlVidmhlSUZreCtScWx3a3BDcjJ4VUFhUkJwRjZ4REpBNnlYSXlOT0JVQjZ4RFN4OGNYNnE1VGlsN2M0N0ticG02cEh2cHdZTE9xWjBEN3lNL0pEbVo1S1prNkZrS0YyNVVrSlZMMXhpYW84V2poQkNTd0FIN1lwQ1VNMXFxd0o0bHp0cVpPOGlzdVV4bGRHRFNiT3NxaDNqTEZCT01iUDVqOXNYNWdRTUpGbXpVcGtyS0U1a1dkS1BRK05iTGlCVTR1elZZU3didHVUMjB0Nm9kdCtzYkR3RW9wNXRVbkRKT3RVWFZzdVJNckxOcUsrOGdQQURndnNxb3ZSbDJ6MW1EdFFQdTkwTnZVNTRqQzJsdjhnQklUVzFIbUQwMU9IVExJTStnU242ZXNUMVVwMGJrdzRnNkQyT2VIaUhlOEhyRjZ5MnY1MmtlOThQKzVDdVlzeHp3WmVSbVE1QTV0VERNYkQ1c2NuZTZnNUdmQnlKVzlCUnU0ZWhoUFVBbUh0TmYvTmp0ZHIvSGRiVlZmcWc3QkpmY0xyVytkNXpQcDhkUnlqUEs1VGxwbWo3YitTaDU0a2FCMDRpSlNiWFNUY1FmcTQrZmlnVVRzZitkbFAzeHdiN1lNOTBWckhuQk9nYXNEUTZXeksyNkExc09MMWx5VnJ6dW5QbjdSUzg1NnRlQmdocnVMVFhiVlNKWm5IajhBN0Zxa0dHbEJBQUEifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["theme"],"name":[1],"type":["chr"],"align":["left"]},{"label":["themeDescription"],"name":[2],"type":["chr"],"align":["left"]},{"label":["tools"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"20"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"17"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"21"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"8"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"10"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"3"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfY291bnRzIDwtIHRoZW1lX3Byb2pzICU+JSBcbiAgbGVmdF9qb2luKHRoZW1lX2RzZXRzKSAlPiUgXG4gIGxlZnRfam9pbih0aGVtZV9wdWJzKSAlPiUgXG4gIGxlZnRfam9pbih0aGVtZV90b29scykgJT4lIFxuICByZXBsYWNlX25hKGxpc3QodG9vbHMgPSAwKSkgJT4lIFxuICBnYXRoZXIoZ3JvdXBCeSwgdG90YWxDb3VudCwgLXRoZW1lLCAtdGhlbWVEZXNjcmlwdGlvbikgJT4lIFxuICBmaWx0ZXIodGhlbWUgIT0gXCJDb21wdXRhdGlvbmFsIFJlc291cmNlXCIpXG5gYGAifQ== -->
+<pre class="r"><code>theme_counts &lt;- theme_projs %&gt;% 
+  left_join(theme_dsets) %&gt;% 
+  left_join(theme_pubs) %&gt;% 
+  left_join(theme_tools) %&gt;% 
+  replace_na(list(tools = 0)) %&gt;% 
+  gather(groupBy, totalCount, -theme, -themeDescription) %&gt;% 
+  filter(theme != &quot;Computational Resource&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBjKFwidGhlbWVcIiwgXCJ0aGVtZURlc2NyaXB0aW9uXCIpXG5Kb2luaW5nLCBieSA9IGMoXCJ0aGVtZVwiLCBcInRoZW1lRGVzY3JpcHRpb25cIilcbkpvaW5pbmcsIGJ5ID0gYyhcInRoZW1lXCIsIFwidGhlbWVEZXNjcmlwdGlvblwiKVxuIn0= -->
+<pre><code>Joining, by = c(&quot;theme&quot;, &quot;themeDescription&quot;)
+Joining, by = c(&quot;theme&quot;, &quot;themeDescription&quot;)
+Joining, by = c(&quot;theme&quot;, &quot;themeDescription&quot;)</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfY291bnRzXG5gYGAifQ== -->
+<pre class="r"><code>theme_counts</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6NCwibnJvdyI6MzJ9LCJyZGYiOiJINHNJQUFBQUFBQUFBKzFZeTI3VU1CUTEweG5hRGkwYWlTVXN2R0NGYUhrSUpCWklURjlTSzZpRUFBRVNHenpPYldKdzdNaVBLU01oZ2Rqd0czd0tuOEtYdEZ3N3puUWFkWXZLSXBHU0c1L2M5ejBaamZOcTkvM0Q0ZnNoSWFSSGxnWkxwTGVFdC8wZVhxNlFQbGtOOGdzaFN6Y0NpdWNJVDVvZTNOdzFQcWV2d0Fycm1PSnc3elVvSzV5WUNqZExLdGYyS3BHREFpZTRUZERxM2xSTDc0UldDVmpmQndkR0I3VXp3K0VoT0RiUlV0aHlFY0ZBR0MwaG8wUEJqUVkxRlVhckVwUkwrTm9iWDJxemNWQ1dYa0dYYTVkcmk3ZjZ0Zk9aQUV1UE5QY1dNcW9WTGIxMEloT1dpMG9LeGN5TXNxb3ltdkVDOVp5bUdWYVlLOHBVUm1IS3BHY09xRkJLVHhuV0NwU0gyZzExQlJoV0FWYkdxWFVHbFhLTWs4SSt1eUFzR2xDakpWQjlST0dzVGVpNmNWa1ZvTFNiVlhNM2I3WVVrelBzUUxDeElJSEhEQ29EMW5xOFVHMW84b09wWWtjdy80STVtcG1nRmdKQzAvemd3WVUrTmI1Zk5DbEdpMUpuSU8rRzBya1JFNGpGWTVoTWNJY0o0cncySW9TM1dHbHdRNHNMcG5od1FkbGVaV0FDWVRLaDhwZ1QxK2hGVE9acGxmUFJoKzdYdldpUzNGcVlUTWdUcE9jaUN4TUpua3JnQlZOb2FPc3djaFppWUpaVHBJMnVSMWkyYWZRU0dRek04Q0pVbzZPZmJLWllpVDJNbFZhU3plZ0UzREZBUGJTeVJidm90bTRDQnlrYnZ4OFdoN1U0YkJHSmlXV1hsVlp4U0djakZ3cGZJQlk2Y1JmN3JmTXcyYmk0TVBXT3pSMmJPelozYk83WTNMRzVZM1BINW4vQjV2UC9uMWRROVJPU3dWN1dHaWZBTEZ6YWVxM3lFeWw0N052L2lBMmMxdktmTGdpNUh2Z3czaWZ4R045S2N2dDdMWjhuZVNmaFQ1TThTUEora3ZBeDJhWDF1MlEzK1ZYTHZZUy9UVGdmMTNJbnJmM0w4M3Bmazc4ZmRXSmptZng4UzNZL2s4eC8xL0lST1hlTUh5VDV1SVhUSkc4bnVkSThPZmVoWk5YbzQwMThsU0UwYUIzUFhrano5UFQwVDB0eHdDV3p6VnZWZ01QQXNzMGpnL1p0OWNablVPL1BKMUZBMmV6Q1IzR3hHMzgrcTRWdDlYSnV0SysyNXh0cXB4MlRPOXJqTnBtUWsxYVlaVjNWTENLOThMVm4wTXJ2aW1rQkk2OUNZdGtHTDd6NnZQRWtORzhZbjlmSGVycW5DL2Y5T21iL05Qa2FKRjlYUWVWaS9sRmhJTmtFWkZwY3g2N0dCbXhXUnN6MzkwTkU3V2FzcDBFNE1qTWhzVGh5OGhjOXN5Y0UzQklBQUE9PSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["theme"],"name":[1],"type":["chr"],"align":["left"]},{"label":["themeDescription"],"name":[2],"type":["chr"],"align":["left"]},{"label":["groupBy"],"name":[3],"type":["chr"],"align":["left"]},{"label":["totalCount"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"projects","4":"48"},{"1":"Epigenetics","2":"Studies focused on the role of epigenetics in cancer phenotypes","3":"projects","4":"7"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"projects","4":"37"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"projects","4":"55"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"projects","4":"13"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"projects","4":"28"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"projects","4":"50"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"projects","4":"16"},{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"datasets","4":"171"},{"1":"Epigenetics","2":"Studies focused on the role of epigenetics in cancer phenotypes","3":"datasets","4":"36"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"datasets","4":"94"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"datasets","4":"149"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"datasets","4":"42"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"datasets","4":"90"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"datasets","4":"154"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"datasets","4":"39"},{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"publications","4":"341"},{"1":"Epigenetics","2":"Studies focused on the role of epigenetics in cancer phenotypes","3":"publications","4":"42"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"publications","4":"454"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"publications","4":"585"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"publications","4":"229"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"publications","4":"500"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"publications","4":"744"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"publications","4":"190"},{"1":"Drug Resistance/Sensitivity","2":"Studies focused on multidisciplinary approaches to design and evaluate innovative cancer therapeutic strategies","3":"tools","4":"20"},{"1":"Epigenetics","2":"Studies focused on the role of epigenetics in cancer phenotypes","3":"tools","4":"0"},{"1":"Evolution","2":"Analysis of selective pressures or genetic events that drive the evolution of tumors","3":"tools","4":"17"},{"1":"Heterogeneity","2":"Studies that model, describe and predict inter- and intratumor heterogeneity","3":"tools","4":"21"},{"1":"Metabolism","2":"Studies focused on understanding the contribution of metabolism to cancer","3":"tools","4":"0"},{"1":"Metastasis","2":"Approaches that elucidate the mechanisms underlying  invasion and metastasis","3":"tools","4":"8"},{"1":"Microenvironment","2":"Research into the dynamic interplay between the microenvironment and tumor cells","3":"tools","4":"10"},{"1":"Tumor-Immune","2":"Analysis of the role of immune components in cancer initiation, progression, and metastasis","3":"tools","4":"3"}],"options":{"columns":{"min":{},"max":[10],"total":[4]},"rows":{"min":[10],"max":[10],"total":[32]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uc29ydGl1bV9jb3VudHMgPC0gY29uc29ydGl1bV9ncmFudHMgJT4lIFxuICBsZWZ0X2pvaW4oY29uc29ydGl1bV9wcm9qcykgJT4lIFxuICAgIGdhdGhlcihncm91cEJ5LCB0b3RhbENvdW50LCAtY29uc29ydGl1bSlcbmBgYCJ9 -->
+<pre class="r"><code>consortium_counts &lt;- consortium_grants %&gt;% 
+  left_join(consortium_projs) %&gt;% 
+    gather(groupBy, totalCount, -consortium)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSm9pbmluZywgYnkgPSBcImNvbnNvcnRpdW1cIlxuIn0= -->
+<pre><code>Joining, by = &quot;consortium&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uc29ydGl1bV9jb3VudHNcbmBgYCJ9 -->
+<pre class="r"><code>consortium_counts</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6NH0sInJkZiI6Ikg0c0lBQUFBQUFBQUEzVlFQVS9ETUJDOXhnbWxrWW9pOFJkWWt3RVdCcWFHR1JCZHVwclVoSUJyUjQ0dFlPT0hvNGF6WXd0cUZVdTIzNzM3ZlBkNHU3bk1OemtBSkVBeUFnbEJtQ2I0ekNDRmhmMC9BTWc1QXVzcHJOYzcwbnE5cWozT0h0YmwvZDMvanNQTWsxWlJvWWVqMW1tdjVDdHJqdGdBUzFjRDRBS3ZuZWhtd2dmakxwUjhyd1Rkc1pDUWZPRXpqdU4zRkppRm9NSnBtOGk4a1dLUVNuZG01NWw1cTZUcFY1OGhRRXROZVMyTjBIRzlodE1oMUF0a3ZxV2FWczhLVzZHMWoxTG1zdGNkTnNRaHJad3NTcDZwaUNpTXNFTnZ5K2JGaUxmeStzcDJjUDdwTEQxTy8yQXk5U1NqcjVXRnJUUFJkb0tGNFRsOVl0d2JaN2hDdDV5cVZ4M3E5RktRSFNvbi8zZFpQREJPSE94L0FFanpHNDFQQWdBQSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["consortium"],"name":[1],"type":["chr"],"align":["left"]},{"label":["groupBy"],"name":[2],"type":["chr"],"align":["left"]},{"label":["totalCount"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"CSBC","2":"grants","3":"36"},{"1":"PS-ON","2":"grants","3":"19"},{"1":"CSBC","2":"projects","3":"60"},{"1":"PS-ON","2":"projects","3":"36"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[4]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uc29ydGl1bV9jb3VudHNfc3ludGFibGUgPC0gdXBkYXRlX3N5bmFwc2VfdGFibGUoXCJzeW4yMTY0MTQ4NVwiLCBjb25zb3J0aXVtX2NvdW50LCBzeW4sIHN5bnRhYilcblxuYGBgIn0= -->
+<pre class="r"><code>consortium_counts_syntable &lt;- update_synapse_table(&quot;syn21641485&quot;, consortium_count, syn, syntab)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gaXMuZGF0YS5mcmFtZSh4KSA6IG9iamVjdCAnY29uc29ydGl1bV9jb3VudCcgbm90IGZvdW5kXG4ifQ== -->
+<pre><code>Error in is.data.frame(x) : object &#39;consortium_count&#39; not found</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKCmBgYHtyfQojIHRoZW1lX2dyYW50cyA8LSBtaW5fZ3JhbnRfZGYgJT4lIAojICAgc2VsZWN0KGlkKSAlPiUgCmdyYW50X3RoZW1lIDwtIGRiX3RoZW1lX2dyYW50ICU+JSAKICBsZWZ0X2pvaW4oc2VsZWN0KGRiX2dyYW50X2RmLCBncmFudElkID0gaWQsIGNvbnNvcnRpdW1JZCkpICU+JSAKICBsZWZ0X2pvaW4oc2VsZWN0KGRiX2NvbnNvcnRpdW1fZGYsIGNvbnNvcnRpdW1JZCA9IGlkLCBjb25zb3J0aXVtID0gZGlzcGxheU5hbWUpKSAlPiUgCiAgbGVmdF9qb2luKHNlbGVjdChkYl90aGVtZV9kZiwgdGhlbWVJZCA9IGlkLCB0aGVtZSA9IGRpc3BsYXlOYW1lKSAlPiUgCiAgICAgICAgICAgICAgbXV0YXRlKGRlc2NyaXB0aW9uID0gZ2x1ZTo6Z2x1ZSgiRGVzY3JpcHRpb24gZm9yICd7dGhlbWV9JyIpKSkgJT4lIAogIHNlbGVjdCgtY29uc29ydGl1bUlkLCAtdGhlbWVJZCkgJT4lIAogIGZpbHRlcighaXMubmEodGhlbWUpKQoKZ3JhbnRfdGhlbWUKYGBgCgoKYGBge3J9CnRoZW1lX3Byb2pzIDwtIG1pbl9wcm9qZWN0X2RmICU+JSAKICBzZWxlY3QoaWQsIGdyYW50SWQpICU+JSAKICBsZWZ0X2pvaW4oZ3JhbnRfdGhlbWUpICU+JSAKICBmaWx0ZXIoIWlzLm5hKHRoZW1lKSkgJT4lIAogIGdyb3VwX2J5KHRoZW1lLCBkZXNjcmlwdGlvbikgJT4lIAogIHRhbGx5KG5hbWUgPSAicHJvamVjdHMiKQoKdGhlbWVfcHJvanMKYGBgCgoKYGBge3J9CmN0X3Byb2pzIDwtIG1pbl9wcm9qZWN0X2RmICU+JSAKICBzZWxlY3QoaWQsIGdyYW50SWQpICU+JSAKICBsZWZ0X2pvaW4oZ3JhbnRfdGhlbWUpICU+JSAKICBmaWx0ZXIoIWlzLm5hKHRoZW1lKSkgJT4lIAogIG11dGF0ZShncm91cEJ5ID0gInByb2plY3RzIikgJT4lIAogIGdyb3VwX2J5KHRoZW1lLCBkZXNjcmlwdGlvbiwgY29uc29ydGl1bSwgZ3JvdXBCeSkgJT4lIAogIHRhbGx5KG5hbWUgPSAidG90YWxDb3VudCIpICU+JSAKICByZW5hbWUodGhlbWVEZXNjcmlwdGlvbiA9IGRlc2NyaXB0aW9uKQogIAoKY3RfcHJvanMKYGBgCgpgYGB7cn0KdXBkYXRlX3RhYmxlIDwtIGZ1bmN0aW9uKHRhYmxlX2lkLCB1cGRhdGVfZGYpIHsKICBjdXJyZW50X3Jvd3MgPC0gc3luVGFibGVRdWVyeShnbHVlOjpnbHVlKCJTRUxFQ1QgKiBGUk9NIHt0YWJsZV9pZH0iKSkKICBzeW5EZWxldGUoY3VycmVudF9yb3dzKQogIHVwZGF0ZV9yb3dzIDwtIFRhYmxlKHRhYmxlX2lkLCB1cGRhdGVfZGYpCiAgc3luU3RvcmUodXBkYXRlX3Jvd3MpCn0KYGBgCgpgYGB7cn0KY3RfY291bnRzX3N5bnRhYmxlIDwtIHVwZGF0ZV90YWJsZSgic3luMjE2NDkyODEiLCBjdF9wcm9qcykKYGBgCgoKCmBgYHtyfQp0aGVtZV9wdWJzIDwtIGRiX3B1Yl9kZiAlPiUgCiAgcmVuYW1lKHB1YmxpY2F0aW9uSWQgPSBpZCkgJT4lIAogIGxlZnRfam9pbihkYl9ncmFudF9wdWIpICU+JSAKICBzZWxlY3QocHVibGljYXRpb25JZCwgZ3JhbnRJZCkgJT4lIAogIGxlZnRfam9pbihncmFudF90aGVtZSkgJT4lCiAgZmlsdGVyKCFpcy5uYSh0aGVtZSkpICU+JSAKICBncm91cF9ieSh0aGVtZSwgZGVzY3JpcHRpb24pICU+JSAKICB0YWxseShuYW1lID0gInB1YmxpY2F0aW9ucyIpCgp0aGVtZV9wdWJzCmBgYAoKYGBge3J9CnRoZW1lX2RzZXRzIDwtIG1pbl9kYXRhc2V0X2RmICU+JSAKICBzZWxlY3QoaWQsIGdyYW50SWQpICU+JSAKICBsZWZ0X2pvaW4oZ3JhbnRfdGhlbWUpICU+JSAKICBmaWx0ZXIoIWlzLm5hKHRoZW1lKSkgJT4lIAogIGdyb3VwX2J5KHRoZW1lLCBkZXNjcmlwdGlvbikgJT4lCiAgdGFsbHkobmFtZSA9ICJkYXRhc2V0cyIpCgp0aGVtZV9kc2V0cwpgYGAKCmBgYHtyfQp0aGVtZV90b29scyA8LSBtaW5fdG9vbF9kZiAlPiUgCiAgc2VsZWN0KGlkICwgZ3JhbnRJZCkgJT4lIAogIGxlZnRfam9pbihncmFudF90aGVtZSkgJT4lIAogIGZpbHRlcighaXMubmEodGhlbWUpKSAlPiUgCiAgZ3JvdXBfYnkodGhlbWUsIGRlc2NyaXB0aW9uKSAlPiUKICB0YWxseShuYW1lID0gInRvb2xzIikKCnRoZW1lX3Rvb2xzCmBgYAoKYGBge3J9CnRoZW1lX2NvdW50cyA8LSBncmFudF90aGVtZSAlPiUgCiAgZ3JvdXBfYnkodGhlbWUsIGRlc2NyaXB0aW9uKSAlPiUgCiAgdGFsbHkobmFtZSA9ICJncmFudHMiKSAlPiUgCiAgbGVmdF9qb2luKHRoZW1lX3Byb2pzKSAlPiUgCiAgbGVmdF9qb2luKHRoZW1lX2RzZXRzKSAlPiUgCiAgbGVmdF9qb2luKHRoZW1lX3B1YnMpICU+JSAKICBsZWZ0X2pvaW4odGhlbWVfdG9vbHMpICU+JSAKICByZXBsYWNlX25hKGxpc3QodG9vbHMgPSAwKSkgJT4lIAogIGdhdGhlcihncm91cEJ5LCB0b3RhbENvdW50LCAtdGhlbWUsIC1kZXNjcmlwdGlvbikgJT4lIAogIGZpbHRlcih0aGVtZSAhPSAiQ29tcHV0YXRpb25hbCBSZXNvdXJjZSIpICU+JSAKICByZW5hbWUodGhlbWVEZXNjcmlwdGlvbiA9IGRlc2NyaXB0aW9uKQoKdGhlbWVfY291bnRzCmBgYAoKCmBgYHtyfQp0ZWFtX2NvdW50c19zeW50YWJsZSA8LSB1cGRhdGVfdGFibGUoInN5bjIxNjM5NTg0IiwgdGhlbWVfY291bnRzKQpgYGAKCmBgYHtyfQpjb25zb3J0aXVtX2NvdW50cyA8LSBtaW5fcHJvamVjdF9kZiAlPiUgCiAgc2VsZWN0KHByb2plY3RJZCA9IGlkLCBncmFudElkKSAlPiUgCiAgbGVmdF9qb2luKHNlbGVjdChtaW5fZ3JhbnRfZGYsIGdyYW50SWQgPSBpZCwgY29uc29ydGl1bUlkKSkgJT4lIAogIGdyb3VwX2J5KGNvbnNvcnRpdW1JZCkgJT4lIAogIHN1bW1hcml6ZV9hbGwofiBuX2Rpc3RpbmN0KC4sIG5hLnJtID0gVFJVRSkpICU+JSAKICBmaWx0ZXIoIWlzLm5hKGNvbnNvcnRpdW1JZCkpICU+JSAKICBsZWZ0X2pvaW4oc2VsZWN0KG1pbl9jb25zb3J0aXVtX2RmLCBjb25zb3J0aXVtSWQgPSBpZCwgZGlzcGxheU5hbWUpKSAlPiUgCiAgc2VsZWN0KGNvbnNvcnRpdW0gPSBkaXNwbGF5TmFtZSwgcHJvamVjdHMgPSBwcm9qZWN0SWQsIGdyYW50cyA9IGdyYW50SWQpICU+JSAKICBnYXRoZXIoZ3JvdXBCeSwgdG90YWxDb3VudCwgLWNvbnNvcnRpdW0pCiAgCmNvbnNvcnRpdW1fY291bnRzCmBgYAoKYGBge3J9CmNvbnNvcnRpdW1fY291bnRzX3N5bnRhYmxlIDwtIHN5bkJ1aWxkVGFibGUoIlBvcnRhbCAtIENvbnNvcnRpdW0gQ291bnRzIiwgInN5bjcwODA3MTQiLCBjb25zb3J0aXVtX2NvdW50cykKY29uc29ydGl1bV9jb3VudHNfc3ludGFibGUgPC0gc3luU3RvcmUoY29uc29ydGl1bV9jb3VudHNfc3ludGFibGUpCmBgYAoKCmBgYHtyfQptdWx0aXRoZW1lcyA8LSBmdWxsX3B1Yl9kZiAlPiUgCiAgZmlsdGVyKHN0cl9kZXRlY3QoVGhlbWUsICIsIikpICU+JSAKICBtdXRhdGUoaWQgPSByb3dfbnVtYmVyKCkpICU+JSAKICBzZWxlY3QoaWQsIHRoZW1lID0gVGhlbWUpICU+JSAKICBzZXBhcmF0ZV9yb3dzKHRoZW1lLCBzZXAgPSAiLCIpICU+JSAKICBuZXN0KHRoZW1lID0gInRoZW1lIikgJT4lIAogIG11dGF0ZSh0aGVtZSA9IG1hcCh0aGVtZSwgZnVuY3Rpb24obXVsdGlfZGYpIHsKICAgIG11bHRpX2RmICU+JSAKICAgICAgcGx1Y2soInRoZW1lIikgJT4lIAogICAgICBqc29ubGl0ZTo6dG9KU09OKCkKICB9KSkgJT4lIAogIHVubmVzdCh0aGVtZSkKCm11bHRpdGhlbWVzIApgYGAKCmBgYHtyfQptdWx0aXRoZW1lc19zeW50YWJsZSA8LSBzeW5CdWlsZFRhYmxlKCJtdWx0aXZhbHVlX3Rlc3QiLCAic3luMjE0OTg5MDIiLCBtdWx0aXRoZW1lcykKYGBgCgpgYGB7cn0KbXVsdGl0aGVtZXNfc3ludGFibGUkc2NoZW1hCmBgYAoKYGBge3J9Cm11bHRpdGhlbWVzX2NvbHMgPC0gbGlzdCgKICBDb2x1bW4obmFtZSA9ICdpZCcsIGNvbHVtblR5cGUgPSAnSU5URUdFUicsIG1heGltdW1TaXplID0gMjApLAogIENvbHVtbihuYW1lID0gJ3RoZW1lJywgY29sdW1uVHlwZSA9ICdTVFJJTkdfTElTVCcsIG1heGltdW1TaXplID0gMjApCikKCm11bHRpdGhlbWVzX2NvbHMKYGBgCgpgYGB7cn0KbXVsdGl0aGVtZXNfc2NoZW1hIDwtIFNjaGVtYShuYW1lID0gIm11bHRpdGhlbWVzIiwgY29sdW1ucyA9IG11bHRpdGhlbWVzX2NvbHMsIHBhcmVudCA9ICJzeW4yMTQ5ODkwMiIpCm11bHRpdGhlbWVzX3NjaGVtYQpgYGAKCmBgYHtyfQptdWx0aXRoZW1lc190YWJsZSA8LSBUYWJsZShtdWx0aXRoZW1lc19zY2hlbWEsIG11bHRpdGhlbWVzKQptdWx0aXRoZW1lc190YWJsZSA8LSBzeW5TdG9yZShtdWx0aXRoZW1lc190YWJsZSkKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9Cm1lcmdlZF9ncmFudHNfZGYgPC0gZGNjdmFsaWRhdG9yOjpnZXRfc3luYXBzZV90YWJsZSgic3luMjE5MTg5NzIiLCBzeW4pCm1lcmdlZF9wcm9qZWN0c19kZiA8LSBkY2N2YWxpZGF0b3I6OmdldF9zeW5hcHNlX3RhYmxlKCJzeW4yMTg2ODYwMiIsIHN5bikKbWVyZ2VkX2RhdGFzZXRzX2RmIDwtIGRjY3ZhbGlkYXRvcjo6Z2V0X3N5bmFwc2VfdGFibGUoInN5bjIxODk3OTY4Iiwgc3luKQptZXJnZWRfcHVibGljYXRpb25zX2RmIDwtIGRjY3ZhbGlkYXRvcjo6Z2V0X3N5bmFwc2VfdGFibGUoInN5bjIxODY4NTkxIiwgc3luKQptZXJnZWRfdG9vbHNfZGYgPC0gZGNjdmFsaWRhdG9yOjpnZXRfc3luYXBzZV90YWJsZSgic3luMjE5MzA1NjYiLCBzeW4pCmRiX3RoZW1lX2RmIDwtIGRjY3ZhbGlkYXRvcjo6Z2V0X3N5bmFwc2VfdGFibGUoInN5bjIxNjMwMDg3Iiwgc3luKQoKcHJvcGVydHlfY29scyA8LSBjKCJjcmVhdGVkT24iLCAiY3JlYXRlZEJ5IiwKICAgICAgICAgICAgICAgICAgICJtb2RpZmllZE9uIiwgIm1vZGlmaWVkQnkiLAogICAgICAgICAgICAgICAgICAgImN1cnJlbnRWZXJzaW9uIikKYGBgCgoKYGBge3J9Cmpzb25fdG9fbGlzdCA8LSBmdW5jdGlvbihqc29uX3N0cikgewogIGlmICghaXMubmEoanNvbl9zdHIpKSB7CiAgICBqc29ubGl0ZTo6ZnJvbUpTT04oanNvbl9zdHIpCiAgfSBlbHNlIHsKICAgIHZlY3Rvcihtb2RlID0gImNoYXJhY3RlciIpCiAgfQp9CmBgYAoKYGBge3J9Cgpjb25zb3J0aXVtX2dyYW50cyA8LSBtZXJnZWRfZ3JhbnRzX2RmICU+JSAKICBzZWxlY3QoZ3JhbnRJZCwgY29uc29ydGl1bSkgJT4lIAogIGdyb3VwX2J5KGNvbnNvcnRpdW0pICU+JSAKICB0YWxseShuYW1lID0gImdyYW50cyIpCgpjb25zb3J0aXVtX2dyYW50cwpgYGAKCmBgYHtyfQp0aGVtZV9ncmFudHMgPC0gbWVyZ2VkX2dyYW50c19kZiAlPiUgCiBzZWxlY3QoZ3JhbnRJZCwgdGhlbWUpICU+JSAKICBmaWx0ZXIodGhlbWUgIT0gIltdIikgJT4lIAogIG11dGF0ZSh0aGVtZSA9IG1hcCh0aGVtZSwganNvbl90b19saXN0KSkgJT4lIAogIHVubmVzdCgidGhlbWUiKSAlPiUgCiAgbGVmdF9qb2luKHNlbGVjdChkYl90aGVtZV9kZiwgdGhlbWUgPSBkaXNwbGF5TmFtZSwgCiAgICAgICAgICAgICAgICAgICB0aGVtZURlc2NyaXB0aW9uID0gZGVzY3JpcHRpb24pKSAlPiUgCiAgZmlsdGVyKCFpcy5uYSh0aGVtZURlc2NyaXB0aW9uKSkgJT4lICAKICBncm91cF9ieSh0aGVtZSwgdGhlbWVEZXNjcmlwdGlvbikgJT4lIAogIHRhbGx5KG5hbWUgPSAiZ3JhbnRzIikgJT4lIAogIHVuZ3JvdXAoKQoKdGhlbWVfZ3JhbnRzCmBgYAoKYGBge3J9CmNvbnNvcnRpdW1fcHJvanMgPC0gbWVyZ2VkX3Byb2plY3RzX2RmICU+JSAKICBzZWxlY3QocHJvamVjdElkLCBjb25zb3J0aXVtKSAlPiUgCiAgZ3JvdXBfYnkoY29uc29ydGl1bSkgJT4lIAogIHRhbGx5KG5hbWUgPSAicHJvamVjdHMiKQoKY29uc29ydGl1bV9wcm9qcwpgYGAKCgpgYGB7cn0KY29uc29ydGl1bXRoZW1lX3Byb2pzIDwtIG1lcmdlZF9wcm9qZWN0c19kZiAlPiUgCiBzZWxlY3QocHJvamVjdElkLCBjb25zb3J0aXVtLCB0aGVtZSkgJT4lIAogIGZpbHRlcih0aGVtZSAhPSAiW10iKSAlPiUgCiAgbXV0YXRlKHRoZW1lID0gbWFwKHRoZW1lLCBqc29uX3RvX2xpc3QpKSAlPiUgCiAgdW5uZXN0KCJ0aGVtZSIpICU+JSAKICBsZWZ0X2pvaW4oc2VsZWN0KGRiX3RoZW1lX2RmLCB0aGVtZSA9IGRpc3BsYXlOYW1lLCAKICAgICAgICAgICAgICAgICAgIHRoZW1lRGVzY3JpcHRpb24gPSBkZXNjcmlwdGlvbikpICU+JSAKICBmaWx0ZXIoIWlzLm5hKHRoZW1lRGVzY3JpcHRpb24pKSAlPiUgIAogIG11dGF0ZShncm91cEJ5ID0gInByb2plY3RzIikgJT4lIAogIGdyb3VwX2J5KHRoZW1lLCB0aGVtZURlc2NyaXB0aW9uLCBjb25zb3J0aXVtLCBncm91cEJ5KSAlPiUgCiAgdGFsbHkobmFtZSA9ICJ0b3RhbENvdW50IikgJT4lIAogIHVuZ3JvdXAoKQoKY29uc29ydGl1bXRoZW1lX3Byb2pzCmBgYAoKCgpgYGB7cn0KY3RfY291bnRzX3N5bnRhYmxlIDwtIHVwZGF0ZV9zeW5hcHNlX3RhYmxlKCJzeW4yMTY0OTI4MSIsIGNvbnNvcnRpdW10aGVtZV9wcm9qcywgc3luLCBzeW50YWIpCmBgYAoKCgpgYGB7cn0KdGhlbWVfcHVicyA8LSBtZXJnZWRfcHVibGljYXRpb25zX2RmICU+JSAKIHNlbGVjdChwdWJsaWNhdGlvbklkLCB0aGVtZSkgJT4lIAogIGZpbHRlcih0aGVtZSAhPSAiW10iKSAlPiUgCiAgbXV0YXRlKHRoZW1lID0gbWFwKHRoZW1lLCBqc29uX3RvX2xpc3QpKSAlPiUgCiAgdW5uZXN0KCJ0aGVtZSIpICU+JSAKICBsZWZ0X2pvaW4oc2VsZWN0KGRiX3RoZW1lX2RmLCB0aGVtZSA9IGRpc3BsYXlOYW1lLCAKICAgICAgICAgICAgICAgICAgIHRoZW1lRGVzY3JpcHRpb24gPSBkZXNjcmlwdGlvbikpICU+JSAKICBmaWx0ZXIoIWlzLm5hKHRoZW1lRGVzY3JpcHRpb24pKSAlPiUgIAogIGdyb3VwX2J5KHRoZW1lLCB0aGVtZURlc2NyaXB0aW9uKSAlPiUgCiAgdGFsbHkobmFtZSA9ICJwdWJsaWNhdGlvbnMiKSAlPiUgCiAgdW5ncm91cCgpCgp0aGVtZV9wdWJzCmBgYAoKYGBge3J9CnRoZW1lX2RzZXRzIDwtIG1lcmdlZF9kYXRhc2V0c19kZiAlPiUgCiBzZWxlY3QocHVibGljYXRpb25JZCwgdGhlbWUpICU+JSAKICBmaWx0ZXIodGhlbWUgIT0gIltdIikgJT4lIAogIG11dGF0ZSh0aGVtZSA9IG1hcCh0aGVtZSwganNvbl90b19saXN0KSkgJT4lIAogIHVubmVzdCgidGhlbWUiKSAlPiUgCiAgbGVmdF9qb2luKHNlbGVjdChkYl90aGVtZV9kZiwgdGhlbWUgPSBkaXNwbGF5TmFtZSwgCiAgICAgICAgICAgICAgICAgICB0aGVtZURlc2NyaXB0aW9uID0gZGVzY3JpcHRpb24pKSAlPiUgCiAgZmlsdGVyKCFpcy5uYSh0aGVtZURlc2NyaXB0aW9uKSkgJT4lICAKICBncm91cF9ieSh0aGVtZSwgdGhlbWVEZXNjcmlwdGlvbikgJT4lIAogIHRhbGx5KG5hbWUgPSAiZGF0YXNldHMiKSAlPiUgCiAgdW5ncm91cCgpCgp0aGVtZV9kc2V0cwpgYGAKCmBgYHtyfQp0aGVtZV90b29scyA8LSBtZXJnZWRfdG9vbHNfZGYgJT4lIAogc2VsZWN0KHB1YmxpY2F0aW9uSWQsIHRoZW1lKSAlPiUgCiAgZmlsdGVyKHRoZW1lICE9ICJbXSIpICU+JSAKICBtdXRhdGUodGhlbWUgPSBtYXAodGhlbWUsIGpzb25fdG9fbGlzdCkpICU+JSAKICB1bm5lc3QoInRoZW1lIikgJT4lIAogIGxlZnRfam9pbihzZWxlY3QoZGJfdGhlbWVfZGYsIHRoZW1lID0gZGlzcGxheU5hbWUsIAogICAgICAgICAgICAgICAgICAgdGhlbWVEZXNjcmlwdGlvbiA9IGRlc2NyaXB0aW9uKSkgJT4lIAogIGZpbHRlcighaXMubmEodGhlbWVEZXNjcmlwdGlvbikpICU+JSAgCiAgZ3JvdXBfYnkodGhlbWUsIHRoZW1lRGVzY3JpcHRpb24pICU+JSAKICB0YWxseShuYW1lID0gInRvb2xzIikgJT4lIAogIHVuZ3JvdXAoKQoKdGhlbWVfdG9vbHMKYGBgCgpgYGB7cn0KdGhlbWVfY291bnRzIDwtIHRoZW1lX3Byb2pzICU+JSAKICBsZWZ0X2pvaW4odGhlbWVfZHNldHMpICU+JSAKICBsZWZ0X2pvaW4odGhlbWVfcHVicykgJT4lIAogIGxlZnRfam9pbih0aGVtZV90b29scykgJT4lIAogIHJlcGxhY2VfbmEobGlzdCh0b29scyA9IDApKSAlPiUgCiAgZ2F0aGVyKGdyb3VwQnksIHRvdGFsQ291bnQsIC10aGVtZSwgLXRoZW1lRGVzY3JpcHRpb24pICU+JSAKICBmaWx0ZXIodGhlbWUgIT0gIkNvbXB1dGF0aW9uYWwgUmVzb3VyY2UiKQoKdGhlbWVfY291bnRzCmBgYAoKCmBgYHtyfQp0aGVtZV9jb3VudHNfc3ludGFibGUgPC0gdXBkYXRlX3N5bmFwc2VfdGFibGUoInN5bjIxNjM5NTg0IiwgdGhlbWVfY291bnRzLCBzeW4sIHN5bnRhYikKYGBgCgpgYGB7cn0KY29uc29ydGl1bV9jb3VudHMgPC0gY29uc29ydGl1bV9ncmFudHMgJT4lIAogIGxlZnRfam9pbihjb25zb3J0aXVtX3Byb2pzKSAlPiUgCiAgICBnYXRoZXIoZ3JvdXBCeSwgdG90YWxDb3VudCwgLWNvbnNvcnRpdW0pCgpjb25zb3J0aXVtX2NvdW50cwpgYGAKCmBgYHtyfQpjb25zb3J0aXVtX2NvdW50c19zeW50YWJsZSA8LSB1cGRhdGVfc3luYXBzZV90YWJsZSgic3luMjE2NDE0ODUiLCBjb25zb3J0aXVtX2NvdW50cywgc3luLCBzeW50YWIpCmBgYAoKCg==</div>
 
 
 

@@ -3,180 +3,166 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-
 ```{r}
-# theme_grants <- min_grant_df %>% 
-#   select(id) %>% 
-grant_theme <- db_theme_grant %>% 
-  left_join(select(db_grant_df, grantId = id, consortiumId)) %>% 
-  left_join(select(db_consortium_df, consortiumId = id, consortium = displayName)) %>% 
-  left_join(select(db_theme_df, themeId = id, theme = displayName) %>% 
-              mutate(description = glue::glue("Description for '{theme}'"))) %>% 
-  select(-consortiumId, -themeId) %>% 
-  filter(!is.na(theme))
+merged_grants_df <- dccvalidator::get_synapse_table("syn21918972", syn)
+merged_projects_df <- dccvalidator::get_synapse_table("syn21868602", syn)
+merged_datasets_df <- dccvalidator::get_synapse_table("syn21897968", syn)
+merged_publications_df <- dccvalidator::get_synapse_table("syn21868591", syn)
+merged_tools_df <- dccvalidator::get_synapse_table("syn21930566", syn)
+db_theme_df <- dccvalidator::get_synapse_table("syn21630087", syn)
 
-grant_theme
+property_cols <- c("createdOn", "createdBy",
+                   "modifiedOn", "modifiedBy",
+                   "currentVersion")
 ```
 
 
 ```{r}
-theme_projs <- min_project_df %>% 
-  select(id, grantId) %>% 
-  left_join(grant_theme) %>% 
-  filter(!is.na(theme)) %>% 
-  group_by(theme, description) %>% 
-  tally(name = "projects")
-
-theme_projs
-```
-
-
-```{r}
-ct_projs <- min_project_df %>% 
-  select(id, grantId) %>% 
-  left_join(grant_theme) %>% 
-  filter(!is.na(theme)) %>% 
-  mutate(groupBy = "projects") %>% 
-  group_by(theme, description, consortium, groupBy) %>% 
-  tally(name = "totalCount") %>% 
-  rename(themeDescription = description)
-  
-
-ct_projs
-```
-
-```{r}
-update_table <- function(table_id, update_df) {
-  current_rows <- synTableQuery(glue::glue("SELECT * FROM {table_id}"))
-  synDelete(current_rows)
-  update_rows <- Table(table_id, update_df)
-  synStore(update_rows)
+json_to_list <- function(json_str) {
+  if (!is.na(json_str)) {
+    jsonlite::fromJSON(json_str)
+  } else {
+    vector(mode = "character")
+  }
 }
 ```
 
 ```{r}
-ct_counts_syntable <- update_table("syn21649281", ct_projs)
+
+consortium_grants <- merged_grants_df %>% 
+  select(grantId, consortium) %>% 
+  group_by(consortium) %>% 
+  tally(name = "grants")
+
+consortium_grants
+```
+
+```{r}
+theme_grants <- merged_grants_df %>% 
+ select(grantId, theme) %>% 
+  filter(theme != "[]") %>% 
+  mutate(theme = map(theme, json_to_list)) %>% 
+  unnest("theme") %>% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %>% 
+  filter(!is.na(themeDescription)) %>%  
+  group_by(theme, themeDescription) %>% 
+  tally(name = "grants") %>% 
+  ungroup()
+
+theme_grants
+```
+
+```{r}
+consortium_projs <- merged_projects_df %>% 
+  select(projectId, consortium) %>% 
+  group_by(consortium) %>% 
+  tally(name = "projects")
+
+consortium_projs
+```
+
+
+```{r}
+consortiumtheme_projs <- merged_projects_df %>% 
+ select(projectId, consortium, theme) %>% 
+  filter(theme != "[]") %>% 
+  mutate(theme = map(theme, json_to_list)) %>% 
+  unnest("theme") %>% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %>% 
+  filter(!is.na(themeDescription)) %>%  
+  mutate(groupBy = "projects") %>% 
+  group_by(theme, themeDescription, consortium, groupBy) %>% 
+  tally(name = "totalCount") %>% 
+  ungroup()
+
+consortiumtheme_projs
 ```
 
 
 
 ```{r}
-theme_pubs <- db_pub_df %>% 
-  rename(publicationId = id) %>% 
-  left_join(db_grant_pub) %>% 
-  select(publicationId, grantId) %>% 
-  left_join(grant_theme) %>%
-  filter(!is.na(theme)) %>% 
-  group_by(theme, description) %>% 
-  tally(name = "publications")
+ct_counts_syntable <- update_synapse_table("syn21649281", consortiumtheme_projs, syn, syntab)
+```
+
+
+
+```{r}
+theme_pubs <- merged_publications_df %>% 
+ select(publicationId, theme) %>% 
+  filter(theme != "[]") %>% 
+  mutate(theme = map(theme, json_to_list)) %>% 
+  unnest("theme") %>% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %>% 
+  filter(!is.na(themeDescription)) %>%  
+  group_by(theme, themeDescription) %>% 
+  tally(name = "publications") %>% 
+  ungroup()
 
 theme_pubs
 ```
 
 ```{r}
-theme_dsets <- min_dataset_df %>% 
-  select(id, grantId) %>% 
-  left_join(grant_theme) %>% 
-  filter(!is.na(theme)) %>% 
-  group_by(theme, description) %>%
-  tally(name = "datasets")
+theme_dsets <- merged_datasets_df %>% 
+ select(publicationId, theme) %>% 
+  filter(theme != "[]") %>% 
+  mutate(theme = map(theme, json_to_list)) %>% 
+  unnest("theme") %>% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %>% 
+  filter(!is.na(themeDescription)) %>%  
+  group_by(theme, themeDescription) %>% 
+  tally(name = "datasets") %>% 
+  ungroup()
 
 theme_dsets
 ```
 
 ```{r}
-theme_tools <- min_tool_df %>% 
-  select(id , grantId) %>% 
-  left_join(grant_theme) %>% 
-  filter(!is.na(theme)) %>% 
-  group_by(theme, description) %>%
-  tally(name = "tools")
+theme_tools <- merged_tools_df %>% 
+ select(publicationId, theme) %>% 
+  filter(theme != "[]") %>% 
+  mutate(theme = map(theme, json_to_list)) %>% 
+  unnest("theme") %>% 
+  left_join(select(db_theme_df, theme = displayName, 
+                   themeDescription = description)) %>% 
+  filter(!is.na(themeDescription)) %>%  
+  group_by(theme, themeDescription) %>% 
+  tally(name = "tools") %>% 
+  ungroup()
 
 theme_tools
 ```
 
 ```{r}
-theme_counts <- grant_theme %>% 
-  group_by(theme, description) %>% 
-  tally(name = "grants") %>% 
-  left_join(theme_projs) %>% 
+theme_counts <- theme_projs %>% 
   left_join(theme_dsets) %>% 
   left_join(theme_pubs) %>% 
   left_join(theme_tools) %>% 
   replace_na(list(tools = 0)) %>% 
-  gather(groupBy, totalCount, -theme, -description) %>% 
-  filter(theme != "Computational Resource") %>% 
-  rename(themeDescription = description)
+  gather(groupBy, totalCount, -theme, -themeDescription) %>% 
+  filter(theme != "Computational Resource")
 
 theme_counts
 ```
 
 
 ```{r}
-team_counts_syntable <- update_table("syn21639584", theme_counts)
+theme_counts_syntable <- update_synapse_table("syn21639584", theme_counts, syn, syntab)
 ```
 
 ```{r}
-consortium_counts <- min_project_df %>% 
-  select(projectId = id, grantId) %>% 
-  left_join(select(min_grant_df, grantId = id, consortiumId)) %>% 
-  group_by(consortiumId) %>% 
-  summarize_all(~ n_distinct(., na.rm = TRUE)) %>% 
-  filter(!is.na(consortiumId)) %>% 
-  left_join(select(min_consortium_df, consortiumId = id, displayName)) %>% 
-  select(consortium = displayName, projects = projectId, grants = grantId) %>% 
-  gather(groupBy, totalCount, -consortium)
-  
+consortium_counts <- consortium_grants %>% 
+  left_join(consortium_projs) %>% 
+    gather(groupBy, totalCount, -consortium)
+
 consortium_counts
 ```
 
 ```{r}
-consortium_counts_syntable <- synBuildTable("Portal - Consortium Counts", "syn7080714", consortium_counts)
-consortium_counts_syntable <- synStore(consortium_counts_syntable)
+consortium_counts_syntable <- update_synapse_table("syn21641485", consortium_counts, syn, syntab)
 ```
 
-
-```{r}
-multithemes <- full_pub_df %>% 
-  filter(str_detect(Theme, ",")) %>% 
-  mutate(id = row_number()) %>% 
-  select(id, theme = Theme) %>% 
-  separate_rows(theme, sep = ",") %>% 
-  nest(theme = "theme") %>% 
-  mutate(theme = map(theme, function(multi_df) {
-    multi_df %>% 
-      pluck("theme") %>% 
-      jsonlite::toJSON()
-  })) %>% 
-  unnest(theme)
-
-multithemes 
-```
-
-```{r}
-multithemes_syntable <- synBuildTable("multivalue_test", "syn21498902", multithemes)
-```
-
-```{r}
-multithemes_syntable$schema
-```
-
-```{r}
-multithemes_cols <- list(
-  Column(name = 'id', columnType = 'INTEGER', maximumSize = 20),
-  Column(name = 'theme', columnType = 'STRING_LIST', maximumSize = 20)
-)
-
-multithemes_cols
-```
-
-```{r}
-multithemes_schema <- Schema(name = "multithemes", columns = multithemes_cols, parent = "syn21498902")
-multithemes_schema
-```
-
-```{r}
-multithemes_table <- Table(multithemes_schema, multithemes)
-multithemes_table <- synStore(multithemes_table)
-```
 
