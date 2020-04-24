@@ -22,7 +22,6 @@ create_entities <- function(entity_df, parent_id) {
   map(entity_names, with_progress(~ .create_dummy_entity(., parent_id)))
 }
 
-
 update_view <- function(view_id, update_df) {
   view_df <- as.data.frame(synTableQuery(glue::glue("select * from {view_id}")))
   
@@ -38,6 +37,15 @@ update_view <- function(view_id, update_df) {
 
   synview <- synTable(view_id, view_df)
   synStore(synview)
+}
+
+update_synapse_table <- function(table_id, update_df, syn, syntab) {
+  current_rows <- syn$tableQuery(glue::glue("SELECT * FROM {table_id}"))
+  syn$delete(current_rows)
+  tmpfile <- fs::file_temp("rows.csv")
+  write_csv(update_df, tmpfile)
+  update_rows <- syntab$Table(table_id, tmpfile)
+  syn$store(update_rows)
 }
 
 update_table <- function(table_id, update_df) {
