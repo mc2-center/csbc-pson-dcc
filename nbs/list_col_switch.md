@@ -14,7 +14,8 @@ Convert a single column in a Synapse Table with comma-separated lists of values 
 
 ### Environment
 
-```{r}
+
+```r
 library(reticulate)
 library(dccvalidator)
 library(tidyverse)
@@ -25,7 +26,8 @@ use_condaenv("csbc-pson-dcc", required = TRUE)
 
 ### Synapse things
 
-```{r}
+
+```r
 synapseclient <- reticulate::import("synapseclient")
 syntab <- reticulate::import("synapseclient.table")
 syn <- synapseclient$Synapse()
@@ -36,7 +38,8 @@ syn$login()
 
 ### Helpers
 
-```{r, warning=FALSE}
+
+```r
 #' Refresh the rows of a table in Synapse
 #'
 #' Note: this will overwrite all existing rows, not attempt to merge or
@@ -112,7 +115,8 @@ update_synapse_table <- function(table_id, update_df, syn, syntab) {
 
 #### `add_list_column`
 
-```{r}
+
+```r
 add_list_column <- function(table_id, column_name, delimiter = ",", 
                             syn, syntab) {
   df <- dccvalidator::get_synapse_table(table_id, syn)
@@ -168,7 +172,8 @@ add_list_column <- function(table_id, column_name, delimiter = ",",
 
 #### `remove_list_column`
 
-```{r}
+
+```r
 remove_list_column <- function(table_id, column_name, delimiter = ",", 
                                syn, syntab) {
   df <- dccvalidator::get_synapse_table(table_id, syn)
@@ -220,39 +225,122 @@ remove_list_column <- function(table_id, column_name, delimiter = ",",
 
 ### Adding a list column
 
-```{r}
+
+```r
 table_id <- "syn21980893"
-dccvalidator::get_synapse_table(table_id, syn)
+dccvalidator::get_synapse_table(table_id, syn) %>% 
+  knitr::kable()
 ```
 
 
 
-```{r, warning=FALSE}
+|string_col |list_col_2       |list_col_1                |
+|:----------|:----------------|:-------------------------|
+|row1       |row12_1, row12_2 |row11_1, row11_2, row11_3 |
+
+
+
+
+```r
 table <- add_list_column(
   "syn21980893", column_name = "list_col_1", ",", syn, syntab
 )
 ```
 
-```{r}
-dccvalidator::get_synapse_table(table_id, syn)
+
+```r
+dccvalidator::get_synapse_table(table_id, syn) %>% 
+  knitr::kable()
 ```
+
+
+
+|string_col |list_col_2       |list_col_1                        |list_col_1_asCsv          |
+|:----------|:----------------|:---------------------------------|:-------------------------|
+|row1       |row12_1, row12_2 |["row11_1", "row11_2", "row11_3"] |row11_1, row11_2, row11_3 |
 
 ### Removing a list column
 
-```{r}
+
+```r
 table <- remove_list_column(
   "syn21980893", column_name = "list_col_1", ",", syn, syntab
 )
 ```
 
-
-```{r}
-dccvalidator::get_synapse_table(table_id, syn) 
 ```
+## Error in py_call_impl(callable, dots$args, dots$keywords): SynapseHTTPError: 412 Client Error: 
+## Object: syn21980893 was updated since you last fetched it, retrieve it again and re-apply the update
+```
+
+
+
+```r
+dccvalidator::get_synapse_table(table_id, syn) %>% 
+  knitr::kable()
+```
+
+
+
+|string_col |list_col_2       |
+|:----------|:----------------|
+|row1       |row12_1, row12_2 |
 
 ## Fin.
 
-```{r}
+
+```r
 sessionInfo()
+```
+
+```
+## R version 3.5.3 (2019-03-11)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS Mojave 10.14.6
+## 
+## Matrix products: default
+## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] gistr_0.5.0        forcats_0.4.0      stringr_1.4.0     
+##  [4] dplyr_0.8.3        purrr_0.3.4        readr_1.3.1       
+##  [7] tidyr_1.0.0        tibble_2.1.3       ggplot2_3.2.0     
+## [10] tidyverse_1.2.1    dccvalidator_0.2.0 shinyBS_0.61      
+## [13] reticulate_1.14   
+## 
+## loaded via a namespace (and not attached):
+##  [1] httr_1.4.0           pkgload_1.0.2        jsonlite_1.6        
+##  [4] modelr_0.1.4         shiny_1.3.2          assertthat_0.2.1    
+##  [7] askpass_1.1          highr_0.8            cellranger_1.1.0    
+## [10] yaml_2.2.0           remotes_2.0.4        pillar_1.4.2        
+## [13] backports_1.1.4      lattice_0.20-38      glue_1.3.1          
+## [16] digest_0.6.20        promises_1.0.1       rvest_0.3.4         
+## [19] colorspace_1.4-1     htmltools_0.3.6      httpuv_1.5.1        
+## [22] pkgconfig_2.0.2      broom_0.5.2          haven_2.1.0         
+## [25] config_0.3           xtable_1.8-4         scales_1.0.0        
+## [28] later_0.8.0          openssl_1.4          generics_0.0.2      
+## [31] usethis_1.5.0        ellipsis_0.2.0.1     withr_2.1.2         
+## [34] lazyeval_0.2.2       cli_1.1.0            magrittr_1.5        
+## [37] crayon_1.3.4         readxl_1.3.1         mime_0.7            
+## [40] evaluate_0.14        golem_0.2.1          fs_1.3.1            
+## [43] dockerfiler_0.1.3    fansi_0.4.0          nlme_3.1-139        
+## [46] xml2_1.2.0           shinydashboard_0.7.1 rsconnect_0.8.15    
+## [49] tools_3.5.3          hms_0.5.0            lifecycle_0.1.0     
+## [52] munsell_0.5.0        packrat_0.5.0        compiler_3.5.3      
+## [55] rlang_0.4.0          grid_3.5.3           attempt_0.3.0       
+## [58] rstudioapi_0.10      base64enc_0.1-3      rmarkdown_1.12      
+## [61] testthat_2.1.1       gtable_0.3.0         curl_3.3            
+## [64] roxygen2_7.1.0       R6_2.4.1             lubridate_1.7.4     
+## [67] knitr_1.23           zeallot_0.1.0        utf8_1.1.4          
+## [70] rprojroot_1.3-2      desc_1.2.0           stringi_1.4.3       
+## [73] Rcpp_1.0.1           vctrs_0.2.0          tidyselect_0.2.5    
+## [76] xfun_0.8
 ```
 
