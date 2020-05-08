@@ -1,0 +1,264 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(reticulate)
+library(dccvalidator)
+library(tidyverse)
+
+# source("../R/synapse_db.R")
+
+use_condaenv("csbc-pson-dcc", required = TRUE)
+synapseclient <- reticulate::import("synapseclient")
+syn <- synapseclient$Synapse()
+syntab <- reticulate::import("synapseclient.table")
+syn$login()
+```
+
+```{r}
+merged_publication_df <- dccvalidator::get_synapse_table("syn21868591", syn)
+```
+
+```{r}
+pub_dset <- merged_publication_df %>% 
+  mutate(pubMedId = str_extract(pubMedUrl, "[0-9].*")) %>%
+  select(publicationId, pubMedId, dataset)
+pub_dset
+```
+
+
+```{r}
+# TODO: update so we only fetch BioProject for pubs that haven't already
+# been matched in Synapse
+get_pub_bp_data <- function(pubmed_id) {
+  bp_template <- "{pubmed_id}[PMID] NOT superseries[Relevance]"
+  query <- glue::glue(bp_template)
+  res <- rentrez::entrez_search("bioproject", query)
+  if (res$count) {
+    res_esum <- rentrez::entrez_summary("bioproject", res$ids)
+    if (res$count == 1) {
+      esum_names <- names(res_esum)
+      esum_list <- res_esum %>% 
+        rentrez::extract_from_esummary(
+          esum_names,
+          simplify = TRUE
+        )
+      purrr::discard(esum_list, purrr::is_list) %>% 
+        tibble::as_tibble() %>% 
+        dplyr::mutate_at(dplyr::vars(dplyr::contains("id")), 
+                         ~ ifelse(. == "", NA, .))
+    } else {
+      esum_names <- names(res_esum[[1]])
+      esum_list <- res_esum %>% 
+        rentrez::extract_from_esummary(
+          esum_names,
+          simplify = TRUE
+        )
+      # print(esum_list)
+      purrr::map(1:dim(esum_list)[2], 
+                 ~ purrr::discard(esum_list[ ,.], purrr::is_list)) %>% 
+        purrr::map_dfr(~ tibble::as_tibble(.) %>% 
+                         dplyr::mutate_at(dplyr::vars(dplyr::contains("id")), 
+                                   ~ ifelse(. == "", NA, .)))
+    }
+  }
+}
+
+# pub_bp_df <- pub_dset$pubMedId %>% 
+#   purrr::set_names(.) %>% 
+#   purrr::map_df(purrrogress::with_progress(get_pub_bp_data), .id = "pubmed_id")
+```
+
+```{r}
+# TODO: update so we only fetch BioProject for pubs that haven't already
+# been matched in Synapse
+
+# pub_bp_df %>% 
+#   left_join(select(pub_dset, publicationId, pubmed_id = pubMedId)) %>% 
+#   update_synapse_table("syn22004001", ., syn, syntab)
+```
+
+```{r}
+pub_bp_df <- dccvalidator::get_synapse_table("syn22004001", syn)
+```
+
+```{r}
+get_bp_data <- function(bpid, data_db) {
+  bp_links <- rentrez::entrez_link(
+    dbfrom = "bioproject", 
+    id = bpid, 
+    db = data_db
+  )
+  bp_links$links
+}
+```
+
+```{r}
+.unpack_study <- function(epkgs) {
+  epkgs %>% 
+    map_at("EXPERIMENT_PACKAGE", function(epkg) {
+      attrs <- epkg$STUDY %>% 
+        attributes() %>% 
+        map_at("names", ~ NULL) %>% 
+        compact() %>% 
+        as_tibble()
+      
+      desc <- epkg$STUDY$DESCRIPTOR %>% 
+        map(1) %>% 
+        map(~ ifelse(is_null(.), "", .)) %>% 
+        as_tibble()
+      
+      links <- epkg$STUDY$STUDY_LINKS$STUDY_LINK %>% 
+        map(~ str_c(.$DB, .$ID, sep = ": ")) %>%
+        as_tibble()
+      
+      annots <- epkg$STUDY$STUDY_ATTRIBUTES %>% 
+        map(~ str_c(.$TAG, .$VALUE, sep = ": ")) %>%
+        as_tibble()
+      
+      bind_cols(attrs, desc, links, annots)
+    }) %>% 
+    flatten_dfr() %>% 
+    rename_all(~ str_to_lower(.)) %>% 
+    rename_all(~ str_c("study", ., sep = "_")) %>% 
+    rename_all(~ str_replace(., "study_study", "study"))
+}
+
+.unpack_sample <- function(epkgs) {
+  epkgs %>% 
+    map_at("EXPERIMENT_PACKAGE", function(epkg) {
+      attrs <- epkg$SAMPLE %>%
+        attributes() %>%
+        map_at("names", ~ NULL) %>%
+        compact() %>%
+        as_tibble()
+      
+      title <- epkg$SAMPLE$TITLE %>%
+        map(1) %>%
+        map(~ ifelse(is_null(.), "", .)) %>%
+        set_names("title") %>%
+        as_tibble()
+      
+      name <- epkg$SAMPLE$SAMPLE_NAME %>% 
+        map(1) %>% 
+        map(~ ifelse(is_null(.), "", .)) %>% 
+        as_tibble()
+      
+      links <- epkg$SAMPLE$SAMPLE_LINKS$SAMPLE_LINK %>% 
+        map(~ str_c(.$DB, .$ID, sep = ": ")) %>%
+        as_tibble()
+      
+      annots <- epkg$SAMPLE$SAMPLE_ATTRIBUTES %>%
+        map(~ str_c(.$TAG, .$VALUE, sep = ": ")) %>%
+        str_c(collapse = "; ") %>% 
+        as_tibble() %>%
+        rename(sample_attribute = value)
+      
+      bind_cols(attrs, title, name, links, annots)
+    }) %>% 
+    bind_rows() %>% 
+    rename_all(~ str_to_lower(.)) %>% 
+    rename_all(~ str_c("sample", ., sep = "_")) %>% 
+    rename_all(~ str_replace(., "sample_sample", "sample"))
+}
+
+.unpack_experiment <- function(epkgs) {
+  epkgs %>% 
+    map_at("EXPERIMENT_PACKAGE", function(epkg) {
+      attrs <- epkg$EXPERIMENT %>%
+        attributes() %>%
+        map_at("names", ~ NULL) %>%
+        compact() %>%
+        as_tibble()
+      
+      title <- epkg$EXPERIMENT$TITLE %>%
+        map(1) %>%
+        map(~ ifelse(is_null(.), "", .)) %>%
+        set_names("title") %>%
+        as_tibble()
+      
+      design <- epkg$EXPERIMENT$DESIGN$LIBRARY_DESCRIPTOR %>% 
+        map(1) %>% 
+        compact() %>% 
+        as_tibble()
+      
+      platform <- epkg$EXPERIMENT$PLATFORM %>% 
+        map("INSTRUMENT_MODEL") %>% 
+        map(1) %>% 
+        as_tibble() %>% 
+        rename_all(~ "instrument_model")
+      
+      links <- epkg$EXPERIMENT$EXPERIMENT_LINKS$EXPERIMENT_LINK %>%
+        map(~ str_c(.$DB, .$ID, sep = ": ")) %>%
+        as_tibble()
+      
+      annots <- epkg$EXPERIMENT$EXPERIMENT_ATTRIBUTES %>%
+        map(~ str_c(.$TAG, .$VALUE, sep = ": ")) %>%
+        str_c(collapse = "; ") %>%
+        as_tibble() %>%
+        rename(experiment_attribute = value)
+      annots
+      bind_cols(attrs, title, design, platform, links, annots)
+    }) %>% 
+    bind_rows() %>%
+    rename_all(~ str_to_lower(.)) %>%
+    rename_all(~ str_c("experiment", ., sep = "_")) %>% 
+    rename_all(~ str_replace(., "experiment_experiment", "experiment"))
+}
+
+.unpack_run <- function(epkgs) {
+  epkgs %>% 
+    map_at("EXPERIMENT_PACKAGE", function(epkg) {
+      attrs <- epkg$RUN_SET$RUN %>%
+        attributes() %>%
+        map_at("names", ~ NULL) %>%
+        compact() %>%
+        as_tibble()
+      attrs
+    }) %>% 
+    bind_rows() %>% 
+    rename_all(~ str_to_lower(.)) %>% 
+    rename_all(~ str_c("run", ., sep = "_"))
+}
+
+sra_data_to_df <- function(sra_data) {
+  sra_list <- xml2::as_list(xml2::as_xml_document(sra_data)) 
+  epkgs <- sra_list$EXPERIMENT_PACKAGE_SET
+  n_samples <- nrow(.unpack_sample(epkgs))
+  bind_cols(
+    sample_n(.unpack_study(epkgs), n_samples, replace = TRUE),
+    .unpack_sample(epkgs),
+    .unpack_experiment(epkgs),
+    .unpack_run(epkgs)
+  )
+}
+```
+
+```{r}
+get_bp_sra_df <- function(bpid) {
+  sra_ids <- get_bp_data(bpid, "sra")
+  if (length(sra_ids)) {
+    sra_ids <- sra_ids[[1]]
+    sra_data <- rentrez::entrez_fetch(
+      db = "sra",
+      id = sra_ids,
+      rettype = "xml"
+    )
+    sra_data_to_df(sra_data)
+  }
+}
+```
+
+```{r}
+# TODO: currently only works for first 9 BioProjects; need to debug
+# errors iteratively for subsequent BPs (198 total)
+bp_sra_df <- pub_bp_df$project_id %>% 
+  head(9) %>%
+  as.list() %>% 
+  set_names(.) %>% 
+  map_dfr(purrrogress::with_progress(get_bp_sra_df), .id = "biopoject_id")
+```
+
+
