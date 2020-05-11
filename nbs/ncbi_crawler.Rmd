@@ -118,7 +118,9 @@ get_bp_data <- function(bpid, data_db) {
         map(~ str_c(.$TAG, .$VALUE, sep = ": ")) %>%
         as_tibble()
       
-      bind_cols(attrs, desc, links, annots)
+      list(attrs, desc, links, annots) %>% 
+        discard(~ nrow(.) == 0) %>% 
+        bind_cols()
     }) %>% 
     flatten_dfr() %>% 
     rename_all(~ str_to_lower(.)) %>% 
@@ -156,7 +158,9 @@ get_bp_data <- function(bpid, data_db) {
         as_tibble() %>%
         rename(sample_attribute = value)
       
-      bind_cols(attrs, title, name, links, annots)
+      list(attrs, title, name, links, annots) %>% 
+        discard(~ nrow(.) == 0) %>% 
+        bind_cols()
     }) %>% 
     bind_rows() %>% 
     rename_all(~ str_to_lower(.)) %>% 
@@ -193,14 +197,16 @@ get_bp_data <- function(bpid, data_db) {
       links <- epkg$EXPERIMENT$EXPERIMENT_LINKS$EXPERIMENT_LINK %>%
         map(~ str_c(.$DB, .$ID, sep = ": ")) %>%
         as_tibble()
-      
+
       annots <- epkg$EXPERIMENT$EXPERIMENT_ATTRIBUTES %>%
         map(~ str_c(.$TAG, .$VALUE, sep = ": ")) %>%
         str_c(collapse = "; ") %>%
         as_tibble() %>%
         rename(experiment_attribute = value)
-      annots
-      bind_cols(attrs, title, design, platform, links, annots)
+      
+      list(attrs, title, design, platform, links, annots) %>% 
+        discard(~ nrow(.) == 0) %>% 
+        bind_cols()
     }) %>% 
     bind_rows() %>%
     rename_all(~ str_to_lower(.)) %>%
@@ -209,14 +215,25 @@ get_bp_data <- function(bpid, data_db) {
 }
 
 .unpack_run <- function(epkgs) {
+  run_names <- attributes(epkgs[1]$EXPERIMENT_PACKAGE$RUN_SET$RUN) %>%         
+    map_at("names", ~ NULL) %>% 
+    discard(is.null) %>% 
+    names()
+  
   epkgs %>% 
     map_at("EXPERIMENT_PACKAGE", function(epkg) {
-      attrs <- epkg$RUN_SET$RUN %>%
-        attributes() %>%
-        map_at("names", ~ NULL) %>%
-        compact() %>%
-        as_tibble()
-      attrs
+      if(length(attributes(epkg$RUN_SET$RUN))) {
+        attrs <- epkg$RUN_SET$RUN %>%
+          attributes() %>%
+          map_at("names", ~ NULL) %>%
+          compact() %>%
+          as_tibble()
+        attrs
+      } else {
+        rep(NA, length(run_names)) %>% set_names(run_names) %>% 
+          enframe() %>% 
+          pivot_wider()
+      }
     }) %>% 
     bind_rows() %>% 
     rename_all(~ str_to_lower(.)) %>% 
@@ -237,28 +254,44 @@ sra_data_to_df <- function(sra_data) {
 ```
 
 ```{r}
-get_bp_sra_df <- function(bpid) {
-  sra_ids <- get_bp_data(bpid, "sra")
+get_bp_sra_df <- function(bpid, chunk_size = 100) {
+  sra_ids <- get_bp_data(bpid, "sra")$bioproject_sra
   if (length(sra_ids)) {
-    sra_ids <- sra_ids[[1]]
-    sra_data <- rentrez::entrez_fetch(
-      db = "sra",
-      id = sra_ids,
-      rettype = "xml"
-    )
-    sra_data_to_df(sra_data)
+    sra_chunks <- tsibble::tile(sra_ids, ~ ., .size = chunk_size)
+    map_df(sra_chunks,function(sra_chunk_ids) {
+      sra_data <- rentrez::entrez_fetch(
+        db = "sra",
+        id = sra_chunk_ids,
+        rettype = "xml"
+      )
+      sra_data_to_df(sra_data)
+    })
   }
 }
 ```
 
+
 ```{r}
-# TODO: currently only works for first 9 BioProjects; need to debug
-# errors iteratively for subsequent BPs (198 total)
 bp_sra_df <- pub_bp_df$project_id %>% 
-  head(9) %>%
   as.list() %>% 
   set_names(.) %>% 
   map_dfr(purrrogress::with_progress(get_bp_sra_df), .id = "biopoject_id")
+```
+
+```{r}
+update_synapse_table <- function(table_id, update_df, syn, syntab) {
+  current_rows <- syn$tableQuery(glue::glue("SELECT * FROM {table_id}"))
+  syn$delete(current_rows)
+  tmpfile <- fs::file_temp("rows.csv")
+  readr::write_csv(update_df, tmpfile, na = "")
+  update_rows <- syntab$Table(table_id, tmpfile)
+  syn$store(update_rows)
+}
+```
+
+```{r}
+bp_sra_df %>%
+  update_synapse_table("syn22015979", ., syn, syntab)
 ```
 
 
