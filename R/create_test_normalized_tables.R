@@ -16,6 +16,20 @@ syn$login()
 prod_project <- "syn21498902"
 test_project <- "syn21989819"
 
+update_synapse_table <- function(
+    id, 
+    tbl, 
+    syntab = .GlobalEnv$syntab,
+    syn    = .GlobalEnv$syn
+){
+    current_rows <- syn$tableQuery(glue::glue("SELECT * FROM {id}"))
+    syn$delete(current_rows)
+    tmpfile <- fs::file_temp("rows.csv")
+    readr::write_csv(tbl, tmpfile, na = "")
+    update_rows <- syntab$Table(id, tmpfile)
+    syn$store(update_rows)
+}
+
 create_entity_tbl <- function(synid, syn = .GlobalEnv$syn, ...){
     synid %>%
         syn$getChildren(...) %>%
@@ -35,11 +49,11 @@ get_synapse_tbl <- function(synid, syn = .GlobalEnv$syn, ...){
 create_synapse_table <- function(
     project_id,
     tbl,
-    table_name,
+    name,
     syntab = .GlobalEnv$syntab ,
     syn = .GlobalEnv$syn
 ){
-    syntab$build_table(table_name, project_id, tbl) %>%
+    syntab$build_table(name, project_id, tbl) %>%
         syn$store()
 }
 
@@ -47,12 +61,7 @@ prod_table_tbl <- prod_project %>%
     create_entity_tbl(includeTypes = list("table")) %>%
     dplyr::select(.data$name, .data$id) 
 
-prod_view_tbl <- prod_project %>%
-    create_entity_tbl(includeTypes = list("entityview")) %>%
-    dplyr::select(.data$name, .data$id) %>% 
-    dplyr::mutate(tbl = purrr::map(
-        id, get_synapse_tbl, includeRowIdAndRowVersion = FALSE)
-    )
+
 
 test_table_tbl <- test_project %>%
     create_entity_tbl(includeTypes = list("table", "entityview"))
@@ -82,9 +91,26 @@ purrr::walk(
     )
 )
 
-prod_view_tbl %>%
-    dplyr::select("table_name" = .data$name, .data$tbl) %>%
+prod_view_tbl <- prod_project %>%
+    create_entity_tbl(includeTypes = list("entityview")) %>%
+    dplyr::select(.data$name, .data$id) %>% 
+    dplyr::mutate(tbl = purrr::map(
+        id, get_synapse_tbl, includeRowIdAndRowVersion = FALSE)
+    )
+
+prod_view_tbl2 <- prod_view_tbl %>%
+    dplyr::select(.data$name, .data$tbl) %>%
+    dplyr::left_join(test_table_tbl, by = "name")
+
+prod_view_tbl2 %>% 
+    dplyr::filter(is.na(id)) %>% 
     dplyr::mutate(project_id = test_project) %>%
+    dplyr::select("project_id", "tbl", "name") %>% 
     purrr::pmap(create_synapse_table)
+
+prod_view_tbl2 %>% 
+    dplyr::filter(!is.na(.data$id)) %>% 
+    dplyr::select("id", "tbl") %>% 
+    purrr::pmap(update_synapse_table)
 
 
