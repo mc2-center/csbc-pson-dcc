@@ -35,7 +35,9 @@ jobs:
         env:
           RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          Rscript -e "install.packages('tidyverse')"
+          Rscript -e "install.packages('lubridate')"
+          Rscript -e "install.packages('stringr')"
+          Rscript -e "install.packages('purrr')"
           Rscript -e "install.packages('reticulate')"
           sudo apt-get install -y python3
           sudo apt-get install -y python3-pip --upgrade

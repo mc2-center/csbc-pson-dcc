@@ -1,5 +1,8 @@
 library(reticulate)
-library(tidyverse)
+library(lubridate)
+library(stringr)
+library(purrr)
+
 args <- commandArgs(trailingOnly = TRUE)
 username <- args[1]
 password <- args[2]
