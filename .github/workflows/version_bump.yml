@@ -47,5 +47,5 @@ jobs:
       - name: bump_version
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: R/version_bump.R ${{ secrets.SYN_USERNAME }} ${{ secrets.SYN_PASSWORD }}
-        shell: Rscript {0}
+        run: |
+          Rscript R/version_bump.R ${{ secrets.SYN_USERNAME }} ${{ secrets.SYN_PASSWORD }}
