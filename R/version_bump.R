@@ -30,12 +30,11 @@ bump_table_version <- function(table_id) {
 }
 
 table_ids <- list(
-  # tools = "syn21930566",
-  # grants = "syn21918972",
-  # datasets = "syn21897968",
-  # projects = "syn21868602",
-  # publications = "syn21868591"
-  test = "syn21093721"
+  tools = "syn21930566",
+  grants = "syn21918972",
+  datasets = "syn21897968",
+  projects = "syn21868602",
+  publications = "syn21868591"
 )
 
 purrr::walk(table_ids, bump_table_version)
