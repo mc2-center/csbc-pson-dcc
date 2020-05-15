@@ -1,4 +1,11 @@
-on: push
+on:
+  # Use this for testing purposes
+  push:
+    branches:
+      - master
+
+  schedule:
+    - cron: "0 */12 * * *"
 
 name: version_bump
 
