@@ -31,7 +31,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
-
       - name: Install system dependencies
         env:
           RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
@@ -44,9 +43,8 @@ jobs:
           sudo apt-get install -y python3-setuptools
           pip3 install synapseclient
 
-
       - name: bump_version
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: R/version_bump.R
+        run: R/version_bump.R ${{ secrets.SYN_USERNAME }} ${{ secrets.SYN_PASSWORD }}
         shell: Rscript {0}
