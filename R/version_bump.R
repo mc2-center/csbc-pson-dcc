@@ -1,13 +1,18 @@
 library(reticulate)
-library(dccvalidator)
-library(tidyverse)
+library(lubridate)
+library(stringr)
+library(purrr)
 
-# local conda env with Python 3.7 and synapseclient installed
-use_condaenv("csbc-pson-dcc", required = TRUE)
+args <- commandArgs(trailingOnly = TRUE)
+username <- args[1]
+password <- args[2]
+
+# # local conda env with Python 3.7 and synapseclient installed
+# use_condaenv("synapse", required = TRUE)
 
 synapseclient <- reticulate::import("synapseclient")
 syn <- synapseclient$Synapse()
-syn$login()
+syn$login(email=username, password=password)
 
 
 bump_table_version <- function(table_id) {
