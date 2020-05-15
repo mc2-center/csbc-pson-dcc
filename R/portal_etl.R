@@ -8,7 +8,6 @@ reticulate::use_condaenv(
   conda = "/home/aelamb/anaconda3/condabin/conda"
 )
 
-
 synapseclient <- reticulate::import("synapseclient")
 syntab <- reticulate::import("synapseclient.table")
 syn <- synapseclient$Synapse()
@@ -107,6 +106,7 @@ db_tissue_pub <- get_synapse_tbl(source_table_list["tissue_publication"])
 db_tumortype_pub <- get_synapse_tbl(source_table_list["tumortype_publication"])
 db_link_pub <- get_synapse_tbl(source_table_list["link_publication"])
 db_dataset_df <- get_synapse_tbl(source_table_list["dataset"])
+db_grant_dataset_df <- get_synapse_tbl(source_table_list["grant_dataset"])
 
 
 property_cols <- c("createdOn", "createdBy",
@@ -233,9 +233,6 @@ merged_proj_syntable <- merged_formatted_project_df %>%
 
 ## Datasets - merged table
 
-
-
-
 merged_dataset_df <- db_dataset_df %>%
   select(-one_of(property_cols)) %>%
   rename(datasetId = id, datasetName = fullName, datasetAlias = displayName) %>%
@@ -243,9 +240,15 @@ merged_dataset_df <- db_dataset_df %>%
   left_join(db_description_dataset, by = "datasetId") %>%
   left_join(db_link_dataset, by = "datasetId") %>%
   left_join(db_dataset_pub, by = "datasetId") %>%
+  left_join(db_grant_dataset_df, by = "datasetId") %>%
   left_join(
     db_grant_df %>%
-      select(grantId = id, grantName = name, grantType, consortiumId),
+      select(
+        grantId = id, 
+        grantName = name, 
+        consortiumId,
+        grant = grantNumber
+      ),
     by = "grantId"
   ) %>%
   left_join(db_theme_grant, by = "grantId") %>%
@@ -273,15 +276,17 @@ merged_dataset_df <- db_dataset_df %>%
          tumorType, assay, species, externalLink,
          publicationId, publication = pubMedLink,
          grantId, grantName, consortiumId, consortium,
-         grantType, themeId, theme) %>%
+         themeId, theme, grant) %>%
   mutate_all(~ ifelse(. == "[NA (PMID:NA)](NA)", NA, .)) %>%
   distinct()
 
 dataset_list_cols <- c(
   "assay",
   "species",
+  "tumorType",
   "theme",
-  "consortium"
+  "consortium",
+  "grant"
 )
 
 dataset_summary_cols <- c(
@@ -290,26 +295,27 @@ dataset_summary_cols <- c(
   "tumorType",
   "assay",
   "species",
-  "grantType",
   "themeId",
   "theme",
   "consortiumId",
-  "consortium"
+  "consortium",
+  "grant"
 )
 
 merged_formatted_dataset_df <- merged_dataset_df %>%
   filter(!is.na(grantName)) %>%
   group_by_at(vars(-c(dataset_summary_cols))) %>%
-  summarize(grantId = str_c(unique(grantId), collapse = ", "),
-            grantName = str_c(unique(grantName), collapse = ", "),
-            tumorType = str_c(unique(tumorType), collapse = ", "),
-            assay = str_c(unique(assay), collapse = ", "),
-            species = str_c(unique(species), collapse = ", "),
-            grantType = str_c(unique(grantType), collapse = ", "),
-            themeId = str_c(unique(themeId), collapse = ", "),
-            theme = str_c(unique(theme), collapse = ", "),
-            consortiumId = str_c(unique(consortiumId), collapse = ", "),
-            consortium = str_c(unique(consortium), collapse = ", ")) %>%
+  summarize(
+    grantId = str_c(unique(grantId), collapse = ", "),
+    grantName = str_c(unique(grantName), collapse = ", "),
+    grant = str_c(unique(grant), collapse = ", "),
+    tumorType = str_c(unique(tumorType), collapse = ", "),
+    assay = str_c(unique(assay), collapse = ", "),
+    species = str_c(unique(species), collapse = ", "),
+    themeId = str_c(unique(themeId), collapse = ", "),
+    theme = str_c(unique(theme), collapse = ", "),
+    consortiumId = str_c(unique(consortiumId), collapse = ", "),
+    consortium = str_c(unique(consortium), collapse = ", ")) %>%
   ungroup() %>%
   # rowwise() %>%
   mutate_at(dataset_list_cols, ~ purrr::map_chr(., csv_str_to_json)) %>%
@@ -331,7 +337,6 @@ merged_dataset_table <- merged_formatted_dataset_df %>%
 
 
 merged_pub_df <- db_pub_df %>%
-  dplyr::select(-.data$grantId) %>% 
   select(-one_of(property_cols)) %>%
   rename(publicationId = id, publicationTitle = title) %>%
   left_join(db_grant_pub, by = "publicationId") %>%
@@ -363,7 +368,7 @@ merged_pub_df <- db_pub_df %>%
   select(publicationId, doi, journal,
          pubMedUrl, publicationTitle, publicationYear, keywords,
          authors = person, assay, tissue, tumorType,
-         consortium, grantName, theme, grantType, datasetId, dataset,
+         consortium, grantName, theme, datasetId, dataset,
          themeId, consortiumId, grantId) %>%
   distinct() %>%
   mutate_all(~ ifelse(str_detect(., "Not Applicable"), NA, .)) %>%
@@ -374,7 +379,7 @@ pub_summary_cols <- c(
   "authors",
   "assay",
   "tumorType",
-  "grantType",
+  "grantId",
   "themeId",
   "consortiumId",
   "datasetId",
@@ -385,6 +390,8 @@ pub_summary_cols <- c(
 )
 
 pub_list_cols <- c(
+  "assay",
+  "tumorType",
   "tissue",
   "theme",
   "consortium"
@@ -398,7 +405,7 @@ merged_formatted_pub_df <- merged_pub_df %>%
             assay = str_c(unique(assay), collapse = ", "),
             tissue = str_c(unique(tissue), collapse = ", "),
             tumorType = str_c(unique(tumorType), collapse = ", "),
-            grantType = str_c(unique(grantType), collapse = ", "),
+            grantId = str_c(unique(grantId), collapse = ", "),
             theme = str_c(unique(theme), collapse = ", "),
             themeId = str_c(unique(themeId), collapse = ", "),
             consortiumId = str_c(unique(consortiumId), collapse = ", "),
