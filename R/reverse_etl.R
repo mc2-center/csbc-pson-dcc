@@ -35,20 +35,26 @@ update_synapse_table <- function(
 update_tbl_with_new_data <- function(
     table_id,
     current_tbl, 
-    updated_tbl, 
-    id_col = "id"
+    updated_tbl
 ){
+    non_updated_rows <- current_tbl %>%
+        dplyr::filter(!.data$id %in% updated_tbl$id) 
+    
     non_updated_cols <- c(
-        id_col, 
+        "id",
         setdiff(colnames(current_tbl), colnames(updated_tbl))
     )
-    update_tbl <- dplyr::full_join(
+    
+    update_tbl <- dplyr::right_join(
         dplyr::select(current_tbl, non_updated_cols),
         updated_tbl,
         by = "id"
-    )
+    ) %>%
+        dplyr::bind_rows(non_updated_rows)
+    
     update_synapse_table(table_id, update_tbl)
 }
+
 
 create_entity_tbl <- function(synid, syn = .GlobalEnv$syn, ...){
     synid %>% 
@@ -128,6 +134,11 @@ project_tbl <- get_synapse_tbl(dest_table_list["project"], row_data = F)
 new_project_tbl <- merged_project_tbl %>%
     dplyr::filter(!.data$projectId %in% project_tbl$id)
 
+missing_project_tbl <- project_tbl %>% 
+    dplyr::filter(!.data$id %in% merged_project_tbl$projectId) %>% 
+    dplyr::select(id) %>% 
+    unique()
+
 updated_project_tbl <- merged_project_tbl %>%
     dplyr::select(
         "id" = .data$projectId,
@@ -161,7 +172,6 @@ updated_dataset_tbl <- merged_dataset_tbl %>%
         "id" = .data$datasetId,
         "displayName" = .data$datasetAlias,
         "fullName" = .data$datasetName,
-        "grantId",
         "overallDesign"
     ) %>% 
     dplyr::mutate("fullName" = dplyr::if_else(
@@ -175,9 +185,14 @@ update_tbl_with_new_data(
 )
 
 merged_dataset_tbl %>%
-    dplyr::select("datasetId","description") %>%
+    dplyr::select("datasetId", "description") %>%
     tidyr::drop_na() %>% 
     update_synapse_table(dest_table_list["description_dataset"], .)
+
+merged_dataset_tbl %>%
+    dplyr::select("datasetId", "grantId") %>%
+    tidyr::separate_rows(.data$grantId, sep = ", ") %>% 
+    update_synapse_table(dest_table_list["grant_dataset"], .)
     
 # publications -----------------------------------------------------------------
 
@@ -190,10 +205,17 @@ merged_publication_tbl <- get_synapse_tbl(
 publication_tbl <- get_synapse_tbl(dest_table_list["publication"]) %>% 
     dplyr::select(-entity_columns)
 
+new_publication_tbl <- merged_publication_tbl %>%
+    dplyr::filter(!.data$publicationId %in% publication_tbl$id)
+
+missing_publication_tbl <- publication_tbl %>% 
+    dplyr::filter(!.data$id %in% merged_publication_tbl$publicationId) %>% 
+    dplyr::select(id) %>% 
+    unique()
+
 updated_publication_tbl <- merged_publication_tbl %>%
     dplyr::select(
         "id" = .data$publicationId,
-        "grantId",
         "title" = .data$publicationTitle,
         "journal",
         "publicationYear",
@@ -206,6 +228,11 @@ update_tbl_with_new_data(
     dest_table_list["publication"], publication_tbl, updated_publication_tbl
 )
 
+merged_publication_tbl %>%
+    dplyr::select("publicationId", "grantId") %>%
+    tidyr::separate_rows(.data$grantId, sep = ", ") %>% 
+    update_synapse_table(dest_table_list["grant_publication"], .)
+
 # tools ------------------------------------------------------------------------
 
 #TODO: Deal with file view
@@ -215,6 +242,14 @@ merged_tool_tbl <- get_synapse_tbl(
 
 tool_tbl <- get_synapse_tbl(dest_table_list["tool"]) %>% 
     dplyr::select(-entity_columns)
+
+new_tool_tbl <- merged_tool_tbl %>%
+    dplyr::filter(!.data$toolId %in% tool_tbl$id)
+
+missing_tool_tbl <- tool_tbl %>% 
+    dplyr::filter(!.data$id %in% merged_tool_tbl$toolId) %>% 
+    dplyr::select(id) %>% 
+    unique()
 
 
 updated_tool_tbl <- merged_tool_tbl %>%
