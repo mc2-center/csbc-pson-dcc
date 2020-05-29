@@ -1,0 +1,196 @@
+---
+title: "Portal Cleanup"
+output: html_notebook
+---
+
+```{r}
+library(reticulate)
+library(dccvalidator)
+library(tidyverse)
+
+# source("../R/synapse_db.R")
+
+use_condaenv("csbc-pson-dcc", required = TRUE)
+synapseclient <- reticulate::import("synapseclient")
+syn <- synapseclient$Synapse()
+syntab <- reticulate::import("synapseclient.table")
+syn$login()
+```
+
+## Grants
+
+```{r}
+merged_grant_df <- dccvalidator::get_synapse_table("syn21918972", syn)
+```
+
+```{r}
+merged_grant_cleaned <- merged_grant_df %>% 
+  mutate(theme = str_replace(theme, "Tumor Evolution", "Evolution")) %>% 
+  mutate(institution = str_replace(institution, "MIT,", "	Massachusetts Institute of Technology |")) %>% 
+  mutate(institution = str_replace(institution, "University of Virginia, University of Pennsylvania, University of Delaware", "University of Virginia | University of Pennsylvania | University of Delaware" )) %>% 
+  separate_rows(institution, sep = " \\| ") %>%
+  mutate(institution = str_trim(institution)) %>% 
+  mutate(institution = case_when(
+    institution == "ASU" ~ "Arizona State University",
+    institution == "Harvard" ~ "Harvard University",
+    institution == "Moffitt Cancer Center & Research Institute" ~ "Moffitt Cancer Center",
+    institution == "MSKCC" ~ "Memorial Sloan Kettering Cancer Center",
+    institution == "MIT" ~ "Massachusetts Institute of Technology",
+    institution == "UC Berkeley" ~ "University of California, Berkeley",
+    institution == "UCSF" ~ "University of California, San Francisco",
+    institution == "UCSD" ~ "University of California, San Diego",
+    institution == "UCLA" ~ "University of California, Los Angeles",
+    institution == "UC Irvine" ~ "University of California, Irvine",
+    institution == "ISB" ~ "Institute for Systems Biology",
+    institution == "OHSU" ~ "Oregon Health & Science University",
+    institution == "UCB" ~ "University of California, Berkeley",
+    institution == "Vanderbilt" ~ "Vanderbilt University",
+    institution == "City of Hope" ~ "City Of Hope National Medical Center",
+    institution == "DFCI" ~ "Dana-Farber Cancer Institute",
+    institution == "Dartmouth" ~ "Dartmouth College",
+    institution == "Duke" ~ "Duke University",
+    institution == "Georgia Tech" ~ "Georgia Institute of Technology",
+    institution == "UTHSCSA" ~ "The University of Texas Health Science Center at San Antonio",
+    institution == "BIMDC" ~ "Beth Israel Deaconess Hospital",
+    institution == "MGH" ~ "Massachusetts General Hospital",
+    institution == "IUPUI" ~ "Indiana University – Purdue University Indianapolis",
+    institution == "UMN" ~ "University of Minnesota",
+    institution == "UNC Chapel Hill" ~ "University of North Carolina at Chapel Hill",
+    institution == "NYUSOM" ~ "New York University School of Medicine",
+    institution == "Moffitt" ~ "Moffitt Cancer Center",
+    institution == "UVA" ~ "University of Virginia",
+    institution == "Institute of Computational Biology" ~ "University of Virginia",
+    institution == "UPenn" ~ "University of Pennsylvania",
+    institution == "USC" ~ "University of Southern California",
+    institution == "Houston Methodist Research Institute" ~ "Houston Methodist",
+    TRUE ~ institution
+  )) %>% 
+  group_by(grantId, grantName, grantNumber, abstract, grantType, theme, consortium, investigator) %>%
+  summarize(institution = str_c(unique(institution), collapse = " | "))
+
+merged_grant_cleaned
+```
+
+```{r}
+merged_grant_syntable <- update_synapse_table("syn21918972", merged_grant_cleaned, syn, syntab)
+```
+
+
+## Projects
+
+```{r}
+merged_project_df <- dccvalidator::get_synapse_table("syn21868602", syn)
+```
+
+```{r}
+merged_project_cleaned <- merged_project_df %>% 
+  mutate(theme = str_replace(theme, "Tumor Evolution", "Evolution")) %>% 
+  mutate(theme = str_replace(theme, "metastasis", "Metastasis")) %>% 
+  mutate(theme = str_replace(theme, "drug resistance/sensitivity", "Drug Resistance/Sensitivity")) %>% 
+  mutate(theme = str_replace(theme, "microenvironment", "Microenvironment")) %>% 
+  mutate_all(~ ifelse(str_detect(., "Not Applicable"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"Not Applicable"'), "", .)) %>%
+  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '\\["NA"\\]'), "[]", .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"NA"'), "", .)) %>%
+  # filter(projectId == "syn21645193") %>% 
+  # update_synapse_table("syn21930566", ., syn, syntab) %>%
+  I
+ 
+merged_project_cleaned
+```
+
+```{r}
+merged_project_syntable <- update_synapse_table("syn21868602", merged_project_cleaned, syn, syntab)
+```
+
+## Tools
+
+```{r}
+merged_tool_df <- dccvalidator::get_synapse_table("syn21930566", syn)
+```
+
+```{r}
+merged_tool_cleaned <- merged_tool_df %>% 
+  mutate(theme = str_replace(theme, "Tumor Evolution", "Evolution")) %>% 
+  mutate_all(~ ifelse(str_detect(., "Not Applicable"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"Not Applicable"'), "", .)) %>%
+  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '\\["NA"\\]'), "[]", .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"NA"'), "", .)) %>%
+  mutate(homepageUrl = ifelse(is.na(homepageUrl), "", homepageUrl)) %>% 
+  mutate(toolType = ifelse(is.na(toolType), "", toolType)) %>% 
+  mutate(publicationId = ifelse(is.na(publicationId), "", publicationId)) %>% 
+  mutate(publicationTitle = ifelse(is.na(publicationTitle), "", publicationTitle)) %>% 
+  mutate(publication = ifelse(is.na(publication), "", publication))
+ 
+merged_tool_cleaned
+```
+
+```{r}
+merged_tool_syntable <- update_synapse_table("syn21930566", merged_tool_cleaned, syn, syntab)
+```
+
+## Datasets
+
+
+```{r}
+merged_dataset_df <- dccvalidator::get_synapse_table("syn21897968", syn)
+```
+
+```{r}
+merged_dataset_cleaned <- merged_dataset_df %>% 
+  mutate(theme = str_replace(theme, "Tumor Evolution", "Evolution")) %>% 
+  mutate(theme = str_replace(theme, "metastasis", "Metastasis")) %>% 
+  mutate(theme = str_replace(theme, "drug resistance/sensitivity", "Drug Resistance/Sensitivity")) %>% 
+  mutate(theme = str_replace(theme, "microenvironment", "Microenvironment")) %>% 
+  mutate(assay = str_replace(assay, "Whoe", "Whole")) %>% 
+  mutate_all(~ ifelse(str_detect(., "Not Applicable"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"Not Applicable"'), "", .)) %>%
+  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '\\["NA"\\]'), "[]", .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"NA"'), "", .)) %>%
+  mutate(tumorType = ifelse(is.na(tumorType), "", tumorType)) %>% 
+  # filter(datasetId == "syn21645193") %>% 
+  # update_synapse_table("syn21930566", ., syn, syntab) %>%
+  I
+ 
+merged_dataset_cleaned
+```
+
+```{r}
+merged_dataset_syntable <- update_synapse_table("syn21897968", merged_dataset_cleaned, syn, syntab)
+```
+
+## Publications
+
+```{r}
+merged_publication_df <- dccvalidator::get_synapse_table("syn21868591", syn)
+```
+
+```{r}
+merged_publication_cleaned <- merged_publication_df %>% 
+  mutate_all(~ ifelse(str_detect(., "Not Applicable"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"Not Applicable"'), "", .)) %>%
+  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '\\["NA"\\]'), "[]", .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"NA"'), "", .)) %>%
+  mutate_at(c("doi", "keywords",
+              "themeId", "theme", "datasetId", "dataset"),
+            ~ ifelse(is.na(.), "", .)) %>%
+  # mutate(tumorType = ifelse(is.na(tumorType), "", tumorType)) %>% 
+  # mutate(doi = ifelse(is.na(doi), "", doi)) %>% 
+  # mutate(keywords = ifelse(is.na(keywords), "", keywords)) %>% 
+  # mutate(assay = ifelse(is.na(assay), "", assay)) %>% 
+  # mutate(datasetId = ifelse(is.na(datasetId), "", datasetId)) %>% 
+  # mutate(dataset = ifelse(is.na(dataset), "", dataset)) %>% 
+  # filter(publicationId == "syn21645193") %>% 
+  # update_synapse_table("syn21930566", ., syn, syntab) %>%
+  I
+ 
+merged_publication_cleaned
+```
+
+```{r}
+merged_publication_syntable <- update_synapse_table("syn21868591", merged_publication_cleaned, syn, syntab)
+```
