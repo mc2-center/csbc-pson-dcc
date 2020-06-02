@@ -69,14 +69,28 @@ find_value_differences <- function(tbl1, tbl2, id_col){
     purrr::keep(., purrr::map(., nrow) > 0)
 }
 
+find_diff <- function(val1, val2){
+  if (is.na(val1) & is.na(val2)) return(F)
+  if (val1 == "[]" & is.na(val2)) return(F)
+  if (val2 == "[]" & is.na(val1)) return(F)
+  if (is.na(val1) | is.na(val2)) return(T)
+  return(val1 != val2)
+}
+
 find_table_diff_by_col <- function(tbl1, tbl2, id_col, test_col){
   dplyr::inner_join(
     dplyr::select(tbl1, id_col, "prod" = test_col),
     dplyr::select(tbl2, id_col, "test" = test_col),
     by = id_col
   ) %>%
-    dplyr::filter(prod != test)
+    dplyr::mutate(
+      "different" = purrr::map2_lgl(.data$prod, .data$test, find_diff)
+    ) %>% 
+    dplyr::filter(.data$different) %>% 
+    dplyr::select(-"different")
 }
+
+
 
 # misc -------------------------------------------------------------------------
 

@@ -94,6 +94,7 @@ purrr::walk(
 prod_view_tbl <- prod_project %>%
     create_entity_tbl(includeTypes = list("entityview")) %>%
     dplyr::select(.data$name, .data$id) %>% 
+    dplyr::filter(.data$name != "datafile") %>% 
     dplyr::mutate(tbl = purrr::map(
         id, get_synapse_tbl, includeRowIdAndRowVersion = FALSE)
     )

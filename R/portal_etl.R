@@ -1,6 +1,5 @@
 library(tidyverse)
 library(reticulate)
-source("../R/synapse_db.R")
 
 reticulate::use_condaenv(
   condaenv = "py37b",
@@ -66,6 +65,27 @@ get_synapse_tbl <- function(synid, syn = .GlobalEnv$syn, ..., row_data = F){
     readr::read_csv(.)
 }
 
+csv_str_to_json <- function(str, delim = ","){
+  json_str <- str_split(str, delim)[[1]] %>% 
+    str_trim() %>% 
+    jsonlite::toJSON()
+  if (json_str == "[null]") {
+    NA
+  } else {
+    json_str
+  }
+}
+
+summarise_list_cols <- function(df, comma_cols, bar_cols){
+  df %>% 
+    group_by_at(vars(-c(comma_cols))) %>%
+    summarise_at(vars(comma_cols), ~str_c(unique(.x), collapse = ", ")) %>% 
+    group_by_at(vars(-c(bar_cols))) %>%
+    summarise_at(vars(bar_cols), ~str_c(unique(.x), collapse = " | ")) %>% 
+    ungroup() %>%
+    distinct()
+}
+
 # misc -------------------------------------------------------------------------
 
 dest_table_list <- destination_project %>%
@@ -84,7 +104,7 @@ db_consortium_df <- get_synapse_tbl(source_table_list["consortium"])
 db_theme_df <- get_synapse_tbl(source_table_list["theme"])
 db_grant_df <- get_synapse_tbl(source_table_list["grant"])
 db_institution_df <- get_synapse_tbl(source_table_list["institution"])
-db_theme_grant <- get_synapse_tbl(source_table_list["theme_grant"])
+db_theme_grant <- get_synapse_tbl(source_table_list["theme_grant"]) 
 db_institution_grant <- get_synapse_tbl(source_table_list["institution_grant"])
 db_person_grant <- get_synapse_tbl(source_table_list["person_grant"])
 db_tool_df <- get_synapse_tbl(source_table_list["tool"])
@@ -133,45 +153,61 @@ merged_grant_df <- db_grant_df %>%
   ) %>%
   left_join(
     db_institution_df %>%
-      select(institutionId = id, institution = fullName)
+      select(
+        "institutionId"    = .data$id, 
+        "grantInstitution" = .data$fullName,
+        "institutionAlias" = .data$displayName 
+      )
   ) %>%
-  select(grantId, grantName, grantNumber, consortiumId, consortium, themeId,
-         theme, institutionId, institution, investigator = person,
-         abstract = description, grantType) %>%
+  select(
+    grantId, grantName, grantNumber, consortiumId, consortium, themeId,
+    theme, institutionId, grantType, institutionId, grantInstitution,
+    institutionAlias,
+    investigator = person,
+    abstract = description
+  ) %>%
   distinct() %>%
+  dplyr::filter(!is.na(.data$grantName)) %>%
   I
 
-grant_summarize_cols <- c(
-  "institutionId", "institution", "investigator",
-  "themeId", "theme", "consortiumId", "consortium"
+grant_comma_summary_cols <- c(
+  "institutionId", 
+  "investigator",
+  "themeId", 
+  "theme", 
+  "consortiumId", 
+  "consortium",
+  "institutionAlias"
 )
 
-merged_formatted_grant_df <- merged_grant_df %>%
-  filter(!is.na(grantName)) %>%
-  group_by_at(vars(-c(grant_summarize_cols))) %>%
-  summarize(
-    institutionId = str_c(unique(institutionId), collapse = " | "),
-    institution = str_c(unique(institution), collapse = " | "),
-    investigator = str_c(unique(investigator), collapse = ", "),
-    themeId = str_c(unique(themeId), collapse = ", "),
-    theme = str_c(unique(theme), collapse = ", "),
-    consortiumId = str_c(unique(consortiumId), collapse = ", "),
-    consortium = str_c(unique(consortium), collapse = ", ")) %>%
-  ungroup() %>%
-  distinct()
-
-grant_list_cols <- c(
-  "theme"
+grant_bar_summary_cols <- c(
+  "grantInstitution"
 )
 
-merged_grant_syntable <- merged_formatted_grant_df %>%
-  # mutate(id = grantName) %>%
-  mutate_at(grant_list_cols, ~ purrr::map_chr(., csv_str_to_json)) %>%
+grant_comma_list_cols <- c(
+  "theme",
+  "institutionAlias"
+)
+
+grant_bar_list_cols <- c(
+  "grantInstitution"
+)
+
+merged_formatted_grant_df1 <- merged_grant_df %>% 
+  group_by_at(vars(-c(grant_bar_summary_cols, grant_comma_summary_cols))) %>% 
+  summarise_at(vars(grant_comma_summary_cols), ~str_c(unique(.x), collapse = ", ")) %>% 
+  mutate_at(grant_comma_list_cols, ~ purrr::map_chr(., csv_str_to_json))
+
+merged_formatted_grant_df2 <- merged_grant_df %>% 
+  group_by_at(vars(-c(grant_bar_summary_cols, grant_comma_summary_cols))) %>% 
+  summarise_at(vars(grant_bar_summary_cols), ~str_c(unique(.x), collapse = " | ")) %>% 
+  mutate_at(grant_bar_list_cols, ~ purrr::map_chr(., csv_str_to_json, "\\|"))
+
+merged_grant_syntable <- 
+  dplyr::inner_join(merged_formatted_grant_df1, merged_formatted_grant_df2) %>% 
   update_synapse_table(dest_table_list["Portal - Grants Merged"], .)
 
 ## Projects - merged table ----
-
-
 
 merged_project_df <- db_project_df %>%
   rename(projectId = id, projectName = name) %>%
@@ -180,7 +216,7 @@ merged_project_df <- db_project_df %>%
   ) %>%
   left_join(
     db_grant_df %>%
-      select(grantId = id, grantName = name, grantType, consortiumId),
+      select(grantId = id, grantName = name, grantType, consortiumId, grant = grantNumber),
     by = "grantId"
   ) %>%
   left_join(db_theme_grant, by = "grantId") %>%
@@ -193,21 +229,28 @@ merged_project_df <- db_project_df %>%
     db_consortium_df %>%
       select(consortiumId = id, consortium = displayName)
   ) %>%
-  select(projectId, projectName = displayName, description,
-         themeId, theme, grantName, consortiumId, consortium, grantType) %>%
+  select(
+    projectId, projectName = displayName, description, grantId, grant,
+    themeId, theme, grantName, consortiumId, consortium, grantType, 
+    projectType
+  ) %>%
   distinct()
 
 
 proj_summarize_cols <- c(
-  "grantName", "grantType", "themeId", "theme", "consortiumId", "consortium"
+  "grantId", "grantName", "grantType", "grant", "themeId", "theme", "consortiumId", "consortium"
 )
-proj_list_cols <- c("theme")
+
+proj_comma_list_cols <- c("grantId", "grantType", "grant", "theme")
+proj_bar_list_cols <- c("grantName")
 
 merged_formatted_project_df <- merged_project_df %>%
   filter(!is.na(grantName)) %>%
   group_by_at(vars(-c(proj_summarize_cols))) %>%
   summarize(
-    grantName = str_c(unique(grantName), collapse = ", "),
+    grantId = str_c(unique(grantId), collapse = ", "),
+    grant = str_c(unique(grant), collapse = ", "),
+    grantName = str_c(unique(grantName), collapse = " | "),
     grantType = str_c(unique(grantType), collapse = ", "),
     themeId = str_c(unique(themeId), collapse = ", "),
     theme = str_c(unique(theme), collapse = ", "),
@@ -215,7 +258,8 @@ merged_formatted_project_df <- merged_project_df %>%
     consortium = str_c(unique(consortium), collapse = ", ")) %>%
   ungroup() %>%
   # rowwise() %>%
-  mutate_at(proj_list_cols, ~ purrr::map_chr(., csv_str_to_json)) %>%
+  mutate_at(proj_comma_list_cols, ~ purrr::map_chr(., csv_str_to_json)) %>%
+  mutate_at(proj_bar_list_cols, ~ purrr::map_chr(., csv_str_to_json, "\\|")) %>%
   # ungroup() %>%
   distinct()
 
@@ -231,9 +275,10 @@ merged_proj_syntable <- merged_formatted_project_df %>%
   update_synapse_table(dest_table_list["Portal - Projects Merged"], .)
 
 
-## Datasets - merged table
+## Datasets - merged table ----
 
 merged_dataset_df <- db_dataset_df %>%
+  dplyr::filter(.data$is.dataset) %>% 
   select(-one_of(property_cols)) %>%
   rename(datasetId = id, datasetName = fullName, datasetAlias = displayName) %>%
   mutate(datasetName = ifelse(datasetName == "NA", datasetAlias, datasetName)) %>%
@@ -247,7 +292,7 @@ merged_dataset_df <- db_dataset_df %>%
         grantId = id, 
         grantName = name, 
         consortiumId,
-        grant = grantNumber
+        grantNumber
       ),
     by = "grantId"
   ) %>%
@@ -276,22 +321,13 @@ merged_dataset_df <- db_dataset_df %>%
          tumorType, assay, species, externalLink,
          publicationId, publication = pubMedLink,
          grantId, grantName, consortiumId, consortium,
-         themeId, theme, grant) %>%
+         themeId, theme, grantNumber) %>%
   mutate_all(~ ifelse(. == "[NA (PMID:NA)](NA)", NA, .)) %>%
-  distinct()
+  distinct() %>% 
+  filter(!is.na(.data$grantName))
 
-dataset_list_cols <- c(
-  "assay",
-  "species",
-  "tumorType",
-  "theme",
-  "consortium",
-  "grant"
-)
 
-dataset_summary_cols <- c(
-  "grantId",
-  "grantName",
+dataset_comma_summary_cols <- c(
   "tumorType",
   "assay",
   "species",
@@ -299,42 +335,51 @@ dataset_summary_cols <- c(
   "theme",
   "consortiumId",
   "consortium",
-  "grant"
+  "grantId",
+  "grantNumber",
+  "publicationId",
+  "publication",
+  "publicationTitle"
 )
 
-merged_formatted_dataset_df <- merged_dataset_df %>%
-  filter(!is.na(grantName)) %>%
-  group_by_at(vars(-c(dataset_summary_cols))) %>%
-  summarize(
-    grantId = str_c(unique(grantId), collapse = ", "),
-    grantName = str_c(unique(grantName), collapse = ", "),
-    grant = str_c(unique(grant), collapse = ", "),
-    tumorType = str_c(unique(tumorType), collapse = ", "),
-    assay = str_c(unique(assay), collapse = ", "),
-    species = str_c(unique(species), collapse = ", "),
-    themeId = str_c(unique(themeId), collapse = ", "),
-    theme = str_c(unique(theme), collapse = ", "),
-    consortiumId = str_c(unique(consortiumId), collapse = ", "),
-    consortium = str_c(unique(consortium), collapse = ", ")) %>%
-  ungroup() %>%
-  # rowwise() %>%
-  mutate_at(dataset_list_cols, ~ purrr::map_chr(., csv_str_to_json)) %>%
-  # ungroup() %>%
-  distinct()
+dataset_bar_summary_cols <- c(
+  "grantName"
+)
 
+dataset_comma_list_cols <- c(
+  "assay",
+  "species",
+  "tumorType",
+  "theme",
+  "consortium",
+  "grantNumber",
+  "grantId",
+  "publicationId",
+  "publication",
+  "publicationTitle"
+)
 
-# initial table creation (synIDs need to be integers)
-# merged_dataset_syntable <- merged_formatted_dataset_df %>%
-#   mutate_at(vars(contains("Id")), ~ str_replace(., "syn", "")) %>%
-#   synBuildTable("Portal - datasets Merged", "syn7080714", .) %>%
-#   synStore()
+dataset_bar_list_cols <- c(
+  "grantName"
+)
 
-merged_dataset_table <- merged_formatted_dataset_df %>%
+merged_formatted_dataset_df1 <- merged_dataset_df %>% 
+  group_by_at(vars(-c(dataset_bar_summary_cols, dataset_comma_summary_cols))) %>% 
+  summarise_at(vars(dataset_comma_summary_cols), ~str_c(unique(.x), collapse = ", ")) %>% 
+  mutate_at(dataset_comma_list_cols, ~ purrr::map_chr(., csv_str_to_json))
+
+merged_formatted_dataset_df2 <- merged_dataset_df %>% 
+  group_by_at(vars(-c(dataset_bar_summary_cols, dataset_comma_summary_cols))) %>% 
+  summarise_at(vars(dataset_bar_summary_cols), ~str_c(unique(.x), collapse = " | ")) %>% 
+  mutate_at(dataset_bar_list_cols, ~ purrr::map_chr(., csv_str_to_json, "\\|"))
+
+merged_dataset_syntable <- 
+  dplyr::inner_join(merged_formatted_dataset_df1, merged_formatted_dataset_df2) %>% 
   update_synapse_table(dest_table_list["Portal - Datasets Merged"], .)
 
+
+
 ## Publications - merged table ----
-
-
 
 merged_pub_df <- db_pub_df %>%
   select(-one_of(property_cols)) %>%
@@ -348,8 +393,22 @@ merged_pub_df <- db_pub_df %>%
   left_join(db_dataset_pub, by = "publicationId") %>%
   left_join(
     db_grant_df %>%
-      select(grantId = id, grantName = name, grantType, consortiumId),
+      select(
+        "grantId" = "id", 
+        "grantName" = "name", 
+        "grantType", 
+        "consortiumId", 
+        "grantNumber"
+      ),
     by = "grantId"
+  ) %>%
+  left_join(db_institution_grant, by = "grantId") %>%
+  left_join(
+    db_institution_df %>%
+      select(
+        "institutionId"    = .data$id, 
+        "grantInstitution" = .data$fullName
+      )
   ) %>%
   left_join(db_theme_grant, by = "grantId") %>%
   left_join(
@@ -365,93 +424,72 @@ merged_pub_df <- db_pub_df %>%
     db_dataset_df %>%
       select(datasetId = id, dataset = displayName)
   ) %>%
-  select(publicationId, doi, journal,
-         pubMedUrl, publicationTitle, publicationYear, keywords,
-         authors = person, assay, tissue, tumorType,
-         consortium, grantName, theme, datasetId, dataset,
-         themeId, consortiumId, grantId) %>%
+  mutate(pubMedId = str_extract(pubMedUrl, "[0-9].*")) %>%
+  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>%
+  mutate(pubMedLink = glue::glue("[PMID:{pubMedId}]({pubMedUrl})")) %>%
+  select(
+    publicationId, doi, journal, grantNumber, grantInstitution,
+    pubMedUrl, publicationTitle, publicationYear, keywords,
+    authors = person, assay, tissue, tumorType,
+    consortium, grantName, theme, datasetId, dataset,
+    themeId, consortiumId, grantId, pubMedId, pubMedLink
+  ) %>%
   distinct() %>%
   mutate_all(~ ifelse(str_detect(., "Not Applicable"), NA, .)) %>%
-  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .))
+  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>% 
+  filter(!is.na(grantName))
 
-pub_summary_cols <- c(
-  "grantName",
+pub_comma_summary_cols <- c(
   "authors",
   "assay",
   "tumorType",
-  "grantId",
   "themeId",
   "consortiumId",
   "datasetId",
   "dataset",
   "tissue",
   "theme",
-  "consortium"
+  "consortium",
+  "grantId",
+  "grantNumber",
+  "grantInstitution"
 )
 
-pub_list_cols <- c(
+pub_bar_summary_cols <- c(
+  "grantName"
+)
+
+pub_comma_list_cols <- c(
   "assay",
   "tumorType",
   "tissue",
   "theme",
-  "consortium"
+  "consortium",
+  "grantId",
+  "grantNumber",
+  "grantInstitution"
 )
 
-merged_formatted_pub_df <- merged_pub_df %>%
-  filter(!is.na(grantName)) %>%
-  group_by_at(vars(-c(pub_summary_cols))) %>%
-  summarize(grantName = str_c(unique(grantName), collapse = ", "),
-            authors = str_c(unique(authors), collapse = ", "),
-            assay = str_c(unique(assay), collapse = ", "),
-            tissue = str_c(unique(tissue), collapse = ", "),
-            tumorType = str_c(unique(tumorType), collapse = ", "),
-            grantId = str_c(unique(grantId), collapse = ", "),
-            theme = str_c(unique(theme), collapse = ", "),
-            themeId = str_c(unique(themeId), collapse = ", "),
-            consortiumId = str_c(unique(consortiumId), collapse = ", "),
-            consortium = str_c(unique(consortium), collapse = ", "),
-            datasetId = str_c(unique(datasetId), collapse = ", "),
-            dataset = str_c(unique(dataset), collapse = ", ")
-            ) %>%
-  ungroup() %>%
-  # rowwise() %>%
-  mutate_at(pub_list_cols, ~ purrr::map_chr(., csv_str_to_json)) %>%
-  # ungroup() %>%
-  distinct()
+pub_bar_list_cols <- c(
+  "grantName"
+)
 
-# merged_pub_cols <- list(
-#   Column(name = 'authors', columnType = 'LARGETEXT'),
-#   Column(name = 'doi', columnType = 'STRING', maximumSize = 29),
-#   Column(name = 'journal', columnType = 'STRING', maximumSize = 39),
-#   Column(name = 'pubMedUrl', columnType = 'LINK', maximumSize = 50),
-#   Column(name = 'publicationTitle', columnType = 'STRING', maximumSize = 203),
-#   Column(name = 'publicationYear', columnType = 'INTEGER', maximumSize = 4),
-#   Column(name = 'keywords', columnType = 'STRING', maximumSize = 243),
-#   Column(name = 'theme', columnType = 'STRING_LIST', maximumSize = 27),
-#   Column(name = 'tumorType', columnType = 'STRING_LIST', maximumSize = 50),
-#   Column(name = 'tissue', columnType = 'STRING_LIST', maximumSize = 26),
-#   Column(name = 'assay', columnType = 'STRING_LIST', maximumSize = 60),
-#   Column(name = 'grantName', columnType = 'STRING_LIST', maximumSize = 107),
-#   Column(name = 'consortium', columnType = 'STRING_LIST', maximumSize = 5),
-#   Column(name = 'grantType', columnType = 'STRING', maximumSize = 3)
-# )
+merged_formatted_pub_df1 <- merged_pub_df %>% 
+  group_by_at(vars(-c(pub_bar_summary_cols, pub_comma_summary_cols))) %>% 
+  summarise_at(vars(pub_comma_summary_cols), ~str_c(unique(.x), collapse = ", ")) %>% 
+  mutate_at(pub_comma_list_cols, ~ purrr::map_chr(., csv_str_to_json))
 
-# merged_pub_schema <- Schema(name = "Portal - Publications Merged (test 3)",
-#                             columns = merged_pub_cols,
-#                             parent = "syn7080714")
-# merged_pub_schema
+merged_formatted_pub_df2 <- merged_pub_df %>% 
+  group_by_at(vars(-c(pub_bar_summary_cols, pub_comma_summary_cols))) %>% 
+  summarise_at(vars(pub_bar_summary_cols), ~str_c(unique(.x), collapse = " | ")) %>% 
+  mutate_at(pub_bar_list_cols, ~ purrr::map_chr(., csv_str_to_json, "\\|"))
 
-# merged_pub_table <- Table(merged_pub_schema, merged_formatted_pub_df)
-# merged_pub_table <- synStore(merged_pub_table)
-
-merged_pub_table <- merged_formatted_pub_df %>%
+merged_pub_syntable <- 
+  dplyr::inner_join(merged_formatted_pub_df1, merged_formatted_pub_df2) %>% 
   update_synapse_table(dest_table_list["Portal - Publications Merged"], .)
 
 
-
-
-
-## Tools - merged table
+## Tools - merged table ----
 
 merged_tool_df <- db_tool_df %>%
   select(-one_of(property_cols)) %>%
@@ -463,7 +501,7 @@ merged_tool_df <- db_tool_df %>%
   left_join(db_publication_tool, by = "toolId") %>%
   left_join(
     db_grant_df %>%
-      select(grantId = id, grantName = name, grantType, consortiumId),
+      select(grantId = id, grantName = name, grantType, consortiumId, grant = grantNumber),
     by = "grantId"
   ) %>%
   left_join(db_theme_grant, by = "grantId") %>%
@@ -482,11 +520,12 @@ merged_tool_df <- db_tool_df %>%
   ) %>%
   mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>%
   mutate(pubMedLink = glue::glue("[{publicationTitle} (PMID:{pubMedId})]({pubMedUrl})")) %>%
-  select(toolId, toolName, description, dataType, role, softwareLanguage,
+  mutate(grantId = str_remove_all(grantId, "[:punct:]")) %>% 
+  select(grantId, toolId, toolName, description, dataType, role, softwareLanguage,
          homepageUrl = url, toolType,
          publicationId, publication = pubMedLink,
-         theme, grantId, grantName, consortium,
-         themeId, consortiumId) %>%
+         theme, grantName, consortium,
+         themeId, consortiumId, grantNumber = grant, publicationTitle) %>%
   mutate(publication = ifelse(str_detect(publication, "^\\[NA"), NA, publication)) %>%
   distinct()
 
@@ -494,8 +533,10 @@ tool_summary_cols <- c(
   "dataType",
   "grantId",
   "grantName",
+  "grantNumber",
   "publicationId",
   "publication",
+  "publicationTitle",
   "softwareLanguage",
   "themeId",
   "theme",
@@ -503,11 +544,20 @@ tool_summary_cols <- c(
   "consortium"
 )
 
-tool_list_cols <- c(
+tool_comma_list_cols <- c(
   "softwareLanguage",
   "theme",
   "inputDataType",
-  "outputDataType"
+  "outputDataType",
+  "grantId",
+  "grantNumber",
+  "publicationId",
+  "publication",
+  "publicationTitle"
+)
+
+tool_bar_list_cols <- c(
+  "grantName"
 )
 
 merged_formatted_tool_df <- merged_tool_df %>%
@@ -519,9 +569,11 @@ merged_formatted_tool_df <- merged_tool_df %>%
   summarize(
     dataType = str_c(unique(dataType), collapse = ", "),
     grantId = str_c(unique(grantId), collapse = ", "),
-    grantName = str_c(unique(grantName), collapse = ", "),
+    grantName = str_c(unique(grantName), collapse = " | "),
+    grantNumber = str_c(unique(grantNumber), collapse = ", "),
     publicationId = str_c(unique(publicationId), collapse = ", "),
     publication = str_c(unique(publication), collapse = ", "),
+    publicationTitle = str_c(unique(publicationTitle), collapse = ", "),
     softwareLanguage = str_c(unique(softwareLanguage), collapse = ", "),
     themeId = str_c(unique(themeId), collapse = ", "),
     theme = str_c(unique(theme), collapse = ", "),
@@ -534,7 +586,8 @@ merged_formatted_tool_df <- merged_tool_df %>%
   pivot_wider(names_from = role, values_from = dataType) %>%
   select(-`NA`) %>%
   rename_at(c("input", "output"), ~ str_c(., "DataType", sep = "")) %>%
-  mutate_at(tool_list_cols, ~ purrr::map_chr(., csv_str_to_json))
+  mutate_at(tool_comma_list_cols, ~ purrr::map_chr(., csv_str_to_json)) %>% 
+  mutate_at(tool_bar_list_cols, ~ purrr::map_chr(., csv_str_to_json, "\\|"))
 
 # merged_tool_cols <- list(
 #    Column(name = 'toolName', columnType = 'STRING', maximumSize = 30),
