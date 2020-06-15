@@ -1,0 +1,5 @@
+##
+nohup python3 get_disease_annotation.py publications_01-29-2020-pubmed-ids.tsv csbc-pson-pubs-out.csv csbc-pson-diseases.csv -a 561d6721e01bfcb34e5553a3582d761e1508 -e bstephenwhite@gmail.com >& nohup.out &
+
+prefix=publications_02-06-2020
+nohup python3 get_disease_annotation.py ${prefix}-pubmed-ids.tsv ${prefix}-out.csv csbc-pson-diseases.csv -a 561d6721e01bfcb34e5553a3582d761e1508 -e bstephenwhite@gmail.com >& nohup.out &
