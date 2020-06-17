@@ -47,6 +47,8 @@ def get_args():
         description="Scrap PubMed information from a list of grant numbers"
         + " and put the results into a CSV file.  Table ID can be provided"
         + " if interested in only scrapping for new publications.")
+
+    # TODO: default to the grants table/view in the "CSBC PS-ON DB" project
     parser.add_argument("-g", "--grantview_id",
                         type=str, default="syn21918972",
                         help="Synapse table/view ID containing grant numbers in"
