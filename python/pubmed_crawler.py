@@ -54,9 +54,6 @@ def get_args():
     parser.add_argument("-t", "--table_id",
                         type=str,
                         help="Current Synapse table holding PubMed info.")
-    parser.add_argument("-c", "--consortium_name",
-                        type=str, required=True,
-                        help="Name of consortium, e.g. CSBC")
     parser.add_argument("-o", "--output",
                         type=str, default="publications_"
                         + datetime.today().strftime('%m-%d-%Y'),
@@ -119,6 +116,30 @@ def get_pmids(grants):
         count += 1
     print(f"Total unique publications: {len(all_pmids)}\n")
     return all_pmids
+
+
+def parse_header(header):
+    """Parse header div for pub. title, authors journal, year, and doi."""
+
+    # TITLE
+    title = header.find('h1').text.strip()
+
+    # JOURNAL
+    journal = header.find('button').text.strip()
+
+    # PUBLICATION YEAR
+    pub_date = header.find('span', attrs={'class': "cit"}).text
+    year = re.search(r"(\d{4}).*?[\.;]", pub_date).group(1)
+
+    # DOI
+    doi_cit = header.find(attrs={'class': "citation-doi"})
+    doi = doi_cit.text.strip().lstrip("doi: ").rstrip(".") if doi_cit else ""
+
+    # AUTHORS
+    authors = [a.find('a').text for a in header.find_all(
+        'span', attrs={'class': "authors-list-item"})]
+
+    return (title, journal, year, doi, authors)
 
 
 def parse_grant(grant):
@@ -200,19 +221,18 @@ def make_urls(url, accessions):
     return ", ".join(url_list)
 
 
-def scrap_info(pmids, curr_grants, consortium, name):
+def scrap_info(pmids, curr_grants, grant_view):
     """Create dataframe of publications and their pulled data.
 
     Returns:
         df: publications data
     """
 
-    first_colname = "CSBC PSON Center" if re.search(
-        r"csbc", name, re.I) else "Consortium Center"
-    columns = [first_colname, "Consortium", "PubMed", "Journal",
-               "Publication Year", "Title", "Authors", "Grant",
-               "SRX", "SRX Link", "SRP", "SRP Link", "dbGaP", "dbGaP Link",
-               "Data Location", "Synapse Location", "Keywords"]
+    columns = ["doi", "journal", "pubMedId", "pubMedUrl",
+               "publicationTitle", "publicationYear", "keywords",
+               "authors", "consortium", "grantId", "grantNumber",
+               "gseIds", "gseUrls", "srxIds", "srxUrls",
+               "srpIds", "srpUrls", "dpgapIds", "dpgapUrls"]
 
     if not os.environ.get('PYTHONHTTPSVERIFY', '') \
             and getattr(ssl, '_create_unverified_context', None):
@@ -225,27 +245,22 @@ def scrap_info(pmids, curr_grants, consortium, name):
             url = f"https://www.ncbi.nlm.nih.gov/pubmed/?term={pmid}"
             soup = BeautifulSoup(session.get(url).content, "lxml")
 
-            # TITLE
-            title = soup.find(attrs={"class": "rprt abstract"})
-            title = title.h1.text.rstrip(".")
+            # HEADER
+            # Contains: title, journal, pub. date, authors, pmid, doi
+            header = soup.find(attrs={'id': "full-view-heading"})
 
-            # CITATION (including JOURNAL and PUB. YEAR)
-            citation = soup.find(attrs={"class": "cit"}).text
-            journal = citation[:citation.find(".")]
+            # PubMed utilizes JavaScript now, so content does not always
+            # fully load on the first try.
+            if not header:
+                soup = BeautifulSoup(session.get(url).content, "lxml")
+                header = soup.find(attrs={'id': "full-view-heading"})
 
-            date_start = citation.find(".") + 1
-            date_stop = citation.find(";") or citation.find(".")
-            year = citation[date_start:date_stop].split()[0]
-
-            # AUTHORS
-            authors = [a.contents[0] for a in soup.find(
-                'div', attrs={"class": "auths"}).find_all('a')]
+            title, journal, year, doi, authors = parse_header(header)
             authors = ", ".join(authors)
 
             # GRANTS
-            grants = [g.contents[0] for g in soup
-                      .find('div', attrs={"class": "rprt_all"})
-                      .find_all('a', attrs={"abstractlink": "yes", "alsec": "grnt"})]
+            grants = [g.text.strip() for g in soup.find(
+                'div', attrs={'id': "grants"}).find_all('a')]
 
             # Filter out grant annotations not in consortia.
             grants = {parse_grant(grant) for grant in grants
@@ -254,42 +269,42 @@ def scrap_info(pmids, curr_grants, consortium, name):
 
             # Nasim's note: match and get the grant center Synapse ID from
             # its view table by grant number of this journal study.
-            center_id = center_name = consortium_grants = ""
+            grant_id = consortium = ""
             if grants:
-                center = consortium.loc[consortium['grantNumber'].isin(grants)]
-                center_id = ", ".join(list(set(center.grantId)))
-                center_name = ", ".join(list(set(center.consortium)))
-            consortium_grants = ", ".join(
-                [center.grantType.iloc[0] + " " + grant for grant in grants])
+                center = grant_view.loc[grant_view['grantNumber'].isin(grants)]
+                grant_id = ", ".join(list(set(center.grantId)))
+                consortium = ", ".join(list(set(center.consortium)))
 
             # KEYWORDS
-            keywords = soup.find(attrs={"class": "keywords"})
-            keywords = keywords.find("p").text if keywords else ""
+            abstract = soup.find(attrs={"id": "abstract"})
+            try:
+                keywords = abstract.find(text=re.compile(
+                    "Keywords")).find_parent("p").text.replace(
+                    "Keywords:", "").strip()
+            except AttributeError:
+                keywords = ""
 
             # RELATED INFORMATION
+            # Contains: GEO, SRA, dbGaP
             related_info = get_related_info(pmid)
 
-            #   GEO
             gse_ids = parse_geo(related_info.get('gds'))
             gse_url = make_urls(
                 "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=", gse_ids)
 
-            #   SRA
             srx, srp = parse_sra(related_info.get('sra'))
             srx_url = make_urls("https://www.ncbi.nlm.nih.gov/sra/", srx)
             srp_url = make_urls(
                 "https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=", srp)
 
-            #   DBGAP
             dbgaps = parse_dbgap(related_info.get('gap'))
             dbgap_url = make_urls(
                 "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=", dbgaps)
 
             row = pd.DataFrame(
-                [[center_id, center_name, url, journal, year, title, authors,
-                  consortium_grants, ", ".join(srx), srx_url, ", ".join(srp),
-                  srp_url, ", ".join(dbgaps), dbgap_url, gse_url,
-                  "", keywords]],
+                [[doi, journal, pmid, url, title, year, keywords, authors,
+                  consortium, grant_id, ", ".join(grants), gse_ids, gse_url,
+                  srx, srx_url, list(srp), srp_url, dbgaps, dbgap_url]],
                 columns=columns)
             table.append(row)
             session.close()
@@ -303,8 +318,8 @@ def scrap_info(pmids, curr_grants, consortium, name):
 def find_publications(syn, args):
     """Get list of publications based on grants of consortia."""
 
-    consortium = get_view(syn, args.grantview_id)
-    grants = get_grants(consortium)
+    grant_view = get_view(syn, args.grantview_id)
+    grants = get_grants(grant_view)
     pmids = get_pmids(grants)
 
     # If user provided a table ID, only scrap info from
@@ -314,14 +329,14 @@ def find_publications(syn, args):
         current_publications = syn.tableQuery(
             f"select * from {args.table_id}").asDataFrame()
         current_pmids = {re.search(r"[/=](\d+)$", i).group(1)
-                         for i in list(current_publications.PubMed)}
+                         for i in list(current_publications.pubMedUrl)}
         pmids -= current_pmids
         print(f"  New publications found: {len(pmids)}\n")
 
     print(f"Pulling information from publications...")
 
-    table = scrap_info(pmids, grants, consortium, args.consortium_name)
-    table.to_csv(args.output + ".csv", index=False, sep="\t", encoding="utf-8")
+    table = scrap_info(pmids, grants, grant_view)
+    table.to_csv(args.output + ".tsv", index=False, sep="\t", encoding="utf-8")
     print("DONE")
 
 
