@@ -221,7 +221,7 @@ def make_urls(url, accessions):
     return ", ".join(url_list)
 
 
-def scrap_info(pmids, curr_grants, grant_view):
+def scrape_info(pmids, curr_grants, grant_view):
     """Create dataframe of publications and their pulled data.
 
     Returns:
@@ -231,8 +231,8 @@ def scrap_info(pmids, curr_grants, grant_view):
     columns = ["doi", "journal", "pubMedId", "pubMedUrl",
                "publicationTitle", "publicationYear", "keywords",
                "authors", "consortium", "grantId", "grantNumber",
-               "gseIds", "gseUrls", "srxIds", "srxUrls",
-               "srpIds", "srpUrls", "dpgapIds", "dpgapUrls"]
+               "gseAccns", "gseUrls", "srxAccns", "srxUrls",
+               "srpAccns", "srpUrls", "dpgapAccns", "dpgapUrls"]
 
     if not os.environ.get('PYTHONHTTPSVERIFY', '') \
             and getattr(ssl, '_create_unverified_context', None):
@@ -335,7 +335,7 @@ def find_publications(syn, args):
 
     print(f"Pulling information from publications...")
 
-    table = scrap_info(pmids, grants, grant_view)
+    table = scrape_info(pmids, grants, grant_view)
     table.to_csv(args.output + ".tsv", index=False, sep="\t", encoding="utf-8")
     print("DONE")
 
