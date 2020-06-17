@@ -90,14 +90,22 @@ source_table_list <- source_project %>%
 
 # grants -----------------------------------------------------------------------
 
-merged_grants_tbl <- get_synapse_tbl(
+merged_grant_tbl <- get_synapse_tbl(
     source_table_list["Portal - Grants Merged"]
 )
 
-grants_tbl <- get_synapse_tbl(dest_table_list["grant"]) %>% 
+grant_tbl <- get_synapse_tbl(dest_table_list["grant"]) %>% 
     dplyr::select(-entity_columns)
 
-updated_grants_tbl <- merged_grants_tbl %>%
+new_grant_tbl <- merged_grant_tbl %>%
+    dplyr::filter(!.data$grantId %in% grant_tbl$id)
+
+missing_grant_tbl <- grant_tbl %>% 
+    dplyr::filter(!.data$id %in% merged_grant_tbl$grantId) %>% 
+    dplyr::select(id) %>% 
+    unique()
+
+updated_grants_tbl <- merged_grant_tbl %>%
     dplyr::select(
         "id"          = .data$grantId,
         "consortiumId",
@@ -108,18 +116,29 @@ updated_grants_tbl <- merged_grants_tbl %>%
     )
 
 update_tbl_with_new_data(
-    dest_table_list["grant"], grants_tbl, updated_grants_tbl
+    dest_table_list["grant"], grant_tbl, updated_grants_tbl
 )
 
-merged_grants_tbl %>%
+merged_grant_tbl %>%
     dplyr::select("grantId", "institutionId") %>%
-    tidyr::separate_rows("institutionId", sep = " \\| ") %>%
+    tidyr::separate_rows("institutionId", sep = ", ") %>%
     update_synapse_table(dest_table_list["institution_grant"], .)
 
-merged_grants_tbl %>%
+merged_grant_tbl %>%
     dplyr::select("grantId", "themeId") %>%
     tidyr::separate_rows("themeId", sep = ", ") %>%
+    dplyr::mutate("themeId" = dplyr::if_else(
+        .data$themeId == "nan",
+        NA_character_,
+        .data$themeId
+    )) %>% 
     update_synapse_table(dest_table_list["theme_grant"], .)
+
+merged_grant_tbl %>%
+    dplyr::select("grantId", "person" = "investigator") %>%
+    dplyr::mutate("role" = "investigator") %>%
+    tidyr::separate_rows("person", sep = ", ") %>%
+    update_synapse_table(dest_table_list["person_grant"], .)
 
 
 # projects ---------------------------------------------------------------------
@@ -145,6 +164,9 @@ updated_project_tbl <- merged_project_tbl %>%
         "grantId",
         "displayName" = .data$projectName,
         "projectType"
+    ) %>% 
+    dplyr::mutate(
+        "grantId" = stringr::str_remove_all(.data$grantId, '[\\"\\[\\]\\\\]')
     )
 
 update_tbl_with_new_data(
@@ -157,7 +179,7 @@ merged_project_tbl %>%
     update_synapse_table(dest_table_list["description_project"], .)
 
 
-# # datasets ---------------------------------------------------------------------
+# datasets ---------------------------------------------------------------------
 
 #TODO: come up with plan for adding new datasets, and updating existing ones.
 merged_dataset_tbl <- get_synapse_tbl(
@@ -165,7 +187,16 @@ merged_dataset_tbl <- get_synapse_tbl(
 )
 
 dataset_tbl <- get_synapse_tbl(dest_table_list["dataset"]) %>% 
-    dplyr::select(-entity_columns)
+    dplyr::select(-entity_columns) %>% 
+    dplyr::filter(.data$is.dataset)
+
+new_dataset_tbl <- merged_dataset_tbl %>%
+    dplyr::filter(!.data$datasetId %in% dataset_tbl$id)
+
+missing_dataset_tbl <- dataset_tbl %>% 
+    dplyr::filter(!.data$id %in% merged_dataset_tbl$datasetId) %>% 
+    dplyr::select(id) %>% 
+    unique()
 
 updated_dataset_tbl <- merged_dataset_tbl %>%
     dplyr::select(
@@ -173,12 +204,7 @@ updated_dataset_tbl <- merged_dataset_tbl %>%
         "displayName" = .data$datasetAlias,
         "fullName" = .data$datasetName,
         "overallDesign"
-    ) %>% 
-    dplyr::mutate("fullName" = dplyr::if_else(
-        .data$fullName == .data$displayName,
-        NA_character_,
-        .data$fullName
-    )) 
+    )
 
 update_tbl_with_new_data(
     dest_table_list["dataset"], dataset_tbl, updated_dataset_tbl
@@ -192,6 +218,7 @@ merged_dataset_tbl %>%
 merged_dataset_tbl %>%
     dplyr::select("datasetId", "grantId") %>%
     tidyr::separate_rows(.data$grantId, sep = ", ") %>% 
+    dplyr::mutate(grantId = str_remove_all(.data$grantId, '[\\"\\[\\]\\\\]')) %>% 
     update_synapse_table(dest_table_list["grant_dataset"], .)
     
 # publications -----------------------------------------------------------------
@@ -231,7 +258,15 @@ update_tbl_with_new_data(
 merged_publication_tbl %>%
     dplyr::select("publicationId", "grantId") %>%
     tidyr::separate_rows(.data$grantId, sep = ", ") %>% 
+    dplyr::mutate(grantId = str_remove_all(.data$grantId, '[\\"\\[\\]\\\\]')) %>% 
     update_synapse_table(dest_table_list["grant_publication"], .)
+
+merged_publication_tbl %>%
+    dplyr::select("publicationId", "assay") %>%
+    tidyr::separate_rows(.data$assay, sep = ", ") %>% 
+    dplyr::mutate(assay = str_remove_all(.data$assay, '[\\"\\[\\]\\\\]')) %>% 
+    dplyr::filter(.data$assay != "") %>% 
+    update_synapse_table(dest_table_list["assay_publication"], .)
 
 # tools ------------------------------------------------------------------------
 
@@ -258,11 +293,15 @@ updated_tool_tbl <- merged_tool_tbl %>%
         "grantId",
         "displayName" = .data$toolName,
         "toolType"
+    ) %>% 
+    dplyr::mutate(
+        "grantId" = stringr::str_remove_all(.data$grantId, '[\\"\\[\\]\\\\]')
     )
+    
 
 update_tbl_with_new_data(
     dest_table_list["tool"], tool_tbl, updated_tool_tbl
-)
+) 
 
 merged_tool_tbl %>%
     dplyr::select(
@@ -273,7 +312,7 @@ merged_tool_tbl %>%
     tidyr::pivot_longer(., -"toolId", values_to = "dataType", names_to = "role") %>%
     tidyr::separate_rows(.data$dataType, sep = ", ") %>%
     dplyr::mutate(
-        dataType = stringr::str_remove_all(.data$dataType, "[\\[\\]\\\\]")
+        dataType = stringr::str_remove_all(.data$dataType, '[\\"\\[\\]\\\\]')
     ) %>%
     tidyr::drop_na() %>%
     dplyr::filter(!.data$dataType == "") %>%
@@ -283,7 +322,7 @@ merged_tool_tbl %>%
     dplyr::select("toolId", "softwareLanguage") %>%
     tidyr::separate_rows(.data$softwareLanguage, sep = ", ") %>%
     dplyr::mutate(
-        softwareLanguage = stringr::str_remove_all(.data$softwareLanguage, "[\\[\\]\\\\]")
+        softwareLanguage = stringr::str_remove_all(.data$softwareLanguage, '[\\"\\[\\]\\\\]')
     ) %>%
     tidyr::drop_na() %>%
     dplyr::filter(!.data$softwareLanguage == "") %>%
@@ -305,3 +344,13 @@ merged_tool_tbl %>%
     ) %>%
     update_synapse_table(dest_table_list["link_tool"], .)
 
+# merged_tool_tbl %>%
+#     dplyr::select("toolId", "publicationId") %>%
+#     tidyr::separate_rows(.data$publicationId, sep = ", ") %>%
+#     dplyr::mutate(
+#         "publicationId" = stringr::str_remove_all(.data$publicationId, '[\\"\\[\\]\\\\]')
+#     )
+
+merged_tool_tbl %>% 
+    dplyr::select("toolId", "description") %>% 
+    update_synapse_table(dest_table_list["description_tool"], .)
