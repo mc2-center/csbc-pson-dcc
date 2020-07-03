@@ -231,7 +231,7 @@ def scrape_info(pmids, curr_grants, grant_view):
     """
 
     columns = ["doi", "journal", "pubMedId", "pubMedUrl",
-               "publicationTitle", "publicationYear", "keywords",
+               "publicationTitle", "publicationYear", "keywords", "mesh",
                "authors", "consortium", "grantId", "grantNumber",
                "gseAccns", "gseUrls", "srxAccns", "srxUrls",
                "srpAccns", "srpUrls", "dpgapAccns", "dpgapUrls"]
@@ -282,9 +282,17 @@ def scrape_info(pmids, curr_grants, grant_view):
             try:
                 keywords = abstract.find(text=re.compile(
                     "Keywords")).find_parent("p").text.replace(
-                    "Keywords:", "").strip()
+                        "Keywords:", "").strip()
             except AttributeError:
                 keywords = ""
+
+            # MESH TERMS
+            mesh = soup.find(attrs={"id": "mesh-terms"})
+            try:
+                mesh = [term.text.strip().rstrip("*") for term in
+                        mesh.find_all(attrs={"class": "keyword-actions-trigger"})]
+            except AttributeError:
+                mesh = []
 
             # RELATED INFORMATION
             # Contains: GEO, SRA, dbGaP
@@ -304,9 +312,9 @@ def scrape_info(pmids, curr_grants, grant_view):
                 "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=", dbgaps)
 
             row = pd.DataFrame(
-                [[doi, journal, pmid, url, title, year, keywords, authors,
-                  consortium, grant_id, ", ".join(grants), gse_ids, gse_url,
-                  srx, srx_url, list(srp), srp_url, dbgaps, dbgap_url]],
+                [[doi, journal, pmid, url, title, year, keywords, mesh,
+                  authors, consortium, grant_id, ", ".join(grants), gse_ids,
+                  gse_url, srx, srx_url, list(srp), srp_url, dbgaps, dbgap_url]],
                 columns=columns)
             table.append(row)
             session.close()
