@@ -19,6 +19,9 @@ import synapseclient
 import pandas as pd
 from alive_progress import alive_bar
 
+# Memoization: Tree number dictionary
+TREE_MEMO = {}
+
 
 def login():
     """Log into Synapse. If cached info not found, prompt user.
@@ -149,6 +152,31 @@ def parse_grant(grant):
 
     grant_info = re.search(r"(CA\d+)[ /-]", grant, re.I)
     return grant_info.group(1).upper()
+
+
+def get_tree_nums(term):
+    """Find tree numbers associated with MeSH term."""
+
+    if term in TREE_MEMO:
+        return TREE_MEMO[term]
+
+    handle = Entrez.esearch(db="mesh", term=term+"[MeSH Terms]")
+    term_id = Entrez.read(handle).get('IdList')
+
+    # Do non-exact search if exact match not found
+    if not term_id:
+        handle = Entrez.esearch(db="mesh", term=term)
+        term_id = Entrez.read(handle).get('IdList')
+
+    summary = "".join(Entrez.efetch(db="mesh", id=term_id).readlines())
+    result = re.search(r'Tree Number\(s\): (.*?)\n', summary)
+    try:
+        tree_num = result.group(1)
+    except AttributeError:
+        tree_num = None
+
+    TREE_MEMO[term] = tree_num
+    return tree_num
 
 
 def get_related_info(pmid):
@@ -287,12 +315,15 @@ def scrape_info(pmids, curr_grants, grant_view):
                 keywords = ""
 
             # MESH TERMS
+            # Also captures MeSH tree number, e.g. Animals => B01.050
             mesh = soup.find(attrs={"id": "mesh-terms"})
             try:
                 mesh = [term.text.strip().rstrip("*") for term in
                         mesh.find_all(attrs={"class": "keyword-actions-trigger"})]
             except AttributeError:
                 mesh = []
+
+            tree_nums = [get_tree_nums(term) for term in mesh]
 
             # RELATED INFORMATION
             # Contains: GEO, SRA, dbGaP
@@ -312,9 +343,10 @@ def scrape_info(pmids, curr_grants, grant_view):
                 "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=", dbgaps)
 
             row = pd.DataFrame(
-                [[doi, journal, pmid, url, title, year, keywords, mesh,
-                  authors, consortium, grant_id, ", ".join(grants), gse_ids,
-                  gse_url, srx, srx_url, list(srp), srp_url, dbgaps, dbgap_url]],
+                [[doi, journal, pmid, url, title, year, keywords,
+                  "|".join(list(zip(mesh, tree_nums))), authors, consortium,
+                  grant_id, ", ".join(grants), gse_ids, gse_url,
+                  srx, srx_url, list(srp), srp_url, dbgaps, dbgap_url]],
                 columns=columns)
             table.append(row)
             session.close()
@@ -332,7 +364,7 @@ def find_publications(syn, args):
     grants = get_grants(grant_view)
     pmids = get_pmids(grants)
 
-    # If user provided a table ID, only scrap info from
+    # If user provided a table ID, only scrape info from
     # publications not already listed in the provided table.
     if args.table_id:
         print(f"Comparing with table {args.table_id}...")

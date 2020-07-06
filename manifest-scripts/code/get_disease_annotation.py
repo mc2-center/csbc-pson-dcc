@@ -8,45 +8,6 @@ import pandas as pd
 from Bio import Entrez
 
 
-def getTreeNum(term, tree_memo={}):
-    # From a MeSH term String, returns a comma separated string with all tree numbers associated
-
-    # If we've already seen the term, it should be in the tree_memo dictionary
-    if term in tree_memo:
-        return tree_memo[term]
-
-    # If we haven't seen the term, perform an exact search on the MeSH term
-    term_id = json.loads("".join(Entrez.esearch(db="MeSH", term=term+"[MeSH Terms]", retmode="json")
-                                 .readlines())).get('esearchresult').get('idlist')
-
-    if term_id is None:
-        return None
-    s = "".join(Entrez.efetch(db="MeSH", id=term_id).readlines())
-    if len(term_id) != 0:
-        tmp = re.search(r'Tree Number\(s\): (.*?)\n', s)
-        if tmp is not None:
-            tree_num = tmp.group(1)
-            tree_memo[term] = tree_num
-            return tree_num
-
-    # If we haven't found any tree numbers for that exact search (possibly due to special characters), do a non-exact search
-    else:
-        term_id = json.loads("".join(Entrez.esearch(db="MeSH", term=term, retmode="json")
-                                     .readlines())).get('esearchresult').get('idlist')
-        s = "".join(Entrez.efetch(db="MeSH", id=term_id).readlines())
-        if len(term_id) != 0:
-            tmp = re.search(r'Tree Number\(s\): (.*?)\n', s)
-            if tmp is not None:
-                tree_num = tmp.group(1)
-                tree_memo[term] = tree_num
-                return tree_num
-
-        # If we don't find any associated tree numbers, return a null
-        else:
-            tree_memo[term] = None
-            return None
-
-
 def getStdNameAndUnkCUIFromMeSHList(mesh_list):
     # Returns a tuple of two lists, the first containing known standard names from our controlled vocabulary, and the second containing CUIs which do not have a mapping in our standard ontology
     if mesh_list == None:
@@ -74,15 +35,12 @@ def getAllCUIFromMeSHList(mesh_list):
     return cuis
 
 
-def getUniqueDiseaseTerms(head_list, keep_nested=False):
-    # From a list of MeSH headings, returns those terms which have tree numbers starting with C, and which have no tree numbers which are substrings of any other tree numbers in the list of headings (if keep_nested is False)
-    if head_list is None:
+def getUniqueDiseaseTerms(tree_list, keep_nested=False):
+
+    if tree_list is None:
         return []
 
-    # List of tree_num, term tuples for each term in the heading list
-    # However, this line results in a number of problems. Because of list comprehension,
-    # sometimes this results in HTTP Error 429: Too Many Requests (even with the rate limit increased to 10 with an api_key)
-    tree_list = [(getTreeNum(term), term) for term in head_list]
+    print(tree_list)
 
     # Filter for terms which have a tree_num list containing at least one tree number starting with C
     diseases = []
@@ -171,9 +129,14 @@ if __name__ == "__main__":
     # This reads the input column of the manifest, (splitting on forward slash and query strings to find PubMed IDs in links) and applies the getMeSHHeadingList function to each PubMed ID
     mesh_series = pub_data["mesh"].apply(
         lambda x: x[1:-1].replace("'", "").split(', '))
+    print(mesh_series)
+
+    tree_series = pub_data["tree_nums"].apply(
+        lambda x: x[2:-2].split("', '"))
+    print(tree_series)
 
     # Applies "getUniqueDiseaseTerms" to each PubMed ID's MeSH heading lists, filtering for Disease MeSHs and redundant MeSHs
-    disease_series = mesh_series.apply(getUniqueDiseaseTerms)
+    disease_series = tree_series.apply(getUniqueDiseaseTerms)
 
     # Applies "getStdNameAndUnkCUIFromMeSHList" to each PubMed ID's unique disease terms, retrieving both standard names for concepts we know and CUIs for concepts we do not have in our controlled vocabulary
     translated = disease_series.apply(
