@@ -318,8 +318,9 @@ def scrape_info(pmids, curr_grants, grant_view):
             # Also captures MeSH tree number, e.g. Animals => B01.050
             mesh = soup.find(attrs={"id": "mesh-terms"})
             try:
-                mesh = [term.text.strip().rstrip("*") for term in
-                        mesh.find_all(attrs={"class": "keyword-actions-trigger"})]
+                mesh = sorted({term.text.strip().rstrip("*").split(" / ")[0]
+                               for term in mesh.find_all(
+                                   attrs={"class": "keyword-actions-trigger"})})
             except AttributeError:
                 mesh = []
 
@@ -340,7 +341,8 @@ def scrape_info(pmids, curr_grants, grant_view):
 
             dbgaps = parse_dbgap(related_info.get('gap'))
             dbgap_url = make_urls(
-                "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=", dbgaps)
+                "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=",
+                dbgaps)
 
             row = pd.DataFrame(
                 [[doi, journal, pmid, url, title, year, keywords,
