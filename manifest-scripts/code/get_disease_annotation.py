@@ -9,7 +9,9 @@ from Bio import Entrez
 
 
 def getStdNameAndUnkCUIFromMeSHList(mesh_list):
-    # Returns a tuple of two lists, the first containing known standard names from our controlled vocabulary, and the second containing CUIs which do not have a mapping in our standard ontology
+    # Returns a tuple of two lists, the first containing known standard names
+    # from our controlled vocabulary, and the second containing CUIs which do
+    # not have a mapping in our standard ontology
     if mesh_list == None:
         return ([], [])
     known_std = []
@@ -25,7 +27,8 @@ def getStdNameAndUnkCUIFromMeSHList(mesh_list):
 
 
 def getAllCUIFromMeSHList(mesh_list):
-    # Returns a list containing CUIs for the MeSHs in mesh_list (provided one exists)
+    # Returns a list containing CUIs for the MeSHs in mesh_list (provided
+    # one exists)
     if mesh_list == None:
         return ([], [])
     cuis = []
@@ -40,27 +43,32 @@ def getUniqueDiseaseTerms(tree_list, keep_nested=False):
     if tree_list is None:
         return []
 
-    print(tree_list)
-
-    # Filter for terms which have a tree_num list containing at least one tree number starting with C
+    # Filter for terms which have a tree_num list containing at least one
+    # tree number starting with C
     diseases = []
     for ind, pair in enumerate(tree_list):
-        if pair[0] is not None:
-            if any([x.strip()[0] == 'C' for x in pair[0].split(',')]):
+        if pair[1] is not None:
+            if re.search(r"C\d{2}", pair[1]):
                 diseases += [pair]
     if keep_nested:
         return [pair[1] for pair in diseases]
 
-    # From this list, return the terms which do not have a tree number which a substring of any other term's tree number
+    # From this list, return the terms which do not have a tree number which
+    # a substring of any other term's tree number
     result = []
     for ind, pair in enumerate(diseases):
         redund = False
 
-        # For each term tuple, called 'pair', we check every other 'alt_pair' to see if any of the listed tree numbers in the first element of pair's first element is a substring of any of the listed tree numbers in alt_pair's first element
-        if pair[0] is not None:
+        # For each term tuple, called 'pair', we check every other 'alt_pair'
+        # to see if any of the listed tree numbers in the first element of
+        # pair's first element is a substring of any of the listed tree numbers
+        # in alt_pair's first element
+        if pair[1] is not None:
             for alt_pair in [x for i, x in enumerate(diseases) if i != ind]:
-                if alt_pair[0] is not None:
-                    if any([any([sup.strip().startswith(sub.strip()) for sup in alt_pair[0].split(',')]) for sub in pair[0].split(',')]):
+                if alt_pair[1] is not None:
+                    if any([any([sup.strip().startswith(sub.strip())
+                                 for sup in alt_pair[1].split(',')])
+                            for sub in pair[1].split(',')]):
                         redund = True
                         break
         if not redund:
@@ -71,46 +79,94 @@ def getUniqueDiseaseTerms(tree_list, keep_nested=False):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "data_path", help="location for input file in CSV format with header. Each row corresponds to a manuscript, whose corresponding PubMed ID is provided in column 'input_column'.")
-    parser.add_argument("output_path", help="location for output file, will be a CSV with a header row. It will be \
-        identical to the input CSV, with an added column containing a String for each row/publication, with the String \
-        containing semicolon-separated (if there is more than one) disease annotations. The column will be named either \
-        'Disease' or the value of the -output_column option.")
-    parser.add_argument("cont_vocab_path", help="location for controlled vocabulary CSV file. This has been derived from the Google Sheet at \
-        https://docs.google.com/spreadsheets/d/1_Ho4tjgdxSHo19qFhlLJhZAyQSPPDW-W8JN910GizDs/edit?usp=sharing, which \
-        can be used as an example. It is required to have \
-        a column 'UMLS_CUI' containing Concept Unique IDs (from the Unified Medical Language System metathesaurus) \
-        and a column 'standard_name' containing a standard term to annotate the input table with if a publication \
-        is mapped to the corresponding CUI. The rows/standard names do not all need CUIs, but those terms without CUIs will never be mapped to in this script")
-    parser.add_argument("-i", "-input_column", type=str, default="Pubmed", help="column name containing PubMed IDs (for example, '31442407') of the query articles. \
-        Can also contain links to PubMed articles (for example, 'https://www.ncbi.nlm.nih.gov/pubmed/31442407', as the script will extract the PubMed ID from the URL. Will default to 'PubMed'")
-    parser.add_argument("-o", "-output_column", type=str, default="Disease", help="column name for the disease annotation. Will be a \
-        semicolon-separated string containing disease annotation(s) for each row/publication. Will default to 'Disease'")
-    parser.add_argument("-m", "-meshtocui_map_path", type=str, default="../data/mesh_cui_map_total.csv",
-                        help="relative path of CSV with two columns, one containing \
-        possible MeSH terms in a column called 'STR', and their corresponding Concept Unique IDs (according to UMLS \
-        metathesaurus) in a column called 'CUI'. Will default to '../data/mesh_cui_map_total.csv'")
-    parser.add_argument("-c", "-cuitoterms_map_path", type=str, default="../data/cuitoterms_map.csv",
-                        help="relative path of CSV with (at least) two columns, \
-        one containing Concept Unique IDs (CUIs) we may encounter in a column called 'CUI', one containing possible \
-        terms for our controlled vocabulary in a columns called 'term'. Any additional columns or structure can be \
-        added include information  which will be output in the case that there are CUIs which do not have standard \
-        names in our controlled  vocabulary. This CSV will be filtered for those CUIs and output to the location of \
-        the option 'needed_cuis'. The default for '-cuitoterms_map' is '../data/cuitoterms_map.csv', and it contains \
-        columns for 'pref_name', or the most preferred name for a CUI (according to UMLS), 'edit_score' or the edit \
-        score between a possible term and the pref_name, 'ont_source' which tells the ontology providing the term to \
-        be considered. The terms have been filtered for those in ICD10CM and NCI thesaurus ontologies, and ordered by\
-        edit score from the most preferred term")
-    parser.add_argument("-n", "-needed_cuis", type=str, default="needed_cuis.csv",
-                        help="relative path for possible output, if there are Concept \
-        Unique IDs without a standard name in the controlled vocabulary")
-    parser.add_argument("-u", "-CUI_column", type=str,
-                        help="Name of column where all disease CUIs will be listed for each publication. If not included, the column will not be added to the dataframe")
-    # parser.add_argument("-k", "-keep_nested", type=bool, help="Whether or not to keep less specific nested mesh terms \
-    #   (i.e. one being a more specific term for another, such as 'Cancer' and 'Breast Cancer'. Default is to remove")
+    parser.add_argument("data_path",
+                        help="location for input file in CSV format with \
+                            header. Each row corresponds to a manuscript, \
+                            whose corresponding PubMed ID is provided in \
+                            column 'input_column'.")
+    parser.add_argument("output_path",
+                        help="location for output file, will be a CSV with a \
+                            header row. It will be identical to the input CSV, \
+                            with an added column containing a String for each \
+                            row/publication, with the String containing \
+                            semicolon-separated (if there is more than one) \
+                            disease annotations. The column will be named \
+                            either 'Disease' or the value of the -output_column \
+                            option.")
+    parser.add_argument("cont_vocab_path",
+                        help="location for controlled vocabulary CSV file. \
+                            This has been derived from the Google Sheet at \
+                            https://docs.google.com/spreadsheets/d/1_Ho4tjgdxSHo19qFhlLJhZAyQSPPDW-W8JN910GizDs/edit?usp=sharing, \
+                            which can be used as an example. It is required \
+                            to have a column 'UMLS_CUI' containing Concept \
+                            Unique IDs (from the Unified Medical Language \
+                            System metathesaurus) and a column 'standard_name' \
+                            containing a standard term to annotate the input \
+                            table with if a publication is mapped to the \
+                            corresponding CUI. The rows/standard names do not \
+                            all need CUIs, but those terms without CUIs will \
+                            never be mapped to in this script")
+    parser.add_argument("-i", "-input_column",
+                        type=str, default="Pubmed",
+                        help="column name containing PubMed IDs (for example, \
+                            '31442407') of the query articles. Can also contain \
+                            links to PubMed articles (for example, \
+                            'https://www.ncbi.nlm.nih.gov/pubmed/31442407', as \
+                            the script will extract the PubMed ID from the URL. \
+                            Will default to 'PubMed'")
+    parser.add_argument("-o", "-output_column",
+                        type=str, default="Disease",
+                        help="column name for the disease annotation. Will be \
+                            a semicolon-separated string containing disease \
+                            annotation(s) for each row/publication. Will \
+                            default to 'Disease'")
+    parser.add_argument("-m", "-meshtocui_map_path",
+                        type=str, default="../data/mesh_cui_map_total.csv",
+                        help="relative path of CSV with two columns, one \
+                            containing possible MeSH terms in a column called \
+                            'STR', and their corresponding Concept Unique IDs \
+                            (according to UMLS metathesaurus) in a column \
+                            called 'CUI'. Will default to '../data/mesh_cui_map_total.csv'")
+    parser.add_argument("-c", "-cuitoterms_map_path",
+                        type=str, default="../data/cuitoterms_map.csv",
+                        help="relative path of CSV with (at least) two \
+                            columns, one containing Concept Unique IDs (CUIs) \
+                            we may encounter in a column called 'CUI', one \
+                            containing possible terms for our controlled \
+                            vocabulary in a columns called 'term'. Any \
+                            additional columns or structure can be added \
+                            include information  which will be output in the \
+                            case that there are CUIs which do not have standard \
+                            names in our controlled  vocabulary. This CSV will \
+                            be filtered for those CUIs and output to the \
+                            location of the option 'needed_cuis'. The default \
+                            for '-cuitoterms_map' is '../data/cuitoterms_map.csv', \
+                            and it contains columns for 'pref_name', or the most \
+                            preferred name for a CUI (according to UMLS), \
+                            'edit_score' or the edit score between a possible \
+                            term and the pref_name, 'ont_source' which tells \
+                            the ontology providing the term to be considered. \
+                            The terms have been filtered for those in ICD10CM \
+                            and NCI thesaurus ontologies, and ordered by edit \
+                            score from the most preferred term")
+    parser.add_argument("-n", "-needed_cuis",
+                        type=str, default="needed_cuis.csv",
+                        help="relative path for possible output, if there are \
+                            Concept Unique IDs without a standard name in the \
+                            controlled vocabulary")
+    parser.add_argument("-u", "-CUI_column",
+                        type=str,
+                        help="Name of column where all disease CUIs will be \
+                            listed for each publication. If not included, the \
+                                column will not be added to the dataframe")
+    # parser.add_argument("-k", "-keep_nested",
+    #                     type=bool,
+    #                     help="Whether or not to keep less specific nested \
+    #                         mesh terms (i.e. one being a more specific term \
+    #                         for another, such as 'Cancer' and 'Breast \
+    #                         Cancer'. Default is to remove")
     args = parser.parse_args()
-    pub_data = pd.read_csv(args.data_path, sep="\t")
+    pub_data = pd.read_csv(args.data_path, sep="\t", converters={'mesh': eval})
 
     Entrez.email = os.getenv('ENTREZ_EMAIL')
     Entrez.api_key = os.getenv('ENTREZ_API_KEY')
@@ -126,44 +182,49 @@ if __name__ == "__main__":
 
     cui_pref_terms_df = pd.read_csv(args.c)
 
-    # This reads the input column of the manifest, (splitting on forward slash and query strings to find PubMed IDs in links) and applies the getMeSHHeadingList function to each PubMed ID
-    mesh_series = pub_data["mesh"].apply(
-        lambda x: x[1:-1].replace("'", "").split(', '))
-    print(mesh_series)
+    # This reads the input column of the manifest, (splitting on forward slash
+    # and query strings to find PubMed IDs in links) and applies the getMeSHHeadingList
+    # function to each PubMed ID
+    mesh_series = pub_data["mesh"]
 
-    tree_series = pub_data["tree_nums"].apply(
-        lambda x: x[2:-2].split("', '"))
-    print(tree_series)
+    # Applies "getUniqueDiseaseTerms" to each PubMed ID's MeSH heading lists,
+    # filtering for Disease MeSHs and redundant MeSHs
+    disease_series = mesh_series.apply(getUniqueDiseaseTerms)
 
-    # Applies "getUniqueDiseaseTerms" to each PubMed ID's MeSH heading lists, filtering for Disease MeSHs and redundant MeSHs
-    disease_series = tree_series.apply(getUniqueDiseaseTerms)
-
-    # Applies "getStdNameAndUnkCUIFromMeSHList" to each PubMed ID's unique disease terms, retrieving both standard names for concepts we know and CUIs for concepts we do not have in our controlled vocabulary
+    # Applies "getStdNameAndUnkCUIFromMeSHList" to each PubMed ID's unique
+    # disease terms, retrieving both standard names for concepts we know and
+    # CUIs for concepts we do not have in our controlled vocabulary
     translated = disease_series.apply(
         getStdNameAndUnkCUIFromMeSHList).apply(pd.Series)
     known_std = translated[0]
     unk_cui = set(translated[1].sum())
     if len(unk_cui) > 0:
-        print("There are MeSH terms corresponding to Concept Unique IDs (CUIs) which do not \
-have defined standard names in your controlled vocabulary. They are the following \
-(with a possible term for that CUI aside): ")
+        print("There are MeSH terms corresponding to Concept Unique IDs "
+              "(CUIs) which do not have defined standard names in your "
+              "controlled vocabulary. They are the following (with a possible "
+              "term for that CUI aside): ")
         pd.set_option('display.max_rows', None)
-        print(cui_pref_terms_df[cui_pref_terms_df['CUI'].apply(lambda x: x in unk_cui)]
-              [['CUI', 'term']].drop_duplicates(subset='CUI').to_string(index=False))
+        print(cui_pref_terms_df[cui_pref_terms_df['CUI'].apply(
+            lambda x: x in unk_cui)]
+            [['CUI', 'term']].drop_duplicates(subset='CUI').to_string(index=False))
         pd.set_option('display.max_rows', 10)
 
-        print("You may re-run the script after adding those to the controlled vocabulary at " + args.cont_vocab_path)
+        print("You may re-run the script after adding those to the controlled "
+              f"vocabulary at {args.cont_vocab_path}")
         cui_pref_terms_df[cui_pref_terms_df['CUI'].apply(
             lambda x: x in unk_cui)].to_csv(args.n, index=False)
-        print("Writing the table of possible terms to " + args.n)
+        print(f"Writing the table of possible terms to {args.n}")
 
-    # Add a column with known disease standard names in a string separated by semicolons. If the annotations contain 'Not Specified' along with any other disease, remove all 'Not Specified' annotations
-    pub_data[args.o] = known_std.apply(lambda x: ";".join(
-        [anno for anno in set(x) if not (len(set(x)) > 1 and anno == 'Not Specified')]))
+    # Add a column with known disease standard names in a string separated by
+    # semicolons. If the annotations contain 'Not Specified' along with any
+    # other disease, remove all 'Not Specified' annotations
+    pub_data[args.o] = known_std.apply(
+        lambda x: ";".join([anno for anno in set(x)
+                            if not (len(set(x)) > 1 and anno == 'Not Specified')]))
 
     if args.u:
         pub_data[args.u] = disease_series.apply(
             getAllCUIFromMeSHList).apply(lambda x: ";".join(x))
 
-    print("Adding known disease annotations and saving at " + args.output_path)
+    print(f"Adding known disease annotations and saving at {args.output_path}")
     pub_data.to_csv(args.output_path, index=False)
