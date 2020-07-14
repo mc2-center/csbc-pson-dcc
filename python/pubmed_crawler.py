@@ -169,11 +169,11 @@ def get_tree_nums(term):
         term_id = Entrez.read(handle).get('IdList')
 
     summary = "".join(Entrez.efetch(db="mesh", id=term_id).readlines())
-    result = re.search(r'Tree Number\(s\): (.*?)\n', summary)
-    try:
-        tree_num = result.group(1)
-    except AttributeError:
-        tree_num = None
+
+    # Some searches will return multiple exact matches, e.g.
+    # "Antimetabolites, Antineoplastic", so should use re.findall()
+    result = re.findall(r'Tree Number\(s\): (.*?)\n', summary)
+    tree_num = ", ".join(result)
 
     TREE_MEMO[term] = tree_num
     return tree_num
@@ -346,7 +346,7 @@ def scrape_info(pmids, curr_grants, grant_view):
 
             row = pd.DataFrame(
                 [[doi, journal, pmid, url, title, year, keywords,
-                  "|".join(list(zip(mesh, tree_nums))), authors, consortium,
+                  list(zip(mesh, tree_nums)), authors, consortium,
                   grant_id, ", ".join(grants), gse_ids, gse_url,
                   srx, srx_url, list(srp), srp_url, dbgaps, dbgap_url]],
                 columns=columns)
