@@ -7,6 +7,7 @@ output: html_notebook
 library(reticulate)
 library(dccvalidator)
 library(tidyverse)
+library(purrrogress)
 
 # source("../R/synapse_db.R")
 
@@ -14,7 +15,15 @@ use_condaenv("csbc-pson-dcc", required = TRUE)
 synapseclient <- reticulate::import("synapseclient")
 syn <- synapseclient$Synapse()
 syntab <- reticulate::import("synapseclient.table")
+synfile <- synapseclient$File
 syn$login()
+```
+
+
+```{r}
+tibble(id = c("ICBP", "TEC")) %>% 
+  create_entities("syn21630050", syn, synfile)
+
 ```
 
 ## Grants
@@ -24,52 +33,76 @@ merged_grant_df <- dccvalidator::get_synapse_table("syn21918972", syn)
 ```
 
 ```{r}
-merged_grant_cleaned <- merged_grant_df %>% 
-  mutate(theme = str_replace(theme, "Tumor Evolution", "Evolution")) %>% 
-  mutate(institution = str_replace(institution, "MIT,", "	Massachusetts Institute of Technology |")) %>% 
-  mutate(institution = str_replace(institution, "University of Virginia, University of Pennsylvania, University of Delaware", "University of Virginia | University of Pennsylvania | University of Delaware" )) %>% 
-  separate_rows(institution, sep = " \\| ") %>%
-  mutate(institution = str_trim(institution)) %>% 
-  mutate(institution = case_when(
-    institution == "ASU" ~ "Arizona State University",
-    institution == "Harvard" ~ "Harvard University",
-    institution == "Moffitt Cancer Center & Research Institute" ~ "Moffitt Cancer Center",
-    institution == "MSKCC" ~ "Memorial Sloan Kettering Cancer Center",
-    institution == "MIT" ~ "Massachusetts Institute of Technology",
-    institution == "UC Berkeley" ~ "University of California, Berkeley",
-    institution == "UCSF" ~ "University of California, San Francisco",
-    institution == "UCSD" ~ "University of California, San Diego",
-    institution == "UCLA" ~ "University of California, Los Angeles",
-    institution == "UC Irvine" ~ "University of California, Irvine",
-    institution == "ISB" ~ "Institute for Systems Biology",
-    institution == "OHSU" ~ "Oregon Health & Science University",
-    institution == "UCB" ~ "University of California, Berkeley",
-    institution == "Vanderbilt" ~ "Vanderbilt University",
-    institution == "City of Hope" ~ "City Of Hope National Medical Center",
-    institution == "DFCI" ~ "Dana-Farber Cancer Institute",
-    institution == "Dartmouth" ~ "Dartmouth College",
-    institution == "Duke" ~ "Duke University",
-    institution == "Georgia Tech" ~ "Georgia Institute of Technology",
-    institution == "UTHSCSA" ~ "The University of Texas Health Science Center at San Antonio",
-    institution == "BIMDC" ~ "Beth Israel Deaconess Hospital",
-    institution == "MGH" ~ "Massachusetts General Hospital",
-    institution == "IUPUI" ~ "Indiana University – Purdue University Indianapolis",
-    institution == "UMN" ~ "University of Minnesota",
-    institution == "UNC Chapel Hill" ~ "University of North Carolina at Chapel Hill",
-    institution == "NYUSOM" ~ "New York University School of Medicine",
-    institution == "Moffitt" ~ "Moffitt Cancer Center",
-    institution == "UVA" ~ "University of Virginia",
-    institution == "Institute of Computational Biology" ~ "University of Virginia",
-    institution == "UPenn" ~ "University of Pennsylvania",
-    institution == "USC" ~ "University of Southern California",
-    institution == "Houston Methodist Research Institute" ~ "Houston Methodist",
-    TRUE ~ institution
-  )) %>% 
-  group_by(grantId, grantName, grantNumber, abstract, grantType, theme, consortium, investigator) %>%
-  summarize(institution = str_c(unique(institution), collapse = " | "))
+db_institution_df <- dccvalidator::get_synapse_table("syn21905891", syn)
+```
 
+```{r}
+merged_grant_df %>%
+  select(-institutionAlias) %>% 
+  # select(grantId, institutionId) %>% 
+  separate_rows(institutionId, sep = ",") %>% 
+  mutate_all(~ str_trim(.)) %>% 
+  left_join(select(db_institution_df, institutionId = id, institutionAlias = displayName),
+            by = "institutionId") %>%
+  group_by_at(vars(-one_of(c("institutionId", "institutionAlias")))) %>%
+  summarize_all(~ str_c(., collapse = ", ")) %>%
+  ungroup() %>%
+  mutate(institutionAlias = map_chr(institutionAlias, .delim_str_to_json)) %>%
+  update_synapse_table("syn21918972", ., syn, syntab)
+```
+
+
+```{r}
+merged_grant_df %>% 
+  select(grantId, institutionId) %>% 
+  separate_rows(institutionId, sep = ",") %>% 
+  mutate_all(str_trim) %>% 
+  distinct() %>% 
+  I %>% 
+  update_synapse_table("syn21905912", ., syn, syntab)
+```
+
+```{r}
+db_institution_df <- dccvalidator::get_synapse_table("syn21905891", syn)
+```
+
+```{r}
+merged_grant_cleaned <- merged_grant_df %>% 
+  separate_rows(institutionId, institution, sep = "\\|") %>% 
+  mutate_all(str_trim) %>% 
+  distinct() %>% 
+  arrange(institution) %>% 
+  mutate(institutionId = case_when(
+    institution == "University of Pennsylvania" ~ "syn21905883",
+    institution == "University of Virginia" ~ "syn21905886",
+    institution == "University of Colorado Denver" ~ "",
+    institution == "University of Delaware" ~ "",
+    institution == "Pacific Northwest National Laboratory" ~ "",
+    institution == "Massachusetts Institute of Technology" ~ "syn21905863",
+    institution == "The Hebrew University of Jerusalem" ~ "",
+    TRUE ~ institutionId
+  )) %>% 
+  mutate(institution = str_replace(institution, "^The ", "")) %>% 
+  # filter(institutionId == "") %>% 
+  left_join(select(db_institution_df, id, institution = fullName), by = "institution") %>%
+  mutate(institutionId = ifelse(institutionId == "", id, institutionId)) %>%
+  select(-id) %>%
+  distinct() %>% 
+  group_by_at(vars(-contains("institution"))) %>%
+  summarize(
+    institutionId = str_c(unique(institutionId), collapse = ", "),
+    institution = str_c(unique(institution), collapse = " | ")
+  ) %>% 
+  ungroup() %>% 
+  mutate_all(~ ifelse(str_detect(., "Not Applicable"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"Not Applicable"'), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., "^NA$"), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '\\["NA"\\]'), NA, .)) %>%
+  mutate_all(~ ifelse(str_detect(., '"NA"'), NA, .)) %>%
+  I
 merged_grant_cleaned
 ```
+
 
 ```{r}
 merged_grant_syntable <- update_synapse_table("syn21918972", merged_grant_cleaned, syn, syntab)
@@ -167,6 +200,22 @@ merged_dataset_syntable <- update_synapse_table("syn21897968", merged_dataset_cl
 ```{r}
 merged_publication_df <- dccvalidator::get_synapse_table("syn21868591", syn)
 ```
+
+```{r}
+merged_publication_df %>% 
+  select(-grantInstitution) %>% 
+  mutate(grantId = map(grantId, json_to_list)) %>% 
+  unnest(grantId) %>% 
+  
+  left_join(select(merged_grant_df, grantId, institutionId, institutionAlias, grantInstitution),
+            by = "grantId") %>%
+  # group_by_at(vars(-one_of(c("institutionId", "institutionAlias")))) %>%
+  # summarize_all(~ str_c(., collapse = ", ")) %>%
+  # ungroup() %>%
+  # mutate(institutionAlias = map_chr(institutionAlias, .delim_str_to_json)) %>% 
+  I
+```
+
 
 ```{r}
 merged_publication_cleaned <- merged_publication_df %>% 
