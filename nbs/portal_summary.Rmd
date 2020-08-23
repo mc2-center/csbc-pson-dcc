@@ -28,7 +28,6 @@ json_to_list <- function(json_str) {
 ```
 
 ```{r}
-
 consortium_grants <- merged_grants_df %>% 
   select(grantId, consortium) %>% 
   group_by(consortium) %>% 
@@ -39,58 +38,60 @@ consortium_grants
 
 ```{r}
 theme_grants <- merged_grants_df %>% 
- select(grantId, theme) %>% 
+  select(consortium, grantId, theme) %>% 
   filter(theme != "[]") %>% 
   mutate(theme = map(theme, json_to_list)) %>% 
   unnest("theme") %>% 
   left_join(select(db_theme_df, theme = displayName, 
                    themeDescription = description)) %>% 
   filter(!is.na(themeDescription)) %>%  
-  group_by(theme, themeDescription) %>% 
+  group_by(theme, themeDescription, consortium) %>% 
   tally(name = "grants") %>% 
-  ungroup()
+  ungroup() %>% 
+  gather(groupBy, totalCount, grants)
 
 theme_grants
 ```
 
 ```{r}
-consortium_projs <- merged_projects_df %>% 
-  select(projectId, consortium) %>% 
-  group_by(consortium) %>% 
-  tally(name = "projects")
-
-consortium_projs
+ct_counts_syntable <- update_synapse_table("syn21649281", theme_grants, syn, syntab)
 ```
-
 
 ```{r}
-consortiumtheme_projs <- merged_projects_df %>% 
- select(projectId, consortium, theme) %>% 
-  filter(theme != "[]") %>% 
-  mutate(theme = map(theme, json_to_list)) %>% 
-  unnest("theme") %>% 
-  left_join(select(db_theme_df, theme = displayName, 
-                   themeDescription = description)) %>% 
-  filter(!is.na(themeDescription)) %>%  
-  mutate(groupBy = "projects") %>% 
-  group_by(theme, themeDescription, consortium, groupBy) %>% 
-  tally(name = "totalCount") %>% 
-  ungroup()
-
-consortiumtheme_projs
+# consortium_projs <- merged_projects_df %>% 
+#   select(projectId, consortium) %>% 
+#   mutate_all(~ str_trim(.)) %>% 
+#   group_by(consortium) %>%
+#   tally(name = "projects") %>%
+#   I
+# 
+# consortium_projs
 ```
-
-
 
 ```{r}
-ct_counts_syntable <- update_synapse_table("syn21649281", consortiumtheme_projs, syn, syntab)
+# consortiumtheme_projs <- merged_projects_df %>% 
+#  select(projectId, consortium, theme) %>% 
+#   filter(theme != "[]") %>% 
+#   mutate(theme = map(theme, json_to_list)) %>% 
+#   unnest("theme") %>% 
+#   left_join(select(db_theme_df, theme = displayName, 
+#                    themeDescription = description)) %>% 
+#   filter(!is.na(themeDescription)) %>%  
+#   mutate(groupBy = "projects") %>% 
+#   group_by(theme, themeDescription, consortium, groupBy) %>% 
+#   tally(name = "totalCount") %>% 
+#   ungroup()
+# 
+# consortiumtheme_projs
 ```
 
-
+```{r}
+# ct_counts_syntable <- update_synapse_table("syn21649281", consortiumtheme_projs, syn, syntab)
+```
 
 ```{r}
 theme_pubs <- merged_publications_df %>% 
- select(publicationId, theme) %>% 
+  select(publicationId, theme) %>% 
   filter(theme != "[]") %>% 
   mutate(theme = map(theme, json_to_list)) %>% 
   unnest("theme") %>% 
@@ -106,7 +107,7 @@ theme_pubs
 
 ```{r}
 theme_dsets <- merged_datasets_df %>% 
- select(publicationId, theme) %>% 
+  select(publicationId, theme) %>% 
   filter(theme != "[]") %>% 
   mutate(theme = map(theme, json_to_list)) %>% 
   unnest("theme") %>% 
@@ -122,7 +123,7 @@ theme_dsets
 
 ```{r}
 theme_tools <- merged_tools_df %>% 
- select(publicationId, theme) %>% 
+  select(publicationId, theme) %>% 
   filter(theme != "[]") %>% 
   mutate(theme = map(theme, json_to_list)) %>% 
   unnest("theme") %>% 
@@ -137,8 +138,7 @@ theme_tools
 ```
 
 ```{r}
-theme_counts <- theme_projs %>% 
-  left_join(theme_dsets) %>% 
+theme_counts <- theme_dsets %>% 
   left_join(theme_pubs) %>% 
   left_join(theme_tools) %>% 
   replace_na(list(tools = 0)) %>% 
@@ -153,10 +153,11 @@ theme_counts
 theme_counts_syntable <- update_synapse_table("syn21639584", theme_counts, syn, syntab)
 ```
 
+
 ```{r}
 consortium_counts <- consortium_grants %>% 
-  left_join(consortium_projs) %>% 
-    gather(groupBy, totalCount, -consortium)
+  # left_join(consortium_projs) %>% 
+  gather(groupBy, totalCount, -consortium)
 
 consortium_counts
 ```
@@ -164,5 +165,3 @@ consortium_counts
 ```{r}
 consortium_counts_syntable <- update_synapse_table("syn21641485", consortium_counts, syn, syntab)
 ```
-
-
