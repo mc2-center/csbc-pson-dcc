@@ -261,13 +261,16 @@ def scrape_info(pmids, curr_grants, grant_view):
             authors = ", ".join(authors)
 
             # GRANTS
-            grants = [g.text.strip() for g in soup.find(
-                'div', attrs={'id': "grants"}).find_all('a')]
+            try:
+                grants = [g.text.strip() for g in soup.find(
+                    'div', attrs={'id': "grants"}).find_all('a')]
 
-            # Filter out grant annotations not in consortia.
-            grants = {parse_grant(grant) for grant in grants
-                      if re.search(r"CA\d", grant, re.I)}
-            grants = list(filter(lambda x: x in curr_grants, grants))
+                # Filter out grant annotations not in consortia.
+                grants = {parse_grant(grant) for grant in grants
+                          if re.search(r"CA\d", grant, re.I)}
+                grants = list(filter(lambda x: x in curr_grants, grants))
+            except AttributeError:
+                grants = []
 
             # Nasim's note: match and get the grant center Synapse ID from
             # its view table by grant number of this journal study.
