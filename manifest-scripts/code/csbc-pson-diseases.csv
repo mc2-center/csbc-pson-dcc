@@ -23,6 +23,7 @@ Breast Cancer,Carcinoma in situ of Breast,Carcinoma in situ of breast,D05,Breast
 ,Lobular Carcinoma in situ of Breast,Lobular carcinoma in situ of breast,D05.0,Lobular Breast Carcinoma,C3771,,,https://icd.codes/icd10cm/D050,C0206692,Breast
 ,Luminal B Breast Carcinoma,,,Luminal B Breast Carcinoma,C53555,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C53555&key=1711152384&b=1&n=8,C3642346,Breast
 ,Luminal A Breast Carcinoma,,,Luminal A Breast Carcinoma,C53554,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C53554&key=242353962&b=1&n=null,C3642345,Breast
+Ductal Carcinoma in situ,Ductal Breast Carcinoma in situ,,,Ductal Breast Carcinoma in situ,C2924,,,,,
 Ductal Carcinoma,Intraductal Carcinoma in situ of Breast,Intraductal carcinoma in situ of breast,D05.1,Ductal Breast Carcinoma,C4017,,,https://icd.codes/icd10cm/D051,C1527349,Breast
 Colon Cancer,Carcinoma in situ of Colon,Carcinoma in situ of colon,D01.0,Colon Carcinoma,C4910,,,https://icd.codes/icd10cm/D010,C0699790,Colon
 ,Colon Adenosquamous Carcinoma,,,Colon Adenosquamous Carcinoma,C5491,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C5491&key=745142415&b=1&n=2,C1333082,Colon
@@ -33,13 +34,13 @@ Colon Cancer,Carcinoma in situ of Colon,Carcinoma in situ of colon,D01.0,Colon C
 Lung Cancer,Carcinoma in situ of Bronchus and Lung,Carcinoma in situ of bronchus and lung,D02.2,Lung Carcinoma,C4878,,,https://icd.codes/icd10cm/D022,C0684249,Lung
 ,Lung Small Cell Carcinoma,,,Lung Small Cell Carcinoma,C4917,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C4917&key=n120614580&b=1&n=null,C0149925,Lung
 ,Lung Non-Small Cell Carcinoma,,,Lung Non-Small Cell Carcinoma,C2926,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C2926&key=n120614580&b=1&n=null,C0007131,Lung
-Prostate Cancer,"
-",Carcinoma in situ of prostate,D07.5,Prostate Carcinoma,C4863,,,https://icd.codes/icd10cm/D075,C0600139,Prostate Gland
+Prostate Cancer,Carcinoma in situ of prostate,Carcinoma in situ of prostate,D07.5,Prostate Carcinoma,C4863,,,https://icd.codes/icd10cm/D075,C0600139,Prostate Gland
 Pancreatic Cancer,Malignant Neoplasm of Pancreas,Malignant neoplasm of pancreas,C25,Pancreatic Carcinoma,C3850,,,https://icd.codes/icd10cm/C25,C0235974,Pancreas
 ,Pancreatic Adenosquamous Carcinoma,,,Pancreatic Adenosquamous Carcinoma,C5721,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C5721&key=n1740365400&b=1&n=3,C1335299,Pancreas
 ,Pancreatic Neuroendocrine Carcinoma,,,Pancreatic Neuroendocrine Carcinoma,C3770,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3770&key=n1740365400&b=1&n=2,C1328479,Pancreas
 ,Pancreatic Acinar Cell Carcinoma,,,Pancreatic Acinar Cell Carcinoma,C7977,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7977&key=n1740365400&b=1&n=2,C0279661,Pancreas
 ,Pancreatic Adenocarcinoma,,,Pancreatic Adenocarcinoma,C8294,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C8294&key=729254900&b=1&n=null,C0281361,Pancreas
+,Pancreatic Ductal Adenocarcinoma,,,Pancreatic Ductal Adenocarcinoma,C9120,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C9120,,Pancreas
 Skin Cancer,Carcinoma in situ of Skin,Carcinoma in situ of skin,D04,Skin Carcinoma,C4914,,,https://icd.codes/icd10cm/D04,C0699893,Skin
 Melanoma,Melanoma,Malignant melanoma of skin,C43,Melanoma,C3224,,,https://icd.codes/icd10cm/C43,C0025202,Skin
 ,Melanoma,,,Melanoma,C3224,,,,C0025205,Skin
@@ -61,7 +62,7 @@ Carcinoma,Carcinoma in situ,"Carcinoma in situ, unspecified",D09.9,Carcinoma in 
 Malignant Peripheral Nerve Sheath Tumor,Malignant Peripheral Nerve Sheath Tumor,,,Malignant Peripheral Nerve Sheath Tumor,C3798,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3798&key=1642179537&b=1&n=null,C0751690,Nervous System
 Medulloblastoma,Medulloblastoma,,,Medulloblastoma,C3222,,,https://www.icd10data.com/ICD10CM/Codes/C00-D49/C69-C72/C71-/C71.6,C0025149,Brain
 Pan-cancer,Pan-cancer,,,,,,,,,Not Applicable
-Liver Hepatocellular Carcinoma,Liver and Intrahepatic Bile Duct Carcinoma,,,,,,,,C2239176,Liver
+Liver Hepatocellular Carcinoma,Liver and Intrahepatic Bile Duct Carcinoma,Liver cell carcinoma,C22.0,Hepatocellular Carcinoma,C3099,,,https://icd.codes/icd10cm/C220,C2239176,Liver
 Not Applicable,Not Applicable,,,,,,,,,Not Applicable
 Breast Invasive Carcinoma,Carcinoma in situ of Breast,,,,,,,,C0678222,Breast
 Gliomas,Glioma,,,,,,,,C0017638,Brain
@@ -93,7 +94,7 @@ Oral Cavity Squamous Cell Carcinoma,Oral Cavity Squamous Cell Carcinoma,,,Oral C
 ,Renal Cell Carcinoma,,,Renal Cell Carcinoma,C9385,,,,C0007134,Kidney
 ,Squamous Cell Carcinoma,,,Squamous Cell Carcinoma,C2929,,,,C0007137,Epithelium
 ,Cerebellar Neoplasm,,,Cerebellar Neoplasm,C2935,,,,C0007762,Brain
-,Uterine Cervical Neoplasm,,,Cervical Neoplasm,C2940,,,,C0007873,Cervix Uteri
+,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C7558,,,Cervical Neoplasm,C2940,,,,C0007873,Cervix Uteri
 ,Carcinoma in situ of Colon,,,Colon Tumor,C2953,,,,C0009375,Colon
 ,Colorectal Tumor,,,Colorectal Tumor,C2956,,,,C0009404,"Colon, Rectum"
 ,Myelodysplastic Syndrome,,,Myelodysplastic Syndrome,C3247,,,,C3463824,"Hematopoietic system, Lymphatic system"
@@ -135,3 +136,8 @@ Oral Cavity Squamous Cell Carcinoma,Oral Cavity Squamous Cell Carcinoma,,,Oral C
 ,Ependymoma,,,Ependymoma,C3017,,,,C0014474,Nervous System
 ,Endometrial Neoplasm,,,Endometrial Neoplasm,C3012,,,,C0014170,"Uterus, Cervix Uteri"
 ,Dysplastic Nevus Syndrome,,,Dysplastic Nevus Syndrome,C7584,,,,C0013403,Skin
+,Fibrosarcoma,,,Fibrosarcoma,C3043,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C3043,,Connective and soft tissue
+,Colon Adenocarcinoma,,,Colon Adenocarcinoma,C4349,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C4349,,"Colon, Colorectal Region, Digestive System, Intestine"
+lymphocytic leukemia,Lymphoid Leukemia,,,Lymphoid Leukemia,C7539,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C7539,,"Bone Marrow, Hematopoietic system, Lymphatic system"
+uterine cancer,Endometrial Carcinoma,,,Endometrial Carcinoma,C7558,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C7558,,"Corpus uteri, Endometrial cavity, Female reproductive system, Genitourinary system, Uterus"
+,Colorectal Adenocarcinoma ,,,Colorectal Adenocarcinoma,C5105,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C5105,,
