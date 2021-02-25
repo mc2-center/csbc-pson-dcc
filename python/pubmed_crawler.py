@@ -274,7 +274,7 @@ def scrape_info(pmids, curr_grants, grant_view):
                           if re.search(r"CA\d", grant, re.I)}
                 grants = list(filter(lambda x: x in curr_grants, grants))
             except AttributeError:
-                grants = ""
+                grants = []
 
             # Nasim's note: match and get the grant center Synapse ID from
             # its view table by grant number of this journal study.
