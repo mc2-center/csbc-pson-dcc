@@ -18,31 +18,32 @@ from bs4 import BeautifulSoup
 import synapseclient
 import pandas as pd
 from alive_progress import alive_bar
+from openpyxl import Workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 
 def login():
-    """Log into Synapse. If cached info not found, prompt user.
+    """Log into Synapse. If env variables not found, prompt user.
 
     Returns:
         syn: Synapse object
     """
-
     try:
-        syn = synapseclient.login(silent=True)
-    except Exception:
-        print("Cached credentials not found; please provide",
-              "your Synapse username and password.")
-        username = input("Synapse username: ")
-        password = getpass.getpass("Synapse password: ").encode("utf-8")
         syn = synapseclient.login(
-            username=username, password=password,
-            rememberMe=True, silent=True)
+            os.getenv('SYN_USERNAME'),
+            apiKey=os.getenv('SYN_APIKEY'),
+            silent=True)
+    except synapseclient.core.exceptions.SynapseNoCredentialsError:
+        print("Credentials not found; please manually provide your",
+              "Synapse username and password.")
+        username = input("Synapse username: ")
+        password = getpass.getpass("Synapse password: ")
+        syn = synapseclient.login(username, password, silent=True)
     return syn
 
 
 def get_args():
     """Set up command-line interface and get arguments."""
-
     parser = argparse.ArgumentParser(
         description="Scrap PubMed information from a list of grant numbers"
         + " and put the results into a CSV file.  Table ID can be provided"
@@ -56,12 +57,34 @@ def get_args():
     parser.add_argument("-t", "--table_id",
                         type=str,
                         help="Current Synapse table holding PubMed info.")
-    parser.add_argument("-o", "--output",
+    parser.add_argument("-o", "--output_name",
                         type=str, default="publications_"
-                        + datetime.today().strftime('%m-%d-%Y'),
-                        help="Filename for output CSV. (Default:"
+                        + datetime.today().strftime('%Y-%m-%d'),
+                        help="Filename for output filename. (Default:"
                         + " publications_<current-date>)")
     return parser.parse_args()
+
+
+def convert_to_stringlist(lst):
+    """Create StringList of values for Synapse column type.
+
+    Returns:
+        str: list of strings
+    """
+    if lst:
+        return "['" + "', '".join(lst) + "']"
+    else:
+        return "[]"
+
+
+def make_urls(url, accessions):
+    """Create NCBI link for each accession in the iterable.
+
+    Returns:
+        str: list of URLs
+    """
+    url_list = [url + accession for accession in list(accessions)]
+    return ", ".join(url_list)
 
 
 def get_view(syn, table_id):
@@ -73,7 +96,6 @@ def get_view(syn, table_id):
     Returns:
         dataframe: consortiums and their project descriptions.
     """
-
     results = syn.tableQuery(
         f"select * from {table_id}").asDataFrame()
     return results[~results['grantNumber'].isnull()]
@@ -88,7 +110,6 @@ def get_grants(df):
     Returns:
         set: valid grant numbers, e.g. non-empty strings
     """
-
     print(f"Querying for grant numbers...", end="")
     grants = set(df.grantNumber.dropna())
     print(f"{len(grants)} found\n")
@@ -101,7 +122,6 @@ def get_pmids(grants):
     Returns:
         set: PubMed IDs
     """
-
     print("Getting PMIDs from NCBI...")
     all_pmids = set()
 
@@ -146,7 +166,6 @@ def parse_header(header):
 
 def parse_grant(grant):
     """Parse for grant number from grant annotation."""
-
     grant_info = re.search(r"(CA\d+)[ /-]", grant, re.I)
     return grant_info.group(1).upper()
 
@@ -160,7 +179,6 @@ def get_related_info(pmid):
     Returns:
         dict: XML results for GEO, SRA, and dbGaP
     """
-
     handle = Entrez.elink(dbfrom="pubmed", db="gds,sra,gap", id=pmid,
                           remode="xml")
     results = Entrez.read(handle)[0].get('LinkSetDb')
@@ -181,7 +199,6 @@ def get_related_info(pmid):
 
 def parse_geo(info):
     """Parse and return GSE IDs."""
-
     gse_ids = []
     if info:
         tags = info.find_all('item', attrs={'name': "GSE"})
@@ -191,7 +208,6 @@ def parse_geo(info):
 
 def parse_sra(info):
     """Parse and return SRX/SRP IDs."""
-
     srx_ids = srp_ids = []
     if info:
         tags = info.find_all('item', attrs={'name': "ExpXml"})
@@ -204,23 +220,11 @@ def parse_sra(info):
 
 def parse_dbgap(info):
     """Parse and return study IDs."""
-
     gap_ids = []
     if info:
         tags = info.find_all('item', attrs={'name': "d_study_id"})
         gap_ids = [tag.text for tag in tags]
     return gap_ids
-
-
-def make_urls(url, accessions):
-    """Create NCBI link for each accession in the iterable.
-
-    Returns:
-        str: list of URLs
-    """
-
-    url_list = [url + accession for accession in list(accessions)]
-    return ", ".join(url_list)
 
 
 def scrape_info(pmids, curr_grants, grant_view):
@@ -229,12 +233,12 @@ def scrape_info(pmids, curr_grants, grant_view):
     Returns:
         df: publications data
     """
-
-    columns = ["doi", "journal", "pubMedId", "pubMedUrl",
-               "publicationTitle", "publicationYear", "keywords", "mesh",
-               "authors", "consortium", "grantId", "grantNumber",
-               "gseAccns", "gseUrls", "srxAccns", "srxUrls",
-               "srpAccns", "srpUrls", "dpgapAccns", "dpgapUrls"]
+    columns = ["doi", "journal", "pubMedId", "bioProjectIds", "bioProjectAccns",
+               "pubMedUrl", "publicationTitle", "publicationYear", "keywords",
+               "mesh", "authors", "consortium", "grantId", "grantNumber",
+               "gseAccns", "gseUrls", "srxAccns", "srxUrls", "srpAccns",
+               "srpUrls", "dpgapAccns", "dpgapUrls", "dataset", "tool", "assay",
+               "tumorType", "tissue"]
 
     if not os.environ.get('PYTHONHTTPSVERIFY', '') \
             and getattr(ssl, '_create_unverified_context', None):
@@ -261,13 +265,16 @@ def scrape_info(pmids, curr_grants, grant_view):
             authors = ", ".join(authors)
 
             # GRANTS
-            grants = [g.text.strip() for g in soup.find(
-                'div', attrs={'id': "grants"}).find_all('a')]
+            try:
+                grants = [g.text.strip() for g in soup.find(
+                    'div', attrs={'id': "grants"}).find_all('a')]
 
-            # Filter out grant annotations not in consortia.
-            grants = {parse_grant(grant) for grant in grants
-                      if re.search(r"CA\d", grant, re.I)}
-            grants = list(filter(lambda x: x in curr_grants, grants))
+                # Filter out grant annotations not in consortia.
+                grants = {parse_grant(grant) for grant in grants
+                          if re.search(r"CA\d", grant, re.I)}
+                grants = list(filter(lambda x: x in curr_grants, grants))
+            except AttributeError:
+                grants = ""
 
             # Nasim's note: match and get the grant center Synapse ID from
             # its view table by grant number of this journal study.
@@ -294,6 +301,8 @@ def scrape_info(pmids, curr_grants, grant_view):
                                    attrs={"class": "keyword-actions-trigger"})})
             except AttributeError:
                 mesh = []
+            finally:
+                mesh = convert_to_stringlist(mesh)
 
             # RELATED INFORMATION
             # Contains: GEO, SRA, dbGaP
@@ -314,9 +323,13 @@ def scrape_info(pmids, curr_grants, grant_view):
                 dbgaps)
 
             row = pd.DataFrame(
-                [[doi, journal, pmid, url, title, year, keywords, mesh,
-                  authors, consortium, grant_id, ", ".join(grants), gse_ids,
-                  gse_url, srx, srx_url, list(srp), srp_url, dbgaps, dbgap_url]],
+                [[doi, journal, int(pmid), "", "", url, title, int(year),
+                  keywords, mesh, authors, consortium, grant_id,
+                  ", ".join(grants), convert_to_stringlist(gse_ids), gse_url,
+                  convert_to_stringlist(srx), srx_url,
+                  convert_to_stringlist(list(srp)), srp_url,
+                  convert_to_stringlist(dbgaps), dbgap_url,
+                  "", "", "", "", ""]],
                 columns=columns)
             table.append(row)
             session.close()
@@ -329,32 +342,35 @@ def scrape_info(pmids, curr_grants, grant_view):
 
 def find_publications(syn, args):
     """Get list of publications based on grants of consortia."""
-
     grant_view = get_view(syn, args.grantview_id)
     grants = get_grants(grant_view)
     pmids = get_pmids(grants)
 
-    # If user provided a table ID, only scrap info from
-    # publications not already listed in the provided table.
+    # If user provided a table ID, only scrape info from publications
+    # not already listed in the provided table.
     if args.table_id:
         print(f"Comparing with table {args.table_id}...")
         current_publications = syn.tableQuery(
-            f"select * from {args.table_id}").asDataFrame()
-        current_pmids = {re.search(r"[/=](\d+)$", i).group(1)
-                         for i in list(current_publications.pubMedUrl)}
+            f"SELECT * FROM {args.table_id}").asDataFrame()
+        current_pmids = {str(pmid)
+                         for pmid in list(current_publications.pubMedId)}
         pmids -= current_pmids
         print(f"  New publications found: {len(pmids)}\n")
 
-    print(f"Pulling information from publications...")
+    if pmids:
+        print(f"Pulling information from publications...")
+        table = scrape_info(pmids, grants, grant_view)
 
-    table = scrape_info(pmids, grants, grant_view)
-    table.to_csv(args.output + ".tsv", index=False, sep="\t", encoding="utf-8")
+        wb = Workbook()
+        ws = wb.active
+        for r in dataframe_to_rows(table, index=False, header=True):
+            ws.append(r)
+        wb.save("output/" + args.output_name + ".xlsx")
     print("DONE")
 
 
 def main():
     """Main function."""
-
     syn = login()
     args = get_args()
 

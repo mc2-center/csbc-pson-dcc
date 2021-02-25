@@ -1,0 +1,20 @@
+###########################
+# Login Credentials       #
+###########################
+
+## Used for logging in to Synapse
+# For security purposes, you should provide your apikey rather than
+# your password. Your apikey can be found on My Dashboard > Settings.
+export SYN_USERNAME=username
+export SYN_APIKEY="apikey"
+
+
+###########################
+# Entrez Credentials     #
+###########################
+# Providing a valid email and API key will allow up to 10 requests
+# per second. You may experience errors if this information is not
+# provided.
+export ENTREZ_EMAIL=email
+export ENTREZ_API_KEY=apikey
+
