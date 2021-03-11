@@ -1,0 +1,840 @@
+key,value,existing,columnType,ontologyId,ontologySource,ontologyUrl
+assay,,,STRING,,,
+assay,16S Ribosomal RNA Sequencing,16S ribosomal RNA sequencing;16S rRNA sequencing;16S rRNA gene amplification,STRING,,,
+assay,3C,3C,STRING,,,
+assay,3C-qPCR,3C-qPCR; chromosome conformation capture assay; Quantitative analysis of chromosome conformation capture assays,STRING,,,
+assay,3D Cell Culture,3D cell culture,STRING,,,
+assay,3D Cell Culture,3D culture,STRING,,,
+assay,3D Confocal Microscopy,Three-dimensional confocal microscopy,STRING,,,
+assay,4C,4C,STRING,,,
+assay,5C,5C,STRING,,,https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0007692
+assay,Affinity Purification Mass Spectrometry,AP-MS,STRING,,,
+assay,Agarose-Embedded Gradient Assay,agarose-embedded gradient assay,STRING,,,
+assay,Agarose-Embedded Gradient Assay,Agarose-embedded gradient assay,STRING,,,
+assay,Alkaline Comet Assay,Alkaline comet assay,STRING,,,
+assay,Anti-CTCF ChIP-Seq,,STRING,,,
+assay,Apoptosis Assay,,STRING,,,
+assay,Archer FusionPlex Assay,Archer FusionPlex assay,STRING,,,
+assay,ATAC-Seq,ATACSeq,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C156056
+assay,Atomic Absorption Spectroscopy,,STRING,,,
+assay,Atomic Force Microscopy,atomicForceMicroscopy,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C17754
+assay,ATP Bioluminescence Assay,ATP Bioluminescence assay,STRING,,,
+assay,Barcode-Seq,Barcode-Seq,STRING,,,
+assay,Bioluminescence Imaging,Bioluminescence Imaging,STRING,,,
+assay,Bisulfite Sequencing,bisulfiteSeq,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C106054
+assay,Brightfield Microscopy,brightfieldMicroscopy,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C19827
+assay,Brillouin Microscopy,Brillouin microscopy,STRING,,,
+assay,C5,,STRING,,,
+assay,CAP-C,,STRING,,,
+assay,cDNA Array,rnaArray,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C19819
+assay,Cell interaction Assay,Cell interaction assay,STRING,,,
+assay,Cell Migration Assay,Cell Migration Assay,STRING,,,
+assay,Cell Migration Assay,Quantitative Analysis of Cell Migration,STRING,,,
+assay,Cell Migration Assay,pore migration assay,STRING,,,
+assay,Cell Migration Assay,cell migration assay,STRING,,,
+assay,Cell Migration Assay,pore migration assays,STRING,,,
+assay,Cell Proliferation Assay,Cell Proliferation Assay,STRING,,,
+assay,Cellular Thermal Shift Assay,,STRING,,,
+assay,Chemotaxis Assay,Chemotaxis assay,STRING,,,
+assay,ChIA-PET,ChIA-PET,STRING,,,
+assay,ChIP-Seq,ChIPSeq,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C106049
+assay,Chromatin Immunoprecipitation,,STRING,,,
+assay,Colorimetric Cell Viability Assay,cellViabilityAssay,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C95027
+assay,Competitive ELISA,,STRING,,,
+assay,Computational Modeling,Computational Modeling,STRING,,,
+assay,Computational Tool,"iterClust, an iterative clustering framework, which can separate more pronounced differences (e.g. A and B) in starting iterations, followed by relatively subtle differences (e.g. B1 and B2), providing a comprehensive clustering trajectory.",STRING,,,
+assay,Computational Tool,GPU-ARACNE,STRING,,,
+assay,Computational Tool,metaVIPER,STRING,,,
+assay,Computational Tool,computational modeling,STRING,,,
+assay,Computational Tool,Meta-analysis,STRING,,,
+assay,Computational Tool,computational,STRING,,,
+assay,Computed Tomography,computed tomography; CT,STRING,,,
+assay,Confocal Microscopy,Confocal Fluorescence,STRING,,,
+assay,Confocal Microscopy,confocal imaging,STRING,,,
+assay,Conventional Microscopy,,STRING,,,
+assay,CRISPR,CRISPER-Cas9 technique,STRING,,,
+assay,CRISPR,CRISPR-CAS9,STRING,,,
+assay,Cross-Linking Immunoprecipitation High-throughput Sequencing,Cross-linking Immunoprecipitation High-throughput Sequencing,STRING,,,
+assay,Cross-linking Mass Spectrometry ,XL-MS,STRING,,,
+assay,Cross-linking Mass Spectrometry ,Cross-Linking Mass Spectrometry ,,,,
+assay,CUT&RUN,CUT&RUN,STRING,,,
+assay,Cyclic Immunofluorescence,Cyclic immunofluorescence,STRING,,,
+assay,Cyclic Immunofluorescence,cycIF,STRING,,,
+assay,Deep Mutational Scanning,DMS,STRING,,,
+assay,Deep Mutational Scanning,Deep mutational scanning,STRING,,,
+assay,Dideoxy Chain Termination DNA Sequencing,Sanger sequencing,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C19641
+assay,Differential Interference Contrast Microscopy,,STRING,,,
+assay,Differential Scanning Fluorimetry,,STRING,,,
+assay,DNA Optical Mapping,DNA optical mapping,STRING,,,https://doi.org/10.1016/j.copbio.2013.01.009
+assay,DNaseI-Hypersensitivity,DNaseI-Hypersensitivity,STRING,,,
+assay,Droplet Digital PCR,Droplet digital PCR,STRING,,,
+assay,Dual-Luciferase Reporter Assay,,STRING,,,
+assay,Dye Endocytosis Assay,Dye Endocytosis assay,STRING,,,
+assay,Dynamic Light Scattering,Dynamic light scattering,STRING,,,
+assay,Electron Diffraction,Electron diffraction,STRING,,,
+assay,Electron Microscopy,Electron Microscopy,STRING,,,
+assay,Electron Paramagnetic Resonance Spectroscopy,EPR spectroscopy; Electron spin resonance (ESR) spectroscopy ,STRING,,,
+assay,Electrophoretic Mobility Shift Assay,EMSA,STRING,,,
+assay,ELISA,ELISA,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C16553
+assay,Energy-Dispersive X-Ray Spectroscopy,Energy-dispersive X-ray spectroscopy,STRING,,,
+assay,Enzyme-Linked Immunospot Assay,ELISOPOT (enzyme-linked immunospot) assay; ELISpot,STRING,,,
+assay,Epidemiological Method,Epidemiological Method,STRING,,,
+assay,Expression Array,Expression Array,STRING,,,
+assay,FAIRE-Seq,,STRING,,,
+assay,FIA-MSMS,FIA-MSMS,STRING,,,https://www.ncbi.nlm.nih.gov/pubmed/28667829
+assay,FISH,RNA FISH imaging,STRING,,,
+assay,FISH,RNA -FISH analysis,STRING,,,
+assay,FLIM,FLIM,STRING,,,
+assay,Flow Cytometry,Flow Cytometry,STRING,,,
+assay,Fluorescence Correlation Spectroscopy,Fluorescence correlation spectroscopy,STRING,,,
+assay,Fluorescence Microscopy,Fluorescence Microscopy,STRING,,,
+assay,Fluorescence Recovery After Photo-bleaching,FRAP,STRING,,,
+assay,Fluorescent Antibody Procedure,immunofluorescence,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C17370
+assay,Fluorescent Antibody Procedure,Quantitative Immunofluorescence,STRING,,,
+assay,Focused Ion Beam Scanning Electron Microscopy,,STRING,,,
+assay,Forster resonance energy transfer,Forster Resonance Energy Transfer,STRING,,,
+assay,Fourier-Transform Infrared Spectroscopy,Fourier-transform infrared spectroscopy,STRING,,,
+assay,Gas Chromatography Mass Spectrometry,,STRING,,,
+assay,Gene Expression Profiling Microarray,,STRING,,,
+assay,Genotyping,Genotyping,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C45447
+assay,Global run-on Sequencing,GRO-seq,STRING,,,
+,Global Run-On Sequencing,Global run-on sequencing,,,,
+assay,Hematoxylin and Eosin Staining Method,,STRING,,,
+assay,Hi-C,HI-C,STRING,,,http://www.ebi.ac.uk/efo/EFO_0007693
+assay,Hi-C,Hi-C Mapping,STRING,,,
+assay,Hi-C,Hi-C 20,STRING,,,
+assay,HiChIP,,STRING,,,
+assay,High Throughput Screening,High throughput screening,STRING,,,
+assay,High-Content Screen,high content screen,STRING,,,http://www.ebi.ac.uk/efo/EFO_0007550
+assay,High-Performance Liquid Chromatography/Tandem Mass Spectrometry,HPLC-MSMS,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C120691
+,High-Performance Liquid Chromatography/Tandem Mass Spectrometry,High-performance Liquid Chromatography/Tandem Mass Spectrometry,,,,
+assay,High-Throughput Drug Screen,High-throughput Drug Screen,STRING,,,
+assay,Hydrogels,mechanics of hydrogels,STRING,,,
+assay,Hydrogels,Hydro Gel matrices,STRING,,,
+assay,Hydrogels,Gel matrices,STRING,,,
+assay,Hydrogels,Biopolymers gel techniques,STRING,,,
+assay,iBAQ,iBAQ,STRING,,,
+assay,"IHC, PCR, Real Time PCR, Western Blotting",Fluorescent Antibody Procedure; Immunohistochemistry Staining Method; Polymerase Chain Reaction; Real Time PCR; Western Blotting,STRING,,,
+assay,Image Cytometry,Image Cytometry,STRING,,,
+assay,Imaging,quantitative imaging,STRING,,,
+assay,Imaging,imaging and animal model,STRING,,,
+assay,Imaging,Live Cell Imaging,STRING,,,
+assay,Imaging,Protein Complex Imaging,STRING,,,
+assay,Imaging,multi modal imaging,STRING,,,
+assay,Immunocytochemistry,Immunocytochemistry,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C17731
+assay,ImmunoFISH,Immuno-FISH,,,,
+assay,ImmunoFISH,immunofluorescence and in-situ hybridization,,,,
+assay,Immunofluorescence,,STRING,,,
+assay,Immunohistochemistry Staining Method,immunohistochemistry,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C23020
+assay,In Situ Hybridization,In Situ Hybridization,STRING,,,
+assay,In Vitro Cell Survival Assay,In vitro Cell Survival Assay,STRING,,,
+assay,In Vitro Selection,In Vitro Selection,STRING,,,
+assay,In Vivo Bioluminescence,in vivo bioluminescence,STRING,,,http://purl.obolibrary.org/obo/ERO_0000651
+assay,Interference Reflection Microscopy,Interference Reflection Microscopy,STRING,,,
+assay,Intravital Microscopy,Intravital microscopy,STRING,,,
+assay,Isolated Vessel Assay,Isolated vessel assay,STRING,,,
+assay,Lattice Light Sheet Microscopy,Lattice Light Sheet Microscopy,STRING,,,
+assay,LC-MSMS,LC-MSMS,STRING,,,http://purl.obolibrary.org/obo/CHMO_0000701
+assay,Lipoprotein Lipase Activity Assays,Lipoprotein Lipase Activity Assays;LPL activity assay,STRING,,,
+assay,Liquid Chromatography Mass Spectrometry,LC-MS,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C18475&ns=ncit
+assay,Liquid Chromatography-Electrochemical Detection,liquid chromatography-electrochemical detection,STRING,,,http://purl.obolibrary.org/obo/CHMO_0001746
+assay,Liquid Chromatography/Tandem Mass Spectrometry,LC/MS-MS,STRING,,,https://ncithesaurus.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.11d&ns=ncit&code=C122168&key=203159572&b=1&n=null
+assay,Luciferase Reporter Assay,,STRING,,,
+assay,Luminescent Cell Viability Assay,Luminescent Cell Viability assay,STRING,,,
+assay,Macrophage Polarization Assay,macrophage polarization assay,STRING,,,
+assay,Magnetic Resonance Imaging,MRI,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C16809
+assay,Magnetic Resonance Imaging,Magnetic resonance elastography,STRING,,,https://www.mayoclinic.org/tests-procedures/magnetic-resonance-elastography/about/pac-20385177
+assay,Magnetic Tweezers,Magnetic Tweezers,STRING,,,
+assay,Magnetic Twisting Cytometry,,STRING,,,
+assay,Magnetically Activated Cell Sorting,Magnetically Activated Cell Sorting;MACS,STRING,,,
+assay,Mass Cytometry,Mass Cytometry,STRING,,,
+assay,Mass Cytometry,CyTOF,STRING,,,
+assay,Mass Spectrometry,(SILAC)-based quantitative mass spectrometry,STRING,,,
+assay,Mass Spectrometry,MS,STRING,,,
+assay,Mathematical Modeling,Math modeling,STRING,,,
+assay,Mathematical Modeling,mathematical modeling,STRING,,,
+assay,Mathematical Modeling,Expression based network analysis,STRING,,,
+assay,Mathematical Modeling,Gene expression based analysis,STRING,,,
+assay,Mathematical Modeling,expression based network analysis and biochemical assays,STRING,,,
+assay,Mathematical Modeling,integration of computational inference and experimental validation,STRING,,,
+assay,Mathematical Modeling,Mathematical Modeling,STRING,,,
+assay,Mathematical Modeling,genomic variation analysis,STRING,,,
+assay,Mathematical Modeling,big data analysis,STRING,,,
+assay,Mathematical Modeling,Chemomechanical modeling,STRING,,,
+assay,Mathematical Modeling,Theoritical modeling,STRING,,,
+assay,Mathematical Modeling,Big-data analysis,STRING,,,
+assay,Mathematical Modeling,Biophysical analysis,STRING,,,
+assay,Mathematical Modeling,Multiscale modeling,STRING,,,
+assay,Mathematical Modeling,Bigdata anlysis,STRING,,,
+assay,Mathematical Modeling,mechanical modeling of cell invasion,STRING,,,
+assay,Mathematical Modeling,Elastic-fluid modeling,STRING,,,
+assay,Mathematical Modeling,scaling relationship,STRING,,,
+assay,Mathematical Modeling,chemomechanical modeling,STRING,,,
+assay,Mathematical Modeling,Modeling,STRING,,,
+assay,Mathematical Modeling,"We use the generalized singular value decomposition (GSVD), formulated as a comparative spectral decomposition, to model patient-matched grades III and II, i.e., lower-grade astrocytoma (LGA) brain tumor and normal DNA copy-number profiles.",STRING,,,
+assay,Mathematical Modeling,We use the GSVD to compare whole-genome sequencing (WGS) profiles of patient-matched astrocytoma and normal DNA.,STRING,,,
+assay,Mathematical Modeling,"We use the GSVD to compare whole-genome sequencing (WGS) and Affymetrix microarray profiles of patient-matched normal and primary LUAD, USEC, and OV tumor DNA.",STRING,,,
+assay,Mathematical Modeling,nonlinear ordinary differential equation,STRING,,,
+assay,MBD-seq,MBD-Cap Seq,STRING,,,
+assay,Methyl Binding Domain Sequencing,MBD-seq,STRING,,,
+assay,Methylation Profiling by Array,methylationArray,STRING,,,http://www.ebi.ac.uk/efo/EFO_0002759
+assay,Methylation Profiling by Array,Methylation Array,STRING,,,
+assay,MIB/MS,MIB/MS,STRING,,,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3328787/
+assay,Microfabricated Sandwiching Assay,Microfabricated Sandwiching Assay,STRING,,,
+assay,Microfabricated Sandwiching Assay,MIMIC,STRING,,,
+assay,Microfluidics,Microfluidics,STRING,,,
+assay,Microfluidics,In vitro microfluidics,STRING,,,
+assay,Microfluidics,In vitro Microfluidics,STRING,,,
+assay,Micropipette Aspiration,Micropipette aspiration,STRING,,,
+assay,Micropipette Aspiration,micropipette aspiration,STRING,,,
+assay,MicroRNA Expression Array,mirnaArray,STRING,,,
+assay,MicroRNA Sequencing,mirnaSeq,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C156057
+assay,MicroRNA Sequencing,miRNA-seq,STRING,,,
+assay,Microscopy,Advanced Microscopy,STRING,,,
+assay,Microscopy,Advanced microscopy; mechanical probing,STRING,,,
+assay,Microscopy,microscopy,STRING,,,
+assay,MNase-Seq,MNase-seq,STRING,,,
+assay,Molecular Simulations,Molecular Dynamics simulations,STRING,,,
+assay,Monolayer Stress Microscopy,monolayer stress microscopy,STRING,,,
+assay,MudPIT,MudPIT,STRING,,,http://purl.obolibrary.org/obo/MI_0658
+assay,MULTI-seq,multiplexing using lipid-tagged indices for single-cell and single-nucleus RNA sequencing,STRING,,,
+,MULTI-Seq,MULTI-seq,,,,
+assay,Multiphoton Microscopy,Multiphoton Microscopy,STRING,,,
+assay,Murine Model,Murine Models,STRING,,,
+assay,Murine Model,Mouse Model,STRING,,,
+assay,Murine Model,Mouse Modeline,STRING,,,
+assay,Murine Model,Mouse Modeling,STRING,,,
+assay,Nano-hmC-Seal,Nano-hmC-Seal,STRING,,,
+assay,Nanopatterning,Nanopatterning,STRING,,,
+assay,Nanopatterning,Nano and Micro Patterning,STRING,,,
+assay,Nanowire,Nanowire,STRING,,,
+assay,Neutral Comet Assay,Neutral comet assay,STRING,,,
+assay,Next Generation Sequencing,NGS,STRING,,,
+assay,NG Capture-C,NG Capture-C,STRING,,,
+assay,Nm-seq,Nm-seq,STRING,,,
+assay,NOMe-Seq,NOMe-Seq,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C106053
+assay,Not Applicable,Metabolomics,STRING,,,
+assay,Not Applicable,Not Applicable,STRING,,,
+assay,Not Applicable,na,STRING,,,
+assay,Nuclear Deformation Assay,Nuclear deformation assay,STRING,,,
+assay,Nuclear Magnetic Resonance,NMR,STRING,,,
+assay,Optical Emission Spectroscopy,,STRING,,,
+assay,Optical Tweezers,Optical tweezers,STRING,,,
+assay,Optogenetic Assay,Optogenetic methods,STRING,,,
+assay,Organoid,,STRING,,,
+assay,Orthogonal Imaging Chamber,Orthogonal Imaging Chamber,STRING,,,
+assay,oxBS-Seq,oxBS-Seq,STRING,,,http://www.ebi.ac.uk/efo/EFO_0008840
+assay,Partial Wave Spectroscopy,Partial Wave Spectroscopy,STRING,,,
+assay,PDX,PDX,STRING,,,
+assay,Permeability Assay,Permeability Assay;FITC-dextran permeability assay;PAMPA;epithelial permeability assay,STRING,,,
+assay,Permeability Assay,Permeability Assay;FITC-dextran permeability assay;PAMPA;epithelial permeability assay,STRING,,,
+assay,Phagocytosis Assay,Phagocytosis assay,STRING,,,
+assay,Phagocytosis Assay,phagocytosis,STRING,,,
+assay,Phagocytosis Assay,Phagocytosis,STRING,,,
+assay,Phospho,Phospho,STRING,,,
+assay,PLAC-Seq,PLAC-seq,STRING,,,
+assay,PlateSeq,PlateSeq,STRING,,,
+assay,Polymerase Chain Reaction,polymeraseChainReaction,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C17003
+assay,Positron Emission Tomography,Positron Emission Tomography,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C17007
+assay,Proteomics Assay,Protein Expression and Purification,STRING,,,
+assay,Proteomics Assay,Proteomic and transcriptomic profile,STRING,,,
+assay,Proteomics Assay,phosphoproteomics,STRING,,,
+assay,Proximity Ligation Assay,Proximity ligation assay,STRING,,,
+assay,Quantitative Multiplex Immunofluorescence,qmIF,STRING,,,
+assay,Questionnaire,questionnaire,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C17048
+assay,Questionnaire,Questionnaire,STRING,,,
+assay,Raman Spectroscopy,Raman spectroscopy,STRING,,,
+assay,Real Time PCR,RT-PCR,STRING,,,
+assay,Reduced Representation Bisulfite Sequencing,Reduced Representation Bisulfite Sequencing;RRBS,STRING,,,
+assay,Rheology,Nuclear Rheology,STRING,,,
+assay,Rheology,Rheology,STRING,,,
+assay,Rheology,Biopolymer-Rheology,STRING,,,
+assay,Rheology,Shear rheology,STRING,,,
+assay,Ribo-Seq,Ribo-Seq,STRING,,,http://www.ebi.ac.uk/efo/EFO_0008891
+assay,RIP-Seq,,STRING,,,
+assay,RPPA,RPPA,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C120659
+assay,RT-PCR,,STRING,,,
+assay,RT-qPCR,,STRING,,,
+assay,Scanning Angle Interference Microscopy,Scanning angle interference microscopy,STRING,,,
+assay,Scanning Electron Microscopy,Scanning Electron Microscopy,STRING,,,
+assay,scCGIseq,scCGIseq,STRING,,,https://www.ncbi.nlm.nih.gov/pubmed/28126923
+assay,scCGIseq,scCGI-seq,STRING,,,
+assay,Second-Harmonic Imaging Microscopy,second-harmonic imaging,STRING,,,
+assay,Seq-Well,Seq-well,STRING,,,
+assay,shRNA,shRNA,STRING,,,
+assay,Simulation,simulation,STRING,,,
+assay,Single Cell Cytokine Detection Chip (CD-Chip) Assay,,STRING,,,
+assay,Single Cell RNA-Sequencing,scRNA-seq,STRING,,,
+assay,Single Cell RNA-Sequencing,single-cell time course RNA-Seq of circulating tumor cells,STRING,,,
+assay,single Molecule Forster Resonance Energy Transfer,single molecule Forster Resonance Energy Transfer,STRING,,,
+assay,Single Nucleotide Polymorphism Array,snpArray,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C116151&key=n1984673949&b=1&n=null
+assay,Single Nucleus RNA-Sequencing,,STRING,,,
+assay,Single-Cell ATAC-Seq,Single-cell ATAC-Seq,STRING,,,
+assay,Single-Molecule Tracking,Single-molecule tracking,STRING,,,
+assay,siRNA,siRNA,STRING,,,
+assay,Small-Angle X-ray Scattering,Small-Angle X-ray Scattering,STRING,,,
+assay,smRNA-seq,smRNA-seq,STRING,,,
+assay,snRNA-seq,sNuc-seq;single nucleus RNA sequencing;single nuclei RNA sequencing,STRING,,,
+assay,snRNA-seq,sNuc-seq;single nucleus RNA sequencing;single nuclei RNA sequencing,STRING,,,
+assay,Southern Blotting,,STRING,,,
+assay,Spectroscopy,Spectroscopy,STRING,,,
+assay,Statistical Modeling,Statistical Modeling,STRING,,,
+assay,Stimulated Raman Scattering Microscopy,Stimulated Raman scattering microscopy,STRING,,,
+assay,Stress Test Metabolic Assay,,STRING,,,
+assay,Superresolution Intrinsic Fluorescence Imaging,Superresolution Intrinsic Fluorescence Imaging,STRING,,,
+assay,Surface Plasmon Resonance,Surface Plasmon Resonance,STRING,,,
+assay,Surveyor Nuclease Assay,Surveyor Assay,STRING,,,
+assay,Synthetic Genetic Array,,STRING,,,
+assay,T-cell Receptor Sequencing,T-cell receptor Sequencing,STRING,,,
+assay,Tandem Mass Spectrometry,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C18142&ns=ncit
+assay,Tandem Mass Tagging,TMT,STRING,,,
+assay,Targeted Genome Sequencing,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.12e&ns=ncit&code=C158253&key=1868229412&b=1&n=null
+assay,Targeted Transcriptome Sequencing,nextGenerationTargetedSequencing,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C158252
+assay,Targeted Transcriptome Sequencing,Targeted Sequencing,STRING,,,
+assay,Time Lapse Microscopy,time-lapse fluorescence microscopy,STRING,,,
+assay,Tissue Engineering,tissue engineered scaffold,STRING,,,
+assay,Tissue Engineering,Tissue Engineering,STRING,,,
+assay,Traction Force Microscopy,tractionForceMicroscopy,STRING,,,https://en.wikipedia.org/wiki/Traction_force_microscopy
+assay,Transepidermal Water Loss Assay,Transepidermal water loss assay; TEWL; Transepidermal water loss (TEWL) assay,STRING,,,
+assay,Transepithelial Electrical Resistance,,STRING,,,
+assay,Transmission Electron Microscopy,,STRING,,,
+assay,Transposon Insertion Sequencing,,STRING,,,
+assay,Transwell Assay,Transwell assay,STRING,,,
+assay,Unspecified,tumor metabolism,STRING,,,
+assay,Unspecified,nanomaterials,STRING,,,
+assay,Unspecified,OncoLead,STRING,,,
+assay,Unspecified,both in vitro and in vivo,STRING,,,
+assay,Unspecified,Cell Culture,STRING,,,
+assay,Unspecified,Enzyme Kinetics,STRING,,,
+assay,Unspecified,Drug Transport,STRING,,,
+assay,Unspecified,Stroma Targeting Therapy,STRING,,,
+assay,Unspecified,Immune Composition,STRING,,,
+assay,Unspecified,Drug delivery,STRING,,,
+assay,Unspecified,Tumor biology,STRING,,,
+assay,Unspecified,mechanistic link,STRING,,,
+assay,Unspecified,fluorescent antibody,STRING,,,
+assay,Unspecified,single-cell biophysical measurement,STRING,,,
+assay,Unspecified,single-cell bophysical measurement,STRING,,,
+assay,Unspecified,Drug synergy,STRING,,,
+assay,Unspecified,nanoparticle-mediated knockdown,STRING,,,
+assay,Unspecified,Radiotherapy,STRING,,,
+assay,UPLC-MSMS,UPLC-MSMS,STRING,,,https://www.wur.nl/en/show/Ultra-performance-liquid-chromatography-tandem-mass-spectrometer-UPLCMSMS.htm
+assay,UV Photocrosslinking,UV photocrosslinking,STRING,,,
+assay,Vernier Caliper,Vernier Caliper,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C81184
+assay,Vibrational Spectroscopy,,STRING,,,
+assay,Von Kossa Staining,von Kossa staining,STRING,,,
+assay,Western Blotting,westernBlot,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C16357
+assay,Whole Exome Sequencing,exomeSeq,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C101295
+assay,Whole Exome Sequencing,WXS,STRING,,,
+assay,Whole Genome Bisulfite Sequencing,Whole Genome Bisulfite Sequencing;WGBS,STRING,,,
+assay,Whole Genome Sequencing,wholeGenomeSeq,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C101294
+assay,Whole Transcriptome Sequencing,rnaSeq,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C124261
+assay,Whole Transcriptome Sequencing,Population RNA-seq,STRING,,,
+assay,Whole Transcriptome Sequencing,RNA-seq,STRING,,,
+assay,"Whole Transcriptome Sequencing, Whole Exome Sequencing","RNA-seq, WXS",STRING,,,
+assay,Widefield Fluorescence Microscopy,widefieldFluorescenceMicroscopy,STRING,,,
+assay,X-Ray Crystallography,X-Ray Crystallography,STRING,,,
+assay,Xenograft,Xenograft,STRING,,,
+dataFormat,,,STRING,,,
+dataFormat,AA,aa,STRING,,,
+dataFormat,AVI,avi,STRING,,,
+dataFormat,BAI,bai,STRING,,,http://edamontology.org/format_3327
+dataFormat,BAM,bam,STRING,,,http://edamontology.org/format_2572
+dataFormat,BED,bed,STRING,,,http://edamontology.org/format_3003
+dataFormat,CDS,cds,STRING,,,
+dataFormat,CEL,cel,STRING,,,http://edamontology.org/format_1638
+dataFormat,CSV,csv,STRING,,,http://edamontology.org/format_3752
+dataFormat,DB,db,STRING,,,
+dataFormat,FASTA,fasta,STRING,,,http://edamontology.org/format_1929
+dataFormat,FASTQ,fastq,STRING,,,http://edamontology.org/format_1930
+dataFormat,FIG,fig,STRING,,,
+dataFormat,FREQ,freq,STRING,,,
+dataFormat,GCG,pep,STRING,,,https://www.dnastar.com/resources/file-formats/
+dataFormat,GFF3,gff3,STRING,,,http://edamontology.org/format_1975
+dataFormat,GTF,gtf,STRING,,,http://edamontology.org/format_2306
+dataFormat,GZ,gz,STRING,,,
+dataFormat,HTML,html,STRING,,,http://edamontology.org/format_2331
+dataFormat,IDAT,idat,STRING,,,http://edamontology.org/format_3578
+dataFormat,JPEG,jpg,STRING,,,http://edamontology.org/format_3579
+dataFormat,LIF,lif,STRING,,,https://www.leica-microsystems.com/products/microscope-software/details/product/leica-las-x-ls/
+dataFormat,MAP,map,STRING,,,http://edamontology.org/format_3285
+dataFormat,MAT,mat,STRING,,,http://edamontology.org/format_3626
+dataFormat,MSF,msf,STRING,,,http://edamontology.org/format_3702
+dataFormat,PDF,pdf,STRING,,,http://edamontology.org/format_3508
+dataFormat,PNG,png,STRING,,,
+dataFormat,PPT,powerpoint,STRING,,,http://edamontology.org/format_3838
+dataFormat,PY,py,STRING,,,
+dataFormat,PZFX,pzfx,STRING,,,https://www.graphpad.com/www/data-analysis-resource-center/blog/your-colleagues-can-view-prism-files-using-the-free-prism-viewer/
+dataFormat,RAW,raw,STRING,,,http://edamontology.org/format_1957
+dataFormat,SRA,sra,STRING,,,http://edamontology.org/format_3698
+dataFormat,STAT,stat,STRING,,,
+dataFormat,TAR,tar,STRING,,,
+dataFormat,TIFF,tif,STRING,,,http://edamontology.org/format_3591
+dataFormat,TSV,tsv,STRING,,,http://edamontology.org/format_3475
+dataFormat,TXT,txt,STRING,,,http://edamontology.org/format_2330
+dataFormat,VCF,vcf,STRING,,,http://edamontology.org/format_3016
+dataFormat,XLSX,excel,STRING,,,http://edamontology.org/format_3620
+dataFormat,XML,xml,STRING,,,http://edamontology.org/format_2332
+dataFormat,ZIP,zip,STRING,,,
+dataType,,,STRING,,,
+dataType,Cell Cycle Distribution,cell cycle distribution,STRING,,,
+dataType,Cellular Physiology,cellular physiology,STRING,,,
+dataType,Chromatin Activity,chromatin activity,STRING,,,
+dataType,Drug Screen,drug screen,STRING,,,
+dataType,Functional Screen,functional screen,STRING,,,
+dataType,Gene Expression,gene expression,STRING,,,
+dataType,Gene List,gene list,STRING,,,
+dataType,Genomic Variants,genomic variants,STRING,,,
+dataType,Image,image,STRING,,,
+dataType,Imputed Drug Response,imputed drug response,STRING,,,
+dataType,Isoform Expression,isoform expression,STRING,,,
+dataType,Metabolomics,metabolomics,STRING,,,
+dataType,Ontology,ontology,STRING,,,
+dataType,Pathway or Network,pathway or network,STRING,,,
+dataType,Proteins,proteins,STRING,,,
+dataType,Proteomics,proteomics,STRING,,,
+dataType,RNA,,STRING,,,
+inputDataType,,,STRING,,,
+inputDataType,Cell Cycle Distribution,cell cycle distribution,STRING,,,
+inputDataType,Cellular Physiology,cellular physiology,STRING,,,
+inputDataType,Chromatin Activity,chromatin activity,STRING,,,
+inputDataType,Clinical Records,Clinical records,STRING,,,
+inputDataType,Drug Screen,drug screen,STRING,,,
+inputDataType,Functional Screen,functional screen,STRING,,,
+inputDataType,Gene Expression,gene expression,STRING,,,
+inputDataType,Gene List,gene list,STRING,,,
+inputDataType,Genomic Variants,genomic variants,STRING,,,
+inputDataType,Image,image,STRING,,,
+inputDataType,Imputed Drug Response,imputed drug response,STRING,,,
+inputDataType,Isoform Expression,isoform expression,STRING,,,
+inputDataType,Metabolomics,metabolomics,STRING,,,
+inputDataType,Ontology,ontology,STRING,,,
+inputDataType,Pathway or Network,pathway or network,STRING,,,
+inputDataType,Proteins,proteins,STRING,,,
+inputDataType,Proteomics,proteomics,STRING,,,
+inputDataType,RNA,,STRING,,,
+outputDataType,,,STRING,,,
+outputDataType,Cell Cycle Distribution,cell cycle distribution,STRING,,,
+outputDataType,Cellular Physiology,cellular physiology,STRING,,,
+outputDataType,Chromatin Activity,chromatin activity,STRING,,,
+outputDataType,Clinical Records,Clinical records,STRING,,,
+outputDataType,Drug Screen,drug screen,STRING,,,
+outputDataType,Functional Screen,functional screen,STRING,,,
+outputDataType,Gene Expression,gene expression,STRING,,,
+outputDataType,Gene List,gene list,STRING,,,
+outputDataType,Genomic Variants,genomic variants,STRING,,,
+outputDataType,Image,image,STRING,,,
+outputDataType,Imputed Drug Response,imputed drug response,STRING,,,
+outputDataType,Isoform Expression,isoform expression,STRING,,,
+outputDataType,Metabolomics,metabolomics,STRING,,,
+outputDataType,Ontology,ontology,STRING,,,
+outputDataType,Pathway or Network,pathway or network,STRING,,,
+outputDataType,Proteins,proteins,STRING,,,
+outputDataType,Proteomics,proteomics,STRING,,,
+outputDataType,RNA,,STRING,,,
+platform,,,STRING,,,
+platform,Affymetrix Genome-Wide Human SNP 6.0,,STRING,,,
+platform,Affymetrix Human Exon 1.0 ST,Affymetrix Human Exon 1.0 ST Array,STRING,,,
+platform,Affymetrix Human Gene 1.0 ST,Affymetrix Human Gene 1.0 ST Array,STRING,,,
+platform,Affymetrix Human Gene 2.0 ST,Affymetrix Human Gene 2.0 ST Array,STRING,,,
+platform,Affymetrix Human Genome U133 Plus 2.0,Affymetrix Human Genome U133 Plus 2.0 Array,STRING,,,
+platform,Affymetrix Human Genome U133A Array,,STRING,,,
+platform,Affymetrix Mouse Gene 2.0 ST,Affymetrix Mouse Gene 2.0 ST Array,STRING,,,
+platform,Affymetrix Mouse Genome 430 2.0,Affymetrix Mouse Genome 430 2.0 Array,STRING,,,
+platform,Affymetrix Rat Gene 2.0 ST,Affymetrix Rat Gene 2.0 ST,STRING,,,
+platform,Affymetrix U133 Plus 2.0,AffymetrixU133Plus2,STRING,,,
+platform,Agilent-016322 Yeast (V2) Gene Expression 8x15K Microarray,Agilent-016322 Yeast (V2) Gene Expression 8x15K Microarray (Feature Number version),STRING,,,
+platform,HiSeq 2000,HiSeq2000,STRING,,,
+platform,HiSeq 2500,HiSeq2500,STRING,,,
+platform,HiSeq 3000,HiSeq3000,STRING,,,
+platform,HiSeq 4000,HiSeq4000,STRING,,,
+platform,Illumina GA II,GAII,STRING,,,
+platform,Illumina GA II,Illumina Genome Analyzer II,STRING,,,
+platform,Illumina GA IIx,Illumina Genome Analyzer IIx,STRING,,,
+platform,Illumina Human HT-12 V4.0 Beadchip,Illumina HumanHT-12 V4.0 expression beadchip,STRING,,,
+platform,Illumina Mehtylation 450,IlluminaHumanMethylation450,STRING,,,
+platform,Illumina MiSeq,,STRING,,,
+platform,Illumina MouseWG-6 V2.0 Beadchip,Illumina MouseWG-6 v2.0 expression beadchip,STRING,,,
+platform,Ion Torrent Proton,IonTorrentProton,STRING,,,
+platform,Ion Torrent Proton,,STRING,,,
+platform,MouseWG-6 v2.0,Illumina MouseWG-6 v2.0 expression beadchip,STRING,,,
+platform,NanoString nCounter Human miRNA Expression Assay v2,NanoString nCounter Human miRNA Expression Assay v2,STRING,,,
+platform,NextSeq 500,NextSeq500,STRING,,,
+platform,NextSeq 550,,STRING,,,
+sex,,,STRING,,,
+sex,Female,female,STRING,,,
+sex,Male,male,STRING,,,
+sex,Unknown,,STRING,,,
+sex,Unspecified,,STRING,,,
+softwareLanguage,,,STRING,,,
+softwareLanguage,C,C,STRING,,,
+softwareLanguage,C++,,STRING,,,
+softwareLanguage,Golang,,STRING,,,
+softwareLanguage,HTML,,STRING,,,
+softwareLanguage,Java,,STRING,,,
+softwareLanguage,Matlab,,STRING,,,
+softwareLanguage,NetLogo,,STRING,,,
+softwareLanguage,Perl,Perl,STRING,,,
+softwareLanguage,PHP,,STRING,,,
+softwareLanguage,Python,,STRING,,,
+softwareLanguage,R,,STRING,,,
+softwareLanguage,Shell,,STRING,,,
+softwareLanguage,Wolfram,Wolfram Language,STRING,,,
+softwareLanguage,Workflow Description Language,,STRING,,,
+species,,,STRING,,,
+species,Boar,,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=9823
+species,Chicken,Chicken,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=9031
+species,Cow,,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=9913
+species,Dog,,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=9615
+species,Human,Human,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=9606
+species,Mouse,Mouse,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=10090
+species,Opossum,,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=13616
+species,Rat,Rat,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=10116
+species,Rhesus monkey,,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=9544
+species,Rhesus monkey,Macaca mulatta,,,,
+species,Unknown,,STRING,,,
+species,Unspecified,,STRING,,,
+species,Worm,,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=6239
+species,Yeast,,STRING,,,https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=5476
+tissue,,,STRING,,,
+tissue,Abdominal esophagus,Abdominal Esophagus,STRING,,,https://codes.iarc.fr/topography/C15.2
+tissue,Acoustic Nerve,Acoustic nerve,STRING,,,https://codes.iarc.fr/topography/C72.4
+tissue,Anal Canal,Anal canal,STRING,,,https://codes.iarc.fr/topography/C21.1
+tissue,Anus,,STRING,,,https://codes.iarc.fr/topography/C21.1
+tissue,Appendix,,STRING,,,https://codes.iarc.fr/topography/C18.1
+tissue,Ascending Colon,Ascending colon,STRING,,,https://codes.iarc.fr/topography/C18.2
+tissue,Axillary Tail of Breast,Axillary tail of breast,STRING,,,https://codes.iarc.fr/topography/C50.6
+tissue,Bile Duct,Bile duct,STRING,,,
+tissue,Bladder,,STRING,,,https://apps.who.int/iris/bitstream/handle/10665/42344/9241545348_eng.pdf?sequence=1&isAllowed=y
+tissue,Blood,blood,STRING,,,https://codes.iarc.fr/topography/C42.0
+tissue,Body of Pancreas,Body of pancreas,STRING,,,https://codes.iarc.fr/topography/C25.1
+tissue,Body of Stomach,Body of stomach,STRING,,,https://codes.iarc.fr/topography/C16.2
+tissue,Bone,bone,STRING,,,https://codes.iarc.fr/topography/C41.9
+tissue,Bone Marrow,bone marrow,STRING,,,https://codes.iarc.fr/topography/C42.1
+tissue,Bone Marrow,Bone marrow,STRING,,,https://codes.iarc.fr/topography/C42.1
+tissue,Brain,brain,STRING,,,https://codes.iarc.fr/topography/C71
+tissue,Brain,"Brain, NOS",STRING,,,
+tissue,Brain stem,Brain Stem,STRING,,,https://codes.iarc.fr/topography/C71.7
+tissue,Breast,breast,STRING,,,https://codes.iarc.fr/topography/C50
+tissue,Breast,mammary glands,STRING,,,
+tissue,Breast,"Breast, NOS",STRING,,,
+tissue,Cardia,,STRING,,,https://codes.iarc.fr/topography/C16.0
+tissue,Cauda Equina,Cauda equina,STRING,,,https://codes.iarc.fr/topography/C72.1
+tissue,Cecum,,STRING,,,https://codes.iarc.fr/topography/C18.0
+tissue,Central portion of breast,Central Portion of Breast,STRING,,,https://codes.iarc.fr/topography/C50.1
+tissue,Cerebellum,,STRING,,,https://codes.iarc.fr/topography/C71.6
+tissue,Cerebrum,,STRING,,,https://codes.iarc.fr/topography/C71.0
+tissue,Cervical Esophagus,Cervical esophagus,STRING,,,https://codes.iarc.fr/topography/C15.0
+tissue,Cervix Uteri,,STRING,,,https://codes.iarc.fr/topography/C53.9
+tissue,Cloacogenic Zone,Cloacogenic zone,STRING,,,https://codes.iarc.fr/topography/C21.2
+tissue,Colon,colon,STRING,,,https://codes.iarc.fr/topography/C18
+tissue,Connective and Soft Tissue,Connective and soft tissue,STRING,,,
+tissue,Cranial Nerve,Cranial nerve,STRING,,,https://codes.iarc.fr/topography/C72.5
+tissue,Descended Testis,Descended testis,STRING,,,https://codes.iarc.fr/topography/C62.1
+tissue,Descending Colon,Descending colon,STRING,,,https://codes.iarc.fr/topography/C18.6
+tissue,Duodenum,,STRING,,,https://codes.iarc.fr/topography/C17.0
+tissue,Embryo,embryonic,STRING,,,
+tissue,Embyro,embryo,STRING,,,
+tissue,Endocervix,,STRING,,,https://codes.iarc.fr/topography/C53.0
+tissue,Epithelium,Epithelial Tissue,STRING,,,
+tissue,Esophagus,,STRING,,,https://codes.iarc.fr/topography/C15.9
+tissue,Exocervix,,STRING,,,https://codes.iarc.fr/topography/C53.1
+tissue,External Ear,External ear,STRING,,,https://codes.iarc.fr/topography/C44.2
+tissue,Eye,,STRING,,,
+tissue,Eyelid,,STRING,,,https://codes.iarc.fr/topography/C44.1
+tissue,Frontal Lobe,frontal lobe,STRING,,,https://codes.iarc.fr/topography/C71.1
+tissue,Fundus of Stomach,Fundus of stomach,STRING,,,https://codes.iarc.fr/topography/C16.1
+tissue,Gallbladder,gallbladder,STRING,,,https://codes.iarc.fr/topography/C23.9
+tissue,Gastric Antrum,Gastric antrum,STRING,,,https://codes.iarc.fr/topography/C16.3
+tissue,Greater Curvature of Stomach,Greater curvature of stomach,STRING,,,https://codes.iarc.fr/topography/C16.5
+tissue,Head and Neck,Head and neck,STRING,,,
+tissue,Head of Pancreas,Head of pancreas,STRING,,,https://codes.iarc.fr/topography/C25.0
+tissue,Heart,,STRING,,,
+tissue,Hematopoietic System,Hematopoietic system,STRING,,,https://codes.iarc.fr/topography/C42.4
+tissue,Hepatic Flexure of Colon,Hepatic flexure of colon,STRING,,,https://codes.iarc.fr/topography/C18.3
+tissue,Ileum,,STRING,,,https://codes.iarc.fr/topography/C17.1
+tissue,Intra-Abdominal Lymph Nodes,Intra-abdominal lymph nodes,STRING,,,https://codes.iarc.fr/topography/C77.2
+tissue,Intrahepatic Bile Duct,Intrahepatic bile duct,STRING,,,https://codes.iarc.fr/topography/C22.1
+tissue,Intrathoracic Lymph Nodes,Intrathoracic lymph nodes,STRING,,,https://codes.iarc.fr/topography/C77.1
+tissue,Islets of Langerhans,,STRING,,,https://codes.iarc.fr/topography/C25.4
+tissue,Jejunum,,STRING,,,https://codes.iarc.fr/topography/C17.1
+tissue,Kidney,kidney,STRING,,,https://codes.iarc.fr/topography/C64
+tissue,Lesser Curvature of Stomach,Lesser curvature of stomach,STRING,,,https://codes.iarc.fr/topography/C16.5
+tissue,Liver,liver,STRING,,,https://codes.iarc.fr/topography/C22.0
+tissue,"Lower Lobe, Lung","Lower lobe, lung",STRING,,,https://codes.iarc.fr/topography/C34.3
+tissue,Lower Third of Esophagus,Lower third of esophagus,STRING,,,https://codes.iarc.fr/topography/C15.5
+tissue,Lower-Inner Quadrant of Breast,Lower-inner quadrant of breast,STRING,,,https://codes.iarc.fr/topography/C50.3
+tissue,Lower-Outer Quadrant of Breast,Lower-outer quadrant of breast,STRING,,,https://codes.iarc.fr/topography/C50.5
+tissue,Lung,lung,STRING,,,https://codes.iarc.fr/topography/C34.9
+tissue,Lung,"Lung, NOS",STRING,,,
+tissue,Lymph Node,lymph,STRING,,,https://codes.iarc.fr/topography/C77.9
+tissue,Lymph Node,Lymph node,STRING,,,https://codes.iarc.fr/topography/C77.9
+tissue,Lymph Nodes of Axilla or Arm,Lymph nodes of axilla or arm,STRING,,,https://codes.iarc.fr/topography/C77.3
+tissue,"Lymph Nodes of Head, Face and Neck","Lymph nodes of head, face and neck",STRING,,,https://codes.iarc.fr/topography/C77.0
+tissue,Lymph Nodes of Inguinal Region or Leg,"Lymph nodes of head, face and neck",STRING,,,https://codes.iarc.fr/topography/C77.4
+tissue,Lymphatic System,Lymphatic system,STRING,,,
+tissue,Lymphoid Tissue,Lymphoid tissue,STRING,,,
+tissue,Main Bronchus,Main bronchus,STRING,,,https://codes.iarc.fr/topography/C34.0
+tissue,Mammary Gland,mammary gland,STRING,,,
+tissue,Meckel Diverticulum,Meckel diverticulum,STRING,,,https://codes.iarc.fr/topography/C17.3
+tissue,Middle Ear,Middle ear,STRING,,,https://codes.iarc.fr/topography/C30.1
+tissue,"Middle Lobe, Lung","Middle lobe, lung",STRING,,,https://codes.iarc.fr/topography/C34.2
+tissue,Middle Third of Esophagus,Middle third of esophagus,STRING,,,https://codes.iarc.fr/topography/C15.4
+tissue,Mouth,,STRING,,,https://codes.iarc.fr/topography/C06.9
+tissue,Nasal Cavity,nose,STRING,,,https://codes.iarc.fr/topography/C30.0
+tissue,Nasal Cavity,Nasal cavity,STRING,,,https://codes.iarc.fr/topography/C30.0
+tissue,Nervous System,nerves,STRING,,,https://codes.iarc.fr/topography/C72.9
+tissue,Nervous System,nerve tissue,STRING,,,
+tissue,Nervous System,"Nervous system, NOS",STRING,,,
+tissue,Nervous System,nerve,STRING,,,
+tissue,Nervous System,Nervous system,STRING,,,
+tissue,Nipple,,STRING,,,https://codes.iarc.fr/topography/C50.0
+tissue,Not Applicable,Not Applicable,STRING,,,
+tissue,Not Applicable,na,STRING,,,
+tissue,Occipital Lobe,Occipital lobe,STRING,,,https://codes.iarc.fr/topography/C71.4
+tissue,Olfactory Nerve,Olfactory nerve,STRING,,,https://codes.iarc.fr/topography/C72.2
+tissue,Optic Nerve,Optic nerve,STRING,,,https://codes.iarc.fr/topography/C72.3
+tissue,Ovary,Ovary,STRING,,,https://codes.iarc.fr/topography/C56.9
+tissue,Overlapping Lesion of Brain,Overlapping lesion of brain,STRING,,,https://codes.iarc.fr/topography/C71.8
+tissue,Overlapping Lesion of Brain and Central Nervous System,Overlapping lesion of brain and central nervous system,STRING,,,https://codes.iarc.fr/topography/C72.8
+tissue,Overlapping Lesion of Breast,Overlapping lesion of breast,STRING,,,https://codes.iarc.fr/topography/C50.8
+tissue,Overlapping Lesion of Cervix Uteri,Overlapping lesion of cervix uteri,STRING,,,https://codes.iarc.fr/topography/C53.8
+tissue,Overlapping Lesion of Colon,Overlapping lesion of colon,STRING,,,https://codes.iarc.fr/topography/C18.8
+tissue,Overlapping Lesion of Esophagus,Overlapping lesion of esophagus,STRING,,,https://codes.iarc.fr/topography/C15.8
+tissue,Overlapping Lesion of Lung,Overlapping lesion of lung,STRING,,,https://codes.iarc.fr/topography/C34.8
+tissue,Overlapping Lesion of Pancreas,Overlapping lesion of pancreas,STRING,,,https://codes.iarc.fr/topography/C25.4
+tissue,"Overlapping Lesion of Rectum, Anus and Anal Canal","Overlapping lesion of rectum, anus and anal canal",STRING,,,https://codes.iarc.fr/topography/C21.2
+tissue,Overlapping Lesion of Small Intestine,Overlapping lesion of small intestine,STRING,,,https://codes.iarc.fr/topography/C17.8
+tissue,Overlapping Lesion of Stomach,Overlapping lesion of stomach,STRING,,,https://codes.iarc.fr/topography/C16.8
+tissue,Pancreas,pancreas,STRING,,,https://codes.iarc.fr/topography/C25.9
+tissue,Pancreatic Duct,Pancreatic duct,STRING,,,https://codes.iarc.fr/topography/C25.3
+tissue,Parietal Lobe,Parietal lobe,STRING,,,https://codes.iarc.fr/topography/C71.3
+tissue,Pelvic Lymph Nodes,Pelvic lymph nodes,STRING,,,https://codes.iarc.fr/topography/C77.5
+tissue,Peripheral Nerves,,STRING,,,
+tissue,Prostate Gland,prostate,STRING,,,https://codes.iarc.fr/topography/C61.9
+tissue,Prostate Gland,Prostate gland,STRING,,,
+tissue,Pylorus,,STRING,,,https://codes.iarc.fr/topography/C16.4
+tissue,Rectum,rectum,STRING,,,https://codes.iarc.fr/topography/C20.9
+tissue,Reticuloendothelial System,Reticuloendothelial system,STRING,,,https://codes.iarc.fr/topography/C42.3
+tissue,Sigmoid Colon,Sigmoid colon,STRING,,,https://codes.iarc.fr/topography/C18.7
+tissue,Skin,skin,STRING,,,https://codes.iarc.fr/topography/C44
+tissue,Skin,"Skin, NOS",STRING,,,
+tissue,Skin of Lower Limb and Hip,Skin of lower limb and hip,STRING,,,https://codes.iarc.fr/topography/C44.7
+tissue,Skin of Other and Unspecified Parts of Face,Skin of other and unspecified parts of face,STRING,,,https://codes.iarc.fr/topography/C44.3
+tissue,Skin of Scalp and Neck,Skin of scalp and neck,STRING,,,https://codes.iarc.fr/topography/C44.4
+tissue,Skin of Trunk,Skin of trunk,STRING,,,https://codes.iarc.fr/topography/C44.5
+tissue,Skin of Upper Limb and Shoulder,Skin of upper limb and shoulder,STRING,,,https://codes.iarc.fr/topography/C44.6
+tissue,Small Intestine,small intestine,STRING,,,https://codes.iarc.fr/topography/C17.9
+tissue,Small Intestine,Small intestine,STRING,,,https://codes.iarc.fr/topography/C17.9
+tissue,Spinal Bone,Spinal bone,STRING,,,
+tissue,Spinal Cord,Spinal cord,STRING,,,https://codes.iarc.fr/topography/C72.0
+tissue,Spleen,spleen,STRING,,,https://codes.iarc.fr/topography/C42.2
+tissue,Spleen,spleenocytes,STRING,,,
+tissue,Spleen,Bursa of Fabricius,STRING,,,
+tissue,Splenic Flexure of Colon,Splenic flexure of colon,STRING,,,https://codes.iarc.fr/topography/C18.5
+tissue,Stomach,stomach,STRING,,,https://codes.iarc.fr/topography/C16.9
+tissue,Stomach,"Gastrointestinal tract, NOS",STRING,,,
+tissue,Tail of Pancreas,Tail of pancreas,STRING,,,https://codes.iarc.fr/topography/C25.2
+tissue,Temporal Lobe,Temporal lobe,STRING,,,https://codes.iarc.fr/topography/C71.2
+tissue,Testis,,STRING,,,https://codes.iarc.fr/topography/C62.9
+tissue,Thoracic Esophagus,Thoracic esophagus,STRING,,,https://codes.iarc.fr/topography/C15.1
+tissue,Throat,,STRING,,,
+tissue,Thymus,,STRING,,,https://apps.who.int/iris/bitstream/handle/10665/42344/9241545348_eng.pdf?sequence=1&isAllowed=y
+tissue,Thyroid gland,Thyroid Gland,STRING,,,
+tissue,Tongue,,STRING,,,https://codes.iarc.fr/topography/C02.9
+tissue,Trachea,,STRING,,,https://codes.iarc.fr/topography/C33.9
+tissue,Transverse Colon,Transverse colon,STRING,,,https://codes.iarc.fr/topography/C18.4
+tissue,Undescended Testis,Undescended testis,STRING,,,https://codes.iarc.fr/topography/C62.0
+tissue,Unspecified,Pan-cancer,STRING,,,
+tissue,Unspecified,not reported,STRING,,,
+tissue,Unspecified,Pan-tissue,STRING,,,
+tissue,"Upper Lobe, Lung","Upper lobe, lung",STRING,,,https://codes.iarc.fr/topography/C34.1
+tissue,Upper Third of Esophagus,Upper third of esophagus,STRING,,,https://codes.iarc.fr/topography/C15.3
+tissue,Upper-Inner Quadrant of Breast,Upper-inner quadrant of breast,STRING,,,https://codes.iarc.fr/topography/C50.2
+tissue,Upper-Outer Quadrant of Breast,Upper-outer quadrant of breast,STRING,,,https://codes.iarc.fr/topography/C50.4
+tissue,Uterus,,STRING,,,https://codes.iarc.fr/topography/C55.9
+tissue,Vagina,,STRING,,,https://codes.iarc.fr/topography/C52.9
+tissue,Ventricle,,STRING,,,https://codes.iarc.fr/topography/C71.5
+toolType,,,STRING,,,
+toolType,Bench Tool,bench tool,STRING,,,
+toolType,Container,container,STRING,,,
+toolType,Package Binary,package binary,STRING,,,
+toolType,Package Library,package library,STRING,,,
+toolType,Script,script,STRING,,,
+toolType,Unannotated,unannotated,STRING,,,
+toolType,Web Application,web application,STRING,,,
+tumorType,,,STRING,,,
+tumorType,Acinar Cell Carcinoma,,STRING,,,
+tumorType,Acute Lymphoblastic Leukemia,,STRING,,,https://ncit-stage.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.12e&ns=ncit&code=C3167&key=n1401294012&b=1&n=null
+tumorType,Acute Myeloid Leukemia,Acute Myeloid Leukemia,STRING,,,https://icd.codes/icd10cm/C920
+tumorType,Acute Promyelolitic Leukemia,Acute Promyelocytic Leukemia,STRING,,,
+tumorType,Adenocarcinoma,Adenocarcinoma,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C2852&key=n940561247&b=1&n=null
+tumorType,Angiosarcoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C3088
+tumorType,Astrocytoma,Anaplastic Astrocytoma,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C60781&key=632095122&b=1&n=null
+tumorType,Astrocytoma,"Glioblastoma,Astrocytoma",STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C60781&key=n1002098311&b=1&n=null
+tumorType,B Acute Lymphoblastic Leukemia,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C8644&key=155270141&b=1&n=null
+tumorType,Barrett Esophagus,,STRING,,,
+tumorType,Basal Cell Neoplasm,,STRING,,,
+tumorType,Bile Duct Neoplasm,,STRING,,,
+tumorType,Bladder Neoplasm,,STRING,,,
+tumorType,Bladder Small Cell Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9461&key=24503254&m=1&b=1&n=3
+tumorType,Bone Marrow Neoplasm,,STRING,,,
+tumorType,Bone Neoplasm,,STRING,,,
+tumorType,Brain Neoplasm,,STRING,,,
+tumorType,Breast Carcinoma,Breast Cancer,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=20.08e&ns=ncit&code=C4872&key=n898520961&b=1&n=null
+tumorType,Breast Tumor,,STRING,,,
+tumorType,Burkitt Leukemia,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7400&key=155270141&b=1&n=1
+tumorType,Cancer Stem Cells,,STRING,,,
+tumorType,Carcinoma,,STRING,,,
+tumorType,Carcinoma In Situ,Carcinoma,STRING,,,https://icd.codes/icd10cm/D099
+tumorType,Carcinoma In Situ,Carcinoma in situ,STRING,,,https://icd.codes/icd10cm/D099
+tumorType,Carcinoma In Situ of Bladder,Bladder Cancer,STRING,,,https://icd.codes/icd10cm/D090
+tumorType,Carcinoma In Situ of Bladder,Carcinoma in situ of Bladder,STRING,,,https://icd.codes/icd10cm/D090
+tumorType,Carcinoma In Situ of Breast,Breast Cancer,STRING,,,https://icd.codes/icd10cm/D05
+tumorType,Carcinoma In Situ of Breast,Carcinoma in situ of breast,STRING,,,https://icd.codes/icd10cm/D05
+tumorType,Carcinoma In Situ of Breast,Breast Invasive Carcinoma,STRING,,,
+tumorType,Carcinoma In Situ of Bronchus and Lung,Lung Cancer,STRING,,,https://icd.codes/icd10cm/D022
+tumorType,Carcinoma In Situ of Bronchus and Lung,Carcinoma in situ of Bronchus and Lung,STRING,,,https://icd.codes/icd10cm/D022
+tumorType,Carcinoma In Situ of Cervix Uteri,Cervical Cancer,STRING,,,https://icd.codes/icd10cm/D06
+tumorType,Carcinoma In Situ of Cervix Uteri,Carcinoma in situ of Cervix Uteri,STRING,,,https://icd.codes/icd10cm/D06
+tumorType,Carcinoma In Situ of Colon,Colon Cancer,STRING,,,https://icd.codes/icd10cm/D010
+tumorType,Carcinoma In Situ of Colon,Carcinoma in situ of Colon,STRING,,,
+tumorType,Carcinoma In Situ of Esophagus,Carcinoma in situ of Esophagus,STRING,,,https://icd.codes/icd10cm/D001
+tumorType,Carcinoma In Situ of Prostate,Prostate Cancer,STRING,,,https://icd.codes/icd10cm/D075
+tumorType,Carcinoma In Situ of Prostate,prostate cancer,STRING,,,
+tumorType,Carcinoma In Situ of Prostate,Carcinoma in situ of Prostate,STRING,,,
+tumorType,Carcinoma In Situ of Skin,Skin Cancer,STRING,,,https://icd.codes/icd10cm/D04
+tumorType,Carcinoma In Situ of Skin,Skin Cutaneous Melanoma,STRING,,,
+tumorType,Carcinoma In Situ of Skin,Carcinoma in situ of Skin,STRING,,,https://icd.codes/icd10cm/D04
+tumorType,Central Nervous System Neoplasm,,STRING,,,
+tumorType,Cerebellar Neoplasm,,STRING,,,
+tumorType,Cervical Small Cell Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7982&key=n1935502269&b=1&n=4
+tumorType,Childhood Bladder Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C118816&key=24503254&m=1&b=1&n=null
+tumorType,Cholangiocarcinoma,,STRING,,,
+tumorType,Chondroma,,STRING,,,
+tumorType,Chronic Lymphocytic Leukemia,Chronic Lymphocytic Leukemia,STRING,,,https://ncithesaurus.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.12e&ns=ncit&code=C3163&key=486715487&b=1&n=null
+tumorType,Chronic Myeloid Leukemia,Chronic myeloid leukemia,STRING,,,https://icd.codes/icd10cm/C921
+tumorType,Colon Adenocarcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C4349
+tumorType,Colon Adenosquamous Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C5491&key=745142415&b=1&n=2
+tumorType,Colon Small Cell Neuroendocrine Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C6761&key=745142415&b=1&n=2
+tumorType,Colon Squamous Cell Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C5490&key=745142415&b=1&n=2
+tumorType,Colorectal Adenocarcinoma ,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C5105
+tumorType,Colorectal Carcinoma,,STRING,,,
+tumorType,Colorectal Tumor,,STRING,,,
+tumorType,Diffuse Large B-Cell Lymphoma,Diffuse Large B-Cell Lymphoma,STRING,,,
+tumorType,Ductal Breast Carcinoma In Situ,Ductal Carcinoma in situ,STRING,,,
+tumorType,Ductal Breast Carcinoma In Situ,Ductal Breast Carcinoma in situ,STRING,,,
+tumorType,Dysplastic Nevus Syndrome,,STRING,,,
+tumorType,Endometrial Carcinoma,uterine cancer,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C7558
+tumorType,Endometrial Neoplasm,,STRING,,,
+tumorType,Ependymoma,,STRING,,,
+tumorType,Ewing Sarcoma,,STRING,,,
+tumorType,Fibroepithelial Polyp,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C3337
+tumorType,Fibrosarcoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C3043
+tumorType,Gallbladder Carcinoma,,STRING,,,
+tumorType,Gastric Adenocarcinoma,Stomach Adenocarcinoma,STRING,,,
+tumorType,Gastric Neoplasm,,STRING,,,
+tumorType,Genitourinary Cancer,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=20.12d&ns=ncit&code=C156484&key=n111805533&m=1&b=1&n=null
+tumorType,Glioblastoma,Glioblastoma Multiforme,STRING,,,
+tumorType,Glioma,Gliomas,STRING,,,
+tumorType,Glioma,Glioma,STRING,,,
+tumorType,Head and Neck Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C35850&key=n17392571&b=1&n=null
+tumorType,Head and Neck Neoplasm,,STRING,,,
+tumorType,Hepatocellular Carcinoma,Hepatocellular Carcinoma,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C3099
+tumorType,Hodgkin Lymphoma,,STRING,,,https://icd.codes/icd10cm/C81
+tumorType,Intestinal Neoplasm,,STRING,,,
+tumorType,Intraductal Carcinoma In Situ of Breast,Ductal Carcinoma,STRING,,,https://icd.codes/icd10cm/D051
+tumorType,Intraductal Carcinoma In Situ of Breast,Intraductal Carcinoma in situ of Breast,STRING,,,https://icd.codes/icd10cm/D051
+tumorType,Intraductal Carcinoma In Situ of Breast,,STRING,,,
+tumorType,Invasive Ductal Breast Carcinoma,,STRING,,,
+tumorType,Juvenile Myelomonocytic Leukemia,Juvenile Myelomonocytic Leukemia,STRING,,,https://icd.codes/icd10cm/C933
+tumorType,Leiomyoma,,STRING,,,
+tumorType,"Leukemia, Unspecified",Leukemia,STRING,,,https://icd.codes/icd10cm/C959
+tumorType,Liver and Intrahepatic Bile Duct Carcinoma,,STRING,,,https://icd.codes/icd10cm/C81
+tumorType,Liver and Intrahepatic Bile Duct Carcinoma,Liver Hepatocellular Carcinoma,STRING,,,https://icd.codes/icd10cm/C220
+tumorType,Liver and Intrahepatic Bile Duct Carcinoma,Cholangiocarcinoma,STRING,,,
+tumorType,Liver and Intrahepatic Bile Duct Carcinoma,Hepatocellular Carcinoma,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C3099
+tumorType,Liver Neoplasm,,STRING,,,
+tumorType,Lobular Carcinoma In Situ of Breast,Lobular Carcinoma in situ of Breast,STRING,,,https://icd.codes/icd10cm/D050
+tumorType,Luminal A Breast Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C53554&key=242353962&b=1&n=null
+tumorType,Luminal B Breast Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C53555&key=1711152384&b=1&n=8
+tumorType,Lung Adenocarcinoma,Lung Adenocarcinoma,STRING,,,
+tumorType,Lung Neoplasm,,STRING,,,
+tumorType,Lung Non-Small Cell Carcinoma,Lung Squamous Cell Carcinoma,STRING,,,
+tumorType,Lung Small Cell Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C4917&key=n120614580&b=1&n=null
+tumorType,Lymphoblastic Lymphoma,,STRING,,,https://icd.codes/icd10cm/C835
+tumorType,Lymphoid Leukemia,lymphocytic leukemia,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=C7539
+tumorType,Lymphoma,Lymphoma,STRING,,,
+tumorType,Malignant Digestive System Neoplasm,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C4890
+tumorType,Malignant Neoplasm,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C9305
+tumorType,Malignant Neoplasm of Brain,Brain Cancer,STRING,,,https://icd.codes/icd10cm/C71
+tumorType,Malignant Neoplasm of Ovary,Ovary Cancer,STRING,,,https://icd.codes/icd10cm/C56
+tumorType,Malignant Neoplasm of Pancreas,Pancreatic Cancer,STRING,,,https://icd.codes/icd10cm/C25
+tumorType,Malignant Peripheral Nerve Sheath Tumor,Malignant Peripheral Nerve Sheath Tumor,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3798&key=1642179537&b=1&n=null
+tumorType,Malignant Peripheral Nerve Tissue Tumor,Malignant Peripheral Nerve Tissue Tumor,STRING,,,
+tumorType,Malignant Skin Neoplasm,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C2920
+tumorType,Mantle Cell Lymphoma,Mantle Cell Lymphoma,STRING,,,
+tumorType,Marginal Zone Lymphoma,Marginal Zone Lymphoma,STRING,,,
+tumorType,Medulloblastoma,Medulloblastoma,STRING,,,https://www.icd10data.com/ICD10CM/Codes/C00-D49/C69-C72/C71-/C71.6
+tumorType,Melanoma,Melanoma,STRING,,,https://icd.codes/icd10cm/C43
+tumorType,Melanoma,,STRING,,,
+tumorType,Meningioma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C3230
+tumorType,Mesothelioma,,STRING,,,
+tumorType,Monoclonal Gammopathy of Undetermined Significance,,STRING,,,
+tumorType,Mouth Neoplasm,,STRING,,,
+tumorType,Mucosa-Associated Lymphoid Tissue Lymphoma,,STRING,,,
+tumorType,Multiple Myeloma,Myeloma,STRING,,,https://icd.codes/icd10cm/C900
+tumorType,Myelodysplastic Syndrome,,STRING,,,
+tumorType,Myoepithelioma,,STRING,,,
+tumorType,Neuroblastoma,,STRING,,,
+tumorType,Neuroendocrine Neoplasm,,STRING,,,
+tumorType,Neurofibromatosis 1,,STRING,,,
+tumorType,Non-Functioning Pituitary Gland Adenoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C4348
+tumorType,Non-Hodgkin Lymphoma,,STRING,,,
+tumorType,Normal,normal,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.09e&ns=ncit&code=C14165&key=1270433587&b=1&n=null
+tumorType,Not Applicable,Not Applicable,STRING,,,
+tumorType,Not Applicable,na,STRING,,,
+tumorType,Oral Cavity Squamous Cell Carcinoma,Oral Cavity Squamous Cell Carcinoma,STRING,,,
+tumorType,Oropharyngeal Neoplasm,,STRING,,,
+tumorType,Osteosarcoma,Osteosarcoma,STRING,,,
+tumorType,Ovarian Neoplasm,,STRING,,,
+tumorType,Ovarian Serous Adenocarcinoma,,STRING,,,
+tumorType,Pan-cancer,Pan-cancer,STRING,,,
+tumorType,Pancreatic Acinar Cell Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7977&key=n1740365400&b=1&n=2
+tumorType,Pancreatic Adenocarcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C8294&key=729254900&b=1&n=null
+tumorType,Pancreatic Adenosquamous Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C5721&key=n1740365400&b=1&n=3
+tumorType,Pancreatic Ductal Adenocarcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C9120
+tumorType,Pancreatic Neoplasm,,STRING,,,
+tumorType,Pancreatic Neuroendocrine Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3770&key=n1740365400&b=1&n=2
+tumorType,Papillary Breast Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9134&key=1711152384&b=1&n=8
+tumorType,Pituitary Gland Adenoma,,STRING,,,
+tumorType,Plasmablastic Lymphoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C7224
+tumorType,Precursor B-Cell Lymphoblastic Leukemia-Lymphoma,,STRING,,,
+tumorType,Primary Myelofibrosis,,STRING,,,
+tumorType,Prostate Neoplasm,,STRING,,,
+tumorType,Rectal Adenocarcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9383&key=413170142&b=1&n=null
+tumorType,Refractory Bladder Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C150316&key=24503254&m=1&b=1&n=3
+tumorType,Renal Cell Carcinoma,,STRING,,,
+tumorType,Rhabdoid Tumor,,STRING,,,
+tumorType,Sarcoma,,STRING,,,
+tumorType,Serous Tubal Intraepithelial Carcinoma,serous tubal intra-epithelial carcinoma,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C126449
+tumorType,Skin Cancer,,STRING,,,
+tumorType,Skin Carcinoma,,STRING,,,
+tumorType,Skin Neoplasm,,STRING,,,
+tumorType,Soft Tissue Sarcoma,,STRING,,,
+tumorType,Splenic Neoplasm,,STRING,,,
+tumorType,Squamous Cell Carcinoma,,STRING,,,
+tumorType,Squamous Cell Carcinoma of Head and Neck,,STRING,,,
+tumorType,Stomach Neoplasm,,STRING,,,
+tumorType,Superficial Bladder Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C27474&key=24503254&m=1&b=1&n=null
+tumorType,T Acute Lymphoblastic Leukemia,,STRING,,,https://ncit-stage.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C3183&key=n250873431&b=1&n=null
+tumorType,T-Cell Lymphoma,,STRING,,,
+tumorType,Thyroid Gland Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C4815
+tumorType,Thyroid Gland Noninvasive Follicular Neoplasm with Papillary-Like Nuclear Features,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C126598
+tumorType,Triple-Negative Breast Cancer Finding,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C71428&key=1711152384&b=1&n=1
+tumorType,Triple-Negative Breast Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C71732
+tumorType,Tubular Breast Carcinoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C9135&key=1711152384&b=1&n=8
+tumorType,Urothelial Carcinoma,,STRING,,,
+tumorType,Uveal Melanoma,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&version=19.06d&ns=ncit&code=C7712&key=1600710593&b=1&n=null
+tumorType,Uveal Neoplasm,,STRING,,,
+tumorType,Vascular Neoplasm,,STRING,,,https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C7388
