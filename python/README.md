@@ -44,10 +44,23 @@ source .env
 Open a terminal and switch to the `csbc-pson-dcc/python/` directory.  Run the command:
 
 ```bash
-docker run --rm \
-  -v $PWD/.env:/.env:ro \
-  -v $PWD/output:/output:rw \
+docker run --rm -ti \
+  --env-file .env  \
+  --volume $PWD/output:/output:rw \
   pubmed_crawler
+```
+
+The `-ti` flags are not required, if you do not wish to get STDOUT in real-time, e.g.
+
+```bash
+...
+Total unique publications: 1866
+
+Comparing with table syn21868591...
+      New publications found: 118
+
+Pulling information from publications...
+|██████████████▌                         | ▃▅▇ 43/118 [36%] in 1:15 (0.6/s, eta: 2:11)
 ```
 
 Depending on how many new publications have been added to PubMed since the last scrape (and NCBI’s current requests traffic), this step could take anywhere from 10 seconds to 15ish minutes.
