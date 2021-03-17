@@ -1,0 +1,147 @@
+### This script documents linking csbc datasets and files therein to portals using the following steps:
+# -pick a dataset by alias
+# -make file view with proper scope and parent
+# -add annotations to files in fileview by pulling from bioproject_combined table
+
+
+## libraries
+library(synapser)
+library(glue)
+library(tidyverse)
+library(googlesheets4)
+library(plyr)
+library(dplyr)
+
+
+##login 
+synLogin()
+
+
+###### Find the datasets with files to annotate  #######
+# this google sheet can be replaced by the portal dataset table
+# the googlesheet was used here as a static reference point
+original_sheet <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1kRC3PN9AnIn-YP1UHMYOvv1RYmTYr8zZnHsCKyIAyoM/edit#gid=58708989")
+
+## Pick your favorite datasets
+u01<- original_sheet %>% 
+  filter(grantType == "U01" & consortium == "[\"CSBC\"]")# & is.na(annotated))
+## Add a column to store fileview ids for future reference
+u01 <- u01 %>%
+  mutate(fileview = "")
+
+#### Find the relevant info about the samples #####
+bioproj <- synapser::synTableQuery(glue::glue("SELECT * FROM syn22041415"))$asDataFrame()
+
+## Initialise dataset specific annotation columns to add  ####
+species <- ""
+assay <- ""
+tumorType <- ""
+platform <- ""
+tissue <- ""
+gender <- ""
+dataformat <- ""
+filename <- ""
+
+columns <- c("datasetId","datasets","grantName","grantType","consortium","tissue","gender","species","assay","tumorType","dataFormat","platform","fileName")
+types <- rep("STRING",time=length(columns))
+maxsize <- rep(100,time=length(columns))
+
+
+######## Make the file view  ##########
+for (folder in u01$datasetName){
+  
+  ### find where to build fileview
+  parent <- unique(u01$grantId[u01$datasetName == folder])
+  scope <- unique(u01$datasetId[u01$datasetName == folder])
+  name <- unique(u01$datasetAlias[u01$datasetName == folder])
+  cols <- unlist(strsplit(as.character(columns), split=",[ ]*"))
+  types <- unlist(strsplit(as.character(types), split=",[ ]*"))
+  values <- c(scope, name, unique(u01$grantName[u01$datasetName == folder]), unique(u01$grantType[u01$datasetName == folder]), 
+              unique(u01$consortium[u01$datasetName == folder]), tissue, gender, species, assay, tumorType, dataformat, platform, filename)
+  key.val <- setNames(as.list(values), columns) %>% as.data.frame()
+  df <- t(key.val) 
+  keys <- rownames(df)
+  values <- df[,1]
+  values <- gsub(values, pattern="^\\[|\\]|\"", replacement="") 
+  
+  ### check all columns have types
+  if(length(cols) != length(types)) {
+    stop("length(cols) != length(types)\n")
+  }
+  
+  ### start building schema 
+  children <- synGetChildren(parent)
+  lst <- as.list(children)
+  df <- do.call(rbind.data.frame,lst)
+  schema <- NULL
+  if(name %in% df$name) {
+    flag <- df$name == name
+    schema <- synGet(as.character(df[flag, "id"]))
+  } else {
+    cat(paste0("Creating schema with name = ", name, " in ", parent, " with scope ", scope, "\n"))
+    schema <- EntityViewSchema(name=paste(name, "metadata"), parent=parent, scopes=c(scope), includeEntityTypes=c(EntityViewType$FILE))
+    schema <- synStore(schema)
+  }
+  cat("Done storing schema\n")
+  
+  ###### get the newly minted fileview ID 
+  view.synId <- schema$properties$id
+  view <- synGet(view.synId)
+  
+  ##### Add columns to the schema (add types and maxsize)
+  current <- synTableQuery(paste0("SELECT * FROM ", view.synId))$asDataFrame()
+  for(i in 1:length(cols)) {
+    if(cols[i] %in% colnames(current)) { next }
+    cat(paste0("Adding ", cols[i], " of type ", types[i], "\n"))
+    view$addColumn(Column(name=cols[i], columnType=types[i], maximumSize = maxsize[i]))
+  }
+  
+  view <- synStore(view)
+  
+  ##### Pull the fileview and add relevant values
+  current <- synTableQuery(paste0("SELECT * FROM ", view.synId))$asDataFrame()
+  for(i in 1:length(keys)) {
+    current[,keys[i]] <- values[i]
+  }
+  ## add extensions
+  if("name" %in% colnames(current)) {
+    extensions <- c("SRA", "TXT", "RCC", "CEL", "CSV")
+    for(ext in extensions) {
+      flag <- grepl(current$name, pattern=ext, ignore.case=TRUE)
+      current[flag,"dataFormat"] <- ext
+    }
+  }
+  ## add file name
+  current$fileName <- current$name
+  
+  ## add info from bioproject table
+  info <- bioproj %>% 
+    filter(project_acc == name, sample_title %in% current$title) 
+  
+  current$species <- info$sample_scientific_name[match(current$title, info$sample_title)] %>% 
+    lapply(., function(y) gsub("Homo sapiens", "Human", y)) %>% 
+    lapply(., function(y) gsub("Mus musculus", "Mouse", y)) %>% 
+    unlist()
+  
+  current$platform <- info$experiment_instrument_model[match(current$title, info$sample_title)] %>% 
+    lapply(., function(y) gsub("Illumina ", "", y)) %>% 
+    unlist()
+  
+  #The assay added using the following lines only work for whole transcriptome, for other assays test for correct annotation
+  current$assay <- paste(info$project_target_capture[match(current$title, info$sample_title)], 
+                      info$project_target_material[match(current$title, info$sample_title)], 
+                      info$project_methodtype[match(current$title, info$sample_title)]) %>% 
+    lapply(., function(y) gsub("NA NA NA", "", y)) %>% 
+    unlist()
+  
+  
+  #print(head(current))
+  
+  ## store the new view 
+  new <- Table(view.synId, current)
+  synStore(new)
+  
+  ### Add a record of the file view
+  u01$fileview[u01$datasetName == folder] <- view.synId
+  
+}
