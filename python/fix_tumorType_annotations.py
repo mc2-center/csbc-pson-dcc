@@ -1,9 +1,10 @@
 import synapseclient
 from synapseclient import Table, Schema
 
+
 def main():
     # login to synapse
-    syn=synapseclient.login(silent=True)
+    syn = synapseclient.login(silent=True)
 
     # synapse table id for publications - merged
     table_id = "syn21868591"
@@ -19,16 +20,23 @@ def main():
     # Put together a query using f strings
     # A type of query you can plug and chug
     query = (f"SELECT publicationId, pubMedId, assay FROM {table_id} "
-                f"WHERE (({column} HAS ('{annotations}')))")
+             f"WHERE (({column} HAS ('{annotations}')))")
 
     # query the table with tableQuery() and convert the
     # results into a data frame. If the query is correct,
     # we should get 529 rows back.
     publication_view = syn.tableQuery(query).asDataFrame()
-    print(f"Number of results: {len(publication_view)}")
-    #publication_view['assay'] = ["Real Time PCR"]
+    # print(f"Number of results: {len(publication_view)}")
+    # publication_view['assay'] = ["Real Time PCR"]
+
     print(publication_view)
-    
+    for i, row in publication_view.iterrows():
+        annots = row['assay']
+        new_annots = ["Real Time PCR" if x ==
+                      annotations else x for x in annots]
+        publication_view.at[i, 'assay'] = new_annots
+    print(publication_view)
+
     # store row changes in Synapse
     # syn.store(Table(table_id, publication_view))
 
@@ -36,6 +44,7 @@ def main():
     # now get back 0 rows
     # publication_view2 = syn.tableQuery(query).asDataFrame()
     # print(f"Number of results: {len(publication_view2)}")
+
 
 if __name__ == "__main__":
     main()
