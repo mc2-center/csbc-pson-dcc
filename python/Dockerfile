@@ -1,8 +1,14 @@
 FROM python:3.7.4-slim-buster
 
-COPY pubmed_crawler.py .
+RUN mkdir manifest_templates
+COPY manifest_templates/* manifest_templates/.
 
-COPY requirements.txt .
+COPY python/pubmed_crawler.py .
+COPY python/generate_templates.py .
+COPY python/entrypoint.sh .
+COPY python/requirements.txt .
+
+RUN chmod a+x entrypoint.sh
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT ["python3", "pubmed_crawler.py", "-t", "syn21868591"]
+ENTRYPOINT [ "./entrypoint.sh" ]

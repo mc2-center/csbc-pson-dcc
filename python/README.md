@@ -15,10 +15,10 @@ It is ideal to have an Entrez account when scraping information from PubMed (NCB
 3. If you don't have [Docker](https://www.docker.com/get-started) yet, install it onto your machine and let it run.
 
 
-4. Once you have Docker installed and running, open a terminal and switch to the `csbc-pson-dcc/python/` directory.  Enter the following command into your terminal (including that period at the end):
+4. Once you have Docker installed and running, open a terminal and switch to the `csbc-pson-dcc/` directory.  Enter the following command into your terminal (including that period at the end):
 
 ```bash
-docker build -t pubmed_crawler .
+docker build -t pubmed_crawler -f python/Dockerfile .
 ```
 
 This will build an image called `pubmed_crawler` -- now you’re ready to start generating!
@@ -68,7 +68,7 @@ Depending on how many new publications have been added to PubMed since the last 
 Once complete, a manifest should be found in `csbc-pson-dcc/python/output/`, with a name like `publications_manifest_yyyy-mm-dd.xlsx`. 
 
 ### Python
-Open a terminal and switch to the csbc-pson-dcc/python/ directory.  Run the command:
+Open a terminal and switch to the `csbc-pson-dcc/python/` directory.  Run the command:
 
 ```bash
 python pubmed_crawler.py -t syn21868591

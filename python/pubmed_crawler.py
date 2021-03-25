@@ -20,6 +20,7 @@ import pandas as pd
 from alive_progress import alive_bar
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.styles import Font
 
 
 def login():
@@ -340,18 +341,23 @@ def scrape_info(pmids, curr_grants, grant_view):
     return pd.concat(table)
 
 
-def find_publications(syn, args):
-    """Get list of publications based on grants of consortia."""
-    grant_view = get_view(syn, args.grantview_id)
+def find_publications(syn, grantview_id, table_id):
+    """Get list of publications based on grants of consortia.
+
+    Returns:
+        df: publications data
+    """
+    grant_view = get_view(syn, grantview_id)
     grants = get_grants(grant_view)
     pmids = get_pmids(grants)
+    table = []
 
     # If user provided a table ID, only scrape info from publications
     # not already listed in the provided table.
-    if args.table_id:
-        print(f"Comparing with table {args.table_id}...")
+    if table_id:
+        print(f"Comparing with table {table_id}...")
         current_publications = syn.tableQuery(
-            f"SELECT * FROM {args.table_id}").asDataFrame()
+            f"SELECT * FROM {table_id}").asDataFrame()
         current_pmids = {str(pmid)
                          for pmid in list(current_publications.pubMedId)}
         pmids -= current_pmids
@@ -360,13 +366,39 @@ def find_publications(syn, args):
     if pmids:
         print(f"Pulling information from publications...")
         table = scrape_info(pmids, grants, grant_view)
-
-        wb = Workbook()
-        ws = wb.active
-        for r in dataframe_to_rows(table, index=False, header=True):
-            ws.append(r)
-        wb.save("output/" + args.output_name + ".xlsx")
     print("DONE")
+    return table
+
+
+def generate_manifest(syn, table, output):
+    """Generate manifest file (xlsx) with given publications data."""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "manifest"
+    for r in dataframe_to_rows(table, index=False, header=True):
+        ws.append(r)
+
+    # Get latest CV terms to save as "standard_terms".
+    query = ("SELECT key, value, columnType FROM syn25322361 "
+             "WHERE key <> '' AND columnType <> '' "
+             "ORDER BY key, value")
+    cv_terms = syn.tableQuery(
+        query).asDataFrame().fillna("").drop_duplicates()
+    ws2 = wb.create_sheet("standard_terms")
+    for row in dataframe_to_rows(cv_terms, index=False, header=True):
+        ws2.append(row)
+
+    # Style the worksheet.
+    ft = Font(bold=True)
+    ws2["A1"].font = ft
+    ws2["B1"].font = ft
+    ws2["C1"].font = ft
+    ws2.column_dimensions['A'].width = 18
+    ws2.column_dimensions['B'].width = 60
+    ws2.column_dimensions['C'].width = 12
+    ws2.protection.sheet = True
+
+    wb.save(os.path.join("output", output + ".xlsx"))
 
 
 def main():
@@ -379,7 +411,8 @@ def main():
     Entrez.email = os.getenv('ENTREZ_EMAIL')
     Entrez.api_key = os.getenv('ENTREZ_API_KEY')
 
-    find_publications(syn, args)
+    table = find_publications(syn, args.grantview_id, args.table_id)
+    generate_manifest(syn, table, args.output_name)
 
 
 if __name__ == "__main__":
