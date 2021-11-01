@@ -31,8 +31,8 @@ def main():
     # Create a table from a DataFrame and use only necessary columns
     # Insert filepath and table name
     df = pd.read_csv(path, 
-        usecols=['key', 'value', 'columnType',
-        'ontologyId', 'ontologySource', 'ontologyUrl'],
+        usecols=['key', 'value', 'existing', 'description', 'columnType',
+        'ontologyId', 'ontologySource', 'ontologyUrl', 'notes'],
         index_col=False)
 
     table = build_table(table_name, project, df)
