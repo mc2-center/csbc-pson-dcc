@@ -26,22 +26,29 @@ cv_query = (f"SELECT key, value, existing FROM {cv_table_id} "
 # Query the CV table using tableQuery() and convert the results into a dataframe.
 cv_view = syn.tableQuery(cv_query).asDataFrame()
 
-# Create variable for old annotation and new annotation based on "existing" column values of controlled vocabulary data frame
-for i, row in cv_view.iterrows():
-    old_annotation = row['existing']
-    new_annotation = row['value']
-    # Create query for annotations table specified in agrument
-    annotations_query = (f"SELECT publicationId, pubMedId, {column} FROM {annotation_table_id} "
-             f"WHERE (({column} HAS ('{old_annotation}')))")
-    # query the table with tableQuery() and convert the results into a data frame.
-    annotations_view = syn.tableQuery(annotations_query).asDataFrame()
-    # Change old annotation to new annotation
-    for i, row in annotations_view.iterrows():
-        annots = row[column]
-        new_annots = [new_annotation if x ==
-                      old_annotation else x for x in annots]
-        annotations_view.at[i, column] = new_annots
-    print(annotations_view)
+# Iterate through publications using query
+annotations_query = (f"SELECT publicationId, pubMedId, {column} FROM {annotation_table_id}")
+
+# Query the publications table using tableQuery() and convert the results into a dataframe
+annotations_view = syn.tableQuery(annotations_query).asDataFrame()
+
+# Create empty list, then iterate though each type of value
+a_list = []
+for i, row in annotations_view.iterrows():
+    a_list = row[column]
+    # Iterate through each item in list
+    for term in a_list:
+        if term in cv_view['existing'].values:
+            # Does not work:
+            a_list[term] = cv_view['value']
+    print(a_list)
+            
+
+        
+        
+
+
+
 
 
 
