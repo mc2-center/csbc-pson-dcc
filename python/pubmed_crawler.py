@@ -379,11 +379,14 @@ def generate_manifest(syn, table, output):
         ws.append(r)
 
     # Get latest CV terms to save as "standard_terms".
-    query = ("SELECT key, value, columnType FROM syn25322361 "
-             "WHERE key <> '' AND columnType <> '' "
+    query = ("SELECT key, value, existing, columnType FROM syn26433610 "
+             "WHERE key IN ('assay', 'tumorType', 'tissue') "
              "ORDER BY key, value")
-    cv_terms = syn.tableQuery(
-        query).asDataFrame().fillna("").drop_duplicates()
+    cv_terms = (
+        syn.tableQuery(query).asDataFrame()
+        .fillna("")
+        .drop_duplicates()
+        .rename(columns={"value": "Use", "existing": "Used for"}))
     ws2 = wb.create_sheet("standard_terms")
     for row in dataframe_to_rows(cv_terms, index=False, header=True):
         ws2.append(row)
