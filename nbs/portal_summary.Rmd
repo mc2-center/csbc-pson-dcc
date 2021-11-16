@@ -54,7 +54,7 @@ theme_grants
 ```
 
 ```{r}
-ct_counts_syntable <- update_synapse_table("syn21649281", theme_grants, syn, syntab)
+ct_counts_syntable <- update_synapse_table("syn21649281", theme_grants, syntab, syn)
 ```
 
 ```{r}
@@ -86,7 +86,7 @@ ct_counts_syntable <- update_synapse_table("syn21649281", theme_grants, syn, syn
 ```
 
 ```{r}
-# ct_counts_syntable <- update_synapse_table("syn21649281", consortiumtheme_projs, syn, syntab)
+# ct_counts_syntable <- update_synapse_table("syn21649281", consortiumtheme_projs, syntab, syn)
 ```
 
 ```{r}
@@ -150,7 +150,7 @@ theme_counts
 
 
 ```{r}
-theme_counts_syntable <- update_synapse_table("syn21639584", theme_counts, syn, syntab)
+theme_counts_syntable <- update_synapse_table("syn21639584", theme_counts, syntab, syn)
 ```
 
 
@@ -163,5 +163,5 @@ consortium_counts
 ```
 
 ```{r}
-consortium_counts_syntable <- update_synapse_table("syn21641485", consortium_counts, syn, syntab)
+consortium_counts_syntable <- update_synapse_table("syn21641485", consortium_counts, syntab, syn)
 ```
