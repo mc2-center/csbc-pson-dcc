@@ -32,16 +32,35 @@ annotations_query = (f"SELECT publicationId, pubMedId, {column} FROM {annotation
 # Query the publications table using tableQuery() and convert the results into a dataframe
 annotations_view = syn.tableQuery(annotations_query).asDataFrame()
 
-# Create empty list, then iterate though each type of value
-a_list = []
+# Iterate through each row in annoations_view and create list of values
 for i, row in annotations_view.iterrows():
-    a_list = row[column]
-    # Iterate through each item in list
-    for term in a_list:
+    annots = row[column]
+    # Iterate through each item in annotaitons list
+    for term in annots:
         if term in cv_view['existing'].values:
-            # Does not work:
-            a_list[term] = cv_view['value']
-    print(a_list)
+            new_term = cv_view['value'].where(cv_view['existing'] == term).dropna().values[0]
+            annots = [new_term]
+        else:
+            annots = [term]           
+        
+        annotations_view.at[i, column] = annots
+print(annotations_view)
+
+
+
+ #for i, row in publication_view.iterrows():
+   #     annots = row[column]
+  #      new_annots = [new_annotation if x ==
+    #                  old_annotation else x for x in annots]
+    #    publication_view.at[i, column] = new_annots
+   # print(publication_view)
+       
+
+       
+    
+
+    
+        
             
 
         
