@@ -35,26 +35,16 @@ annotations_view = syn.tableQuery(annotations_query).asDataFrame()
 # Iterate through each row in annoations_view and create list of values
 for i, row in annotations_view.iterrows():
     annots = row[column]
-    # Iterate through each item in annotaitons list
-    for term in annots:
-        if term in cv_view['existing'].values:
-            new_term = cv_view['value'].where(cv_view['existing'] == term).dropna().values[0]
-            annots = [new_term]
-        else:
-            annots = [term]           
-        
-        annotations_view.at[i, column] = annots
+    # Iterate through each item in annotations list and update terms
+    new_annots = [cv_view['value'].where(cv_view['existing'] == x).dropna().values[0] if x in cv_view['existing'].values else x for x in annots]
+    annotations_view.at[i, column] = new_annots
 print(annotations_view)
 
 
 
- #for i, row in publication_view.iterrows():
-   #     annots = row[column]
-  #      new_annots = [new_annotation if x ==
-    #                  old_annotation else x for x in annots]
-    #    publication_view.at[i, column] = new_annots
-   # print(publication_view)
-       
+# store row changes in Synapse. Uncomment below when ready to change!
+syn.store(Table(annotation_table_id, annotations_view))
+
 
        
     
