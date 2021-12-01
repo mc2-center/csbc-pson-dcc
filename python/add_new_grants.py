@@ -34,9 +34,7 @@ def login():
               "your Synapse username and password.")
         username = input("Synapse username: ")
         password = getpass.getpass("Synapse password: ").encode("utf-8")
-        syn = synapseclient.login(
-            username=username, password=password,
-            rememberMe=True, silent=True)
+        syn = synapseclient.login(username, password, silent=True)
     return syn
 
 
