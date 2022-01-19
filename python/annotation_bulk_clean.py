@@ -27,7 +27,7 @@ cv_query = (f"SELECT key, value, existing FROM {cv_table_id} "
 cv_view = syn.tableQuery(cv_query).asDataFrame()
 
 # Iterate through publications using query
-annotations_query = (f"SELECT publicationId, pubMedId, {column} FROM {annotation_table_id}")
+annotations_query = (f"SELECT {column} FROM {annotation_table_id}")
 
 # Query the publications table using tableQuery() and convert the results into a dataframe
 annotations_view = syn.tableQuery(annotations_query).asDataFrame()
