@@ -33,7 +33,7 @@ cv_view = syn.tableQuery(cv_query).asDataFrame()
 annotations_query = (f"SELECT {column} FROM {annotation_table_id}")
 
 # Query the publications table using tableQuery() and convert the results into a dataframe
-annotations_view = syn.tableQuery(annotations_query).asDataFrame()
+annotations_view = syn.tableQuery(annotations_query).asDataFrame().fillna("")
 
 # Iterate through each row in annoations_view and create list of values
 for i, row in annotations_view.iterrows():
