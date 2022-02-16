@@ -3,7 +3,6 @@
 TODO:
   - use Python client once Dataset support becomes available
   - get Folder annotations and add them to Dataset entity
-  - apiKey will be deprecated, update to PAT in login()
 
 author: verena.chung
 """
@@ -28,7 +27,7 @@ def login():
     try:
         syn = synapseclient.login(
             os.getenv('SYN_USERNAME'),
-            apiKey=os.getenv('SYN_APIKEY'),
+            authToken=os.getenv('SYN_PAT'),
             silent=True)
     except synapseclient.core.exceptions.SynapseNoCredentialsError:
         print("Credentials not found; please manually provide your",
