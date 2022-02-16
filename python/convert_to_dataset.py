@@ -59,8 +59,9 @@ def create_dataset_schema(syn):
     return [col.get('id') for col in cols]
 
 
-def convert_data_files(syn, folder_id):
-    """Convert `File` entities into `DatasetItem` entities.
+def _get_data_files(syn, folder_id):
+    """Get `File` entities from given Folder ID and format them as
+    `DatasetItem`s.
 
     Assumptions:
         Immediate children of given Folder ID are File entities.
@@ -75,8 +76,12 @@ def convert_data_files(syn, folder_id):
     ]
 
 
-def convert_folder_to_dataset(syn, dataset_name, schema, dataset_items):
-    """Convert `Folder` entity into `Dataset` entity.
+def _create_dataset(syn, dataset_name, schema, dataset_items):
+    """Create `Dataset` entity.
+
+    Assumptions:
+        dataset_items contains IDs of File entities only; otherwise,
+        SynapseHTTPError is thrown.
 
     TODO:
         Replace REST call with Dataset service function once available.
@@ -104,12 +109,12 @@ def main():
     col_ids = create_dataset_schema(syn)
     for folder in syn.getChildren(FOLDERS_ID):
         folder_id = folder.get('id')
-        files = convert_data_files(syn, folder_id)
+        files = _get_data_files(syn, folder_id)
         try:
-            convert_folder_to_dataset(syn,
-                                      dataset_name=folder.get('name'),
-                                      schema=col_ids,
-                                      dataset_items=files)
+            _create_dataset(syn,
+                            dataset_name=folder.get('name'),
+                            schema=col_ids,
+                            dataset_items=files)
             folder_count += 1
             file_count += len(files)
         except synapseclient.core.exceptions.SynapseHTTPError:
