@@ -1,4 +1,4 @@
-"""Convert Synapse Folder to Dataset
+"""Create Synapse Dataset Entities
 
 TODO:
   - use Python client once Dataset support becomes available
@@ -94,6 +94,17 @@ def _create_dataset(syn, dataset_name, schema, dataset_items):
         'items': dataset_items
     }
     syn.restPOST("/entity", json.dumps(req_body))
+
+
+def _reset_datasets(syn):
+    """Remove all current datasets."""
+    curr_datasets = [i.get('id') for i in syn.restPOST(
+        "/entity/children", json.dumps({'parentId': PARENT_ID, "includeTypes": ["dataset"]})).get('page')]
+    while curr_datasets:
+        for dataset_id in curr_datasets:
+            syn.restDELETE(f"/entity/{dataset_id}")
+        curr_datasets = [i.get('id') for i in syn.restPOST(
+            "/entity/children", json.dumps({'parentId': PARENT_ID, "includeTypes": ["dataset"]})).get('page')]
 
 
 def main():
