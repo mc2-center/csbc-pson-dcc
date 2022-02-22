@@ -7,7 +7,7 @@
 # (PAT) rather than your password. You can generate PATs on Synapse by
 # going to Account Settings > Manage Personal Access Tokens.
 export SYN_USERNAME=username
-export SYN_PAT="PAT"
+export SYNAPSE_AUTH_TOKEN="PAT"
 
 
 ###########################

@@ -25,10 +25,7 @@ def login():
         syn: Synapse object
     """
     try:
-        syn = synapseclient.login(
-            os.getenv('SYN_USERNAME'),
-            authToken=os.getenv('SYN_PAT'),
-            silent=True)
+        syn = synapseclient.login(silent=True)
     except synapseclient.core.exceptions.SynapseNoCredentialsError:
         print("Credentials not found; please manually provide your",
               "Synapse username and password.")
@@ -79,10 +76,6 @@ def _get_data_files(syn, folder_id):
 def _create_dataset(syn, dataset_name, schema, dataset_items):
     """Create `Dataset` entity.
 
-    Assumptions:
-        dataset_items contains IDs of File entities only; otherwise,
-        SynapseHTTPError is thrown.
-
     TODO:
         Replace REST call with Dataset service function once available.
     """
@@ -108,7 +101,12 @@ def _reset_datasets(syn):
 
 
 def main():
-    """Main function."""
+    """Main function.
+
+    Assumptions:
+        `files` contains IDs of File entities only; otherwise,
+        SynapseHTTPError is thrown.
+    """
     syn = login()
 
     # Keep count of conversions done for summary report.
