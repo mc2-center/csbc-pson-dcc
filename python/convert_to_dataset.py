@@ -131,7 +131,7 @@ def main():
             # 409 Client Error is from adding a dataset with an existing name.
             # REVIEW. Double-check if this is how Synapse errors should be
             #         caught.
-            if not str(err).startswith("409 Client Error:"):
+            if not err.response.status_code == 409:
                 needs_review.append(folder_id)
 
     # Print summary report.
