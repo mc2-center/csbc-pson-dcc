@@ -126,8 +126,13 @@ def main():
                             dataset_items=files)
             folder_count += 1
             file_count += len(files)
-        except synapseclient.core.exceptions.SynapseHTTPError:
-            needs_review.append(folder_id)
+        except synapseclient.core.exceptions.SynapseHTTPError as err:
+
+            # 409 Client Error is from adding a dataset with an existing name.
+            # REVIEW. Double-check if this is how Synapse errors should be
+            #         caught.
+            if not str(err).startswith("409 Client Error:"):
+                needs_review.append(folder_id)
 
     # Print summary report.
     print(f"      Number of folders converted: {folder_count}")
