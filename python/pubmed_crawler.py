@@ -17,7 +17,6 @@ from Bio import Entrez
 from bs4 import BeautifulSoup
 import synapseclient
 import pandas as pd
-from alive_progress import alive_bar
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Font
@@ -31,8 +30,7 @@ def login():
     """
     try:
         syn = synapseclient.login(
-            os.getenv('SYN_USERNAME'),
-            apiKey=os.getenv('SYN_APIKEY'),
+            authToken=os.getenv('SYNAPSE_AUTH_TOKEN'),
             silent=True)
     except synapseclient.core.exceptions.SynapseNoCredentialsError:
         print("Credentials not found; please manually provide your",
@@ -111,7 +109,7 @@ def get_grants(df):
     Returns:
         set: valid grant numbers, e.g. non-empty strings
     """
-    print(f"Querying for grant numbers...", end="")
+    print("Querying for grant numbers... ", end="")
     grants = set(df.grantNumber.dropna())
     print(f"{len(grants)} found\n")
     return grants
@@ -129,15 +127,13 @@ def get_pmids(grants):
     # Brian's request: add check that pubs. are retreived for each grant number
     count = 1
     for grant in grants:
-        print(f"  {count:02d}. Grant number {grant}...", end="")
         handle = Entrez.esearch(db="pubmed", term=grant,
                                 retmax=1_000_000, retmode="xml", sort="relevance")
         pmids = Entrez.read(handle).get('IdList')
         handle.close()
         all_pmids.update(pmids)
-        print(f"{len(pmids)} found")
         count += 1
-    print(f"Total unique publications: {len(all_pmids)}\n")
+    print(f"  Total unique publications: {len(all_pmids)}\n")
     return all_pmids
 
 
@@ -191,7 +187,7 @@ def get_related_info(pmid):
         ids = [link.get('Id') for link in result.get('Link')]
 
         handle = Entrez.esummary(db=db, id=",".join(ids))
-        soup = BeautifulSoup(handle, "lxml")
+        soup = BeautifulSoup(handle, features="xml")
         handle.close()
         related_info[db] = soup
 
@@ -246,12 +242,13 @@ def scrape_info(pmids, curr_grants, grant_view):
         ssl._create_default_https_context = ssl._create_unverified_context
 
     table = []
-    with alive_bar(len(pmids)) as progress:
-        for pmid in pmids:
-            session = requests.Session()
-            url = f"https://www.ncbi.nlm.nih.gov/pubmed/?term={pmid}"
-            soup = BeautifulSoup(session.get(url).content, "lxml")
 
+    for pmid in pmids:
+        session = requests.Session()
+        url = f"https://www.ncbi.nlm.nih.gov/pubmed/?term={pmid}"
+        soup = BeautifulSoup(session.get(url).content, features="xml")
+
+        if not soup.find(attrs={'aria-label': "500 Error"}):
             # HEADER
             # Contains: title, journal, pub. date, authors, pmid, doi
             header = soup.find(attrs={'id': "full-view-heading"})
@@ -259,7 +256,7 @@ def scrape_info(pmids, curr_grants, grant_view):
             # PubMed utilizes JavaScript now, so content does not always
             # fully load on the first try.
             if not header:
-                soup = BeautifulSoup(session.get(url).content, "lxml")
+                soup = BeautifulSoup(session.get(url).content, features="xml")
                 header = soup.find(attrs={'id': "full-view-heading"})
 
             title, journal, year, doi, authors = parse_header(header)
@@ -272,7 +269,7 @@ def scrape_info(pmids, curr_grants, grant_view):
 
                 # Filter out grant annotations not in consortia.
                 grants = {parse_grant(grant) for grant in grants
-                          if re.search(r"CA\d", grant, re.I)}
+                            if re.search(r"CA\d", grant, re.I)}
                 grants = list(filter(lambda x: x in curr_grants, grants))
             except AttributeError:
                 grants = []
@@ -281,7 +278,8 @@ def scrape_info(pmids, curr_grants, grant_view):
             # its view table by grant number of this journal study.
             grant_id = consortium = ""
             if grants:
-                center = grant_view.loc[grant_view['grantNumber'].isin(grants)]
+                center = grant_view.loc[grant_view['grantNumber'].isin(
+                    grants)]
                 grant_id = ", ".join(list(set(center.grantId)))
                 consortium = ", ".join(list(set(center.consortium)))
 
@@ -298,8 +296,8 @@ def scrape_info(pmids, curr_grants, grant_view):
             mesh = soup.find(attrs={"id": "mesh-terms"})
             try:
                 mesh = sorted({term.text.strip().rstrip("*").split(" / ")[0]
-                               for term in mesh.find_all(
-                                   attrs={"class": "keyword-actions-trigger"})})
+                                for term in mesh.find_all(
+                    attrs={"class": "keyword-actions-trigger"})})
             except AttributeError:
                 mesh = []
             finally:
@@ -325,18 +323,18 @@ def scrape_info(pmids, curr_grants, grant_view):
 
             row = pd.DataFrame(
                 [[doi, journal, int(pmid), "", "", url, title, int(year),
-                  keywords, mesh, authors, consortium, grant_id,
-                  ", ".join(grants), convert_to_stringlist(gse_ids), gse_url,
-                  convert_to_stringlist(srx), srx_url,
-                  convert_to_stringlist(list(srp)), srp_url,
-                  convert_to_stringlist(dbgaps), dbgap_url,
-                  "", "", "", "", ""]],
+                    keywords, mesh, authors, consortium, grant_id,
+                    ", ".join(grants), convert_to_stringlist(
+                        gse_ids), gse_url,
+                    convert_to_stringlist(srx), srx_url,
+                    convert_to_stringlist(list(srp)), srp_url,
+                    convert_to_stringlist(dbgaps), dbgap_url,
+                    "", "", "", "", ""]],
                 columns=columns)
             table.append(row)
-            session.close()
-
-            # Increment progress bar animation.
-            progress()
+        else:
+            print(f"{pmid} publication not found - skipping...")
+        session.close()
 
     return pd.concat(table)
 
@@ -364,9 +362,9 @@ def find_publications(syn, grantview_id, table_id):
         print(f"  New publications found: {len(pmids)}\n")
 
     if pmids:
-        print(f"Pulling information from publications...")
+        print("Pulling information from publications... ")
         table = scrape_info(pmids, grants, grant_view)
-    print("DONE")
+    print("DONE ✓")
     return table
 
 
@@ -379,14 +377,11 @@ def generate_manifest(syn, table, output):
         ws.append(r)
 
     # Get latest CV terms to save as "standard_terms".
-    query = ("SELECT key, value, existing, columnType FROM syn26433610 "
-             "WHERE key IN ('assay', 'tumorType', 'tissue') "
+    query = ("SELECT key, value, columnType FROM syn26433610 "
+             "WHERE key <> '' AND columnType <> '' "
              "ORDER BY key, value")
-    cv_terms = (
-        syn.tableQuery(query).asDataFrame()
-        .fillna("")
-        .drop_duplicates()
-        .rename(columns={"value": "Use", "existing": "Used for"}))
+    cv_terms = syn.tableQuery(
+        query).asDataFrame().fillna("").drop_duplicates()
     ws2 = wb.create_sheet("standard_terms")
     for row in dataframe_to_rows(cv_terms, index=False, header=True):
         ws2.append(row)

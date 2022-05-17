@@ -1,84 +1,78 @@
 # Publications Manifest Generator
 
 ## Setup
-1. Download the csbc-pson-dcc repository to your local machine:
+1. Create a file called `.env`, then copy-paste the following.  Replace
+values in the file with your Synapse PAT and Entrez credentials.
 
-```bash
-git clone https://github.com/Sage-Bionetworks/csbc-pson-dcc.git
+```
+###########################
+# Login Credentials       #
+###########################
+
+## Used for logging in to Synapse
+# For security purposes, you should provide your personal access token
+# (PAT) rather than your password. You can generate PATs on Synapse by
+# going to Account Settings > Manage Personal Access Tokens.
+SYNAPSE_AUTH_TOKEN="PAT"
+
+
+###########################
+# Entrez Credentials     #
+###########################
+# Providing a valid email and API key will allow up to 10 requests
+# per second. You may experience errors if this information is not
+# provided.
+ENTREZ_EMAIL=email
+ENTREZ_API_KEY=apikey
 ```
 
-2. Open the `csbc-pson-dcc` directory with your editor of choice, then switch to the `python/` directory.  Copy `.envTemplate` as `.env`, then update `.env` to include your Synapse and Entrez credentials.
-
-It is ideal to have an Entrez account when scraping information from PubMed (NCBI in general); providing credentials will enable you to send up to 10 requests per second (as opposed to only 3).  More information about that and how to create an account here.
-
-
-3. If you don't have [Docker](https://www.docker.com/get-started) yet, install it onto your machine and let it run.
+It is ideal to have an Entrez account when scraping information from PubMed
+(NCBI in general); providing credentials will enable you to send up to 10
+requests per second (as opposed to only 3).
 
 
-4. Once you have Docker installed and running, open a terminal and switch to the `csbc-pson-dcc/` directory.  Enter the following command into your terminal (including that period at the end):
+2. If you do not have [Docker](https://www.docker.com/get-started) yet, install
+it onto your machine and let it run.
 
-```bash
-docker build -t pubmed_crawler -f python/Dockerfile .
-```
+3. Once you have Docker installed on your machine, open a terminal and log into
+the Synapse Docker hub with `docker login docker.synapse.org`.
 
-This will build an image called `pubmed_crawler` -- now you’re ready to start generating!
-
----
-
-#### Note
-Alternatively, if you rather run the crawler with the Python interpreter, install all of its dependencies first with `pip` (or `pip3` if you have multiple Python interpreters on your machine):
-
-```bash
-pip install -r requirements.txt
-```
-
-Afterward, source the environment variables from `.env` to the environment, so that the script will have access to the credentials:
-
-```bash
-source .env
-```
 
 ## Usage
 
 ### Docker
-Open a terminal and switch to the `csbc-pson-dcc/python/` directory.  Run the command:
+Open a terminal and (optional) switch to the directory containing your .env
+file.  Run the command:
 
 ```bash
 docker run --rm -ti \
-  --env-file .env  \
+  --env-file /path/to/.env \
   --volume $PWD/output:/output:rw \
-  pubmed_crawler
+  docker.synapse.org/syn7080714/pubmed_crawler
 ```
 
-The `-ti` flags are not required, if you do not wish to get STDOUT in real-time, e.g.
+If this is your first time running the command, Docker will first pull the image. 
+Note that the `-ti` flags are not required, if you do not wish to get STDOUT in 
+real-time, e.g.
 
 ```bash
 ...
 Total unique publications: 1866
 
-Comparing with table syn21868591...
-      New publications found: 118
+Querying for grant numbers... 77 found
 
-Pulling information from publications...
-|██████████████▌                         | ▃▅▇ 43/118 [36%] in 1:15 (0.6/s, eta: 2:11)
+Getting PMIDs from NCBI...
+  Total unique publications: 2524
+...
 ```
 
-Depending on how many new publications have been added to PubMed since the last scrape (and NCBI’s current requests traffic), this step could take anywhere from 10 seconds to 15ish minutes.
+Depending on how many new publications have been added to PubMed since the last
+scrape (and NCBI’s current requests traffic), this step could take anywhere from
+10 seconds to 15ish minutes.
 
-Once complete, a manifest should be found in `csbc-pson-dcc/python/output/`, with a name like `publications_manifest_yyyy-mm-dd.xlsx`. 
-
-### Python
-Open a terminal and switch to the `csbc-pson-dcc/python/` directory.  Run the command:
-
-```bash
-python pubmed_crawler.py -t syn21868591
-```
-
-(You may need to use `python3` instead of `python` if you have multiple versions of Python.)
-
-This will pull all grant numbers from the Portal - Grants Merged table (syn21918972), use them as the search terms in PubMed, then compare the PMIDs found in PubMed with the existing ones in the Portal - Publications Merged table (syn21868591).
-
-Similar to the Docker approach, a new manifest should be found in `csbc-pson-dcc/python/output/`, with a name like `publications_manifest_yyyy-mm-dd.xlsx`. 
+Once complete, a manifest will be found in `output/`, with a name like 
+`publications_manifest_yyyy-mm-dd.xlsx`, as well as manifest templates
+for datasets, files, and tools.
 
 ## Next Steps
 1. Fill out the manifest by completing the annotations for:
@@ -89,6 +83,7 @@ Similar to the Docker approach, a new manifest should be found in `csbc-pson-dcc
 
 if applicable.
 
-If there are accompanying datasets, data files, and/or tools for the publications, fill out the relevant manifests.  Templates are available under `csbc-pson-dcc/manifest_templates/`.
+If there are accompanying datasets, data files, and/or tools for the
+publications, fill out the relevant manifests.
 
-2. Validate and upload the manifest with the [CSBC/PS-ON curator tool](https://shinypro.synapse.org/users/vchung/csbc-pson-manifest/).
+2. Validate and upload the manifest with the Data Curator App (coming soon!).
