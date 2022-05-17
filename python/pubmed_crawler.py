@@ -31,8 +31,7 @@ def login():
     """
     try:
         syn = synapseclient.login(
-            os.getenv('SYN_USERNAME'),
-            apiKey=os.getenv('SYN_APIKEY'),
+            authToken=os.getenv('SYNAPSE_AUTH_TOKEN'),
             silent=True)
     except synapseclient.core.exceptions.SynapseNoCredentialsError:
         print("Credentials not found; please manually provide your",

@@ -3,10 +3,10 @@
 ###########################
 
 ## Used for logging in to Synapse
-# For security purposes, you should provide your apikey rather than
-# your password. Your apikey can be found on My Dashboard > Settings.
-SYN_USERNAME=username
-SYN_APIKEY="apikey"
+# For security purposes, you should provide your personal access token
+# (PAT) rather than your password. You can generate PATs on Synapse by
+# going to Account Settings > Manage Personal Access Tokens.
+SYNAPSE_AUTH_TOKEN="PAT"
 
 
 ###########################
@@ -17,4 +17,3 @@ SYN_APIKEY="apikey"
 # provided.
 ENTREZ_EMAIL=email
 ENTREZ_API_KEY=apikey
-
