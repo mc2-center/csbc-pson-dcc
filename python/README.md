@@ -31,10 +31,10 @@ It is ideal to have an Entrez account when scraping information from PubMed
 requests per second (as opposed to only 3).
 
 
-3. If you do not have [Docker](https://www.docker.com/get-started) yet, install
+2. If you do not have [Docker](https://www.docker.com/get-started) yet, install
 it onto your machine and let it run.
 
-4. Once you have Docker installed on your machine, open a terminal and log into
+3. Once you have Docker installed on your machine, open a terminal and log into
 the Synapse Docker hub with `docker login docker.synapse.org`.
 
 
