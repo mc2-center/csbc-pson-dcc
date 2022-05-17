@@ -252,87 +252,92 @@ def scrape_info(pmids, curr_grants, grant_view):
             url = f"https://www.ncbi.nlm.nih.gov/pubmed/?term={pmid}"
             soup = BeautifulSoup(session.get(url).content, "lxml")
 
-            # HEADER
-            # Contains: title, journal, pub. date, authors, pmid, doi
-            header = soup.find(attrs={'id': "full-view-heading"})
-
-            # PubMed utilizes JavaScript now, so content does not always
-            # fully load on the first try.
-            if not header:
-                soup = BeautifulSoup(session.get(url).content, "lxml")
+            if not soup.find(attrs={'aria-label': "500 Error"}):
+                # HEADER
+                # Contains: title, journal, pub. date, authors, pmid, doi
                 header = soup.find(attrs={'id': "full-view-heading"})
 
-            title, journal, year, doi, authors = parse_header(header)
-            authors = ", ".join(authors)
+                # PubMed utilizes JavaScript now, so content does not always
+                # fully load on the first try.
+                if not header:
+                    soup = BeautifulSoup(session.get(url).content, "lxml")
+                    header = soup.find(attrs={'id': "full-view-heading"})
 
-            # GRANTS
-            try:
-                grants = [g.text.strip() for g in soup.find(
-                    'div', attrs={'id': "grants"}).find_all('a')]
+                title, journal, year, doi, authors = parse_header(header)
+                authors = ", ".join(authors)
 
-                # Filter out grant annotations not in consortia.
-                grants = {parse_grant(grant) for grant in grants
-                          if re.search(r"CA\d", grant, re.I)}
-                grants = list(filter(lambda x: x in curr_grants, grants))
-            except AttributeError:
-                grants = []
+                # GRANTS
+                try:
+                    grants = [g.text.strip() for g in soup.find(
+                        'div', attrs={'id': "grants"}).find_all('a')]
 
-            # Nasim's note: match and get the grant center Synapse ID from
-            # its view table by grant number of this journal study.
-            grant_id = consortium = ""
-            if grants:
-                center = grant_view.loc[grant_view['grantNumber'].isin(grants)]
-                grant_id = ", ".join(list(set(center.grantId)))
-                consortium = ", ".join(list(set(center.consortium)))
+                    # Filter out grant annotations not in consortia.
+                    grants = {parse_grant(grant) for grant in grants
+                              if re.search(r"CA\d", grant, re.I)}
+                    grants = list(filter(lambda x: x in curr_grants, grants))
+                except AttributeError:
+                    grants = []
 
-            # KEYWORDS
-            abstract = soup.find(attrs={"id": "abstract"})
-            try:
-                keywords = abstract.find(text=re.compile(
-                    "Keywords")).find_parent("p").text.replace(
-                        "Keywords:", "").strip()
-            except AttributeError:
-                keywords = ""
+                # Nasim's note: match and get the grant center Synapse ID from
+                # its view table by grant number of this journal study.
+                grant_id = consortium = ""
+                if grants:
+                    center = grant_view.loc[grant_view['grantNumber'].isin(
+                        grants)]
+                    grant_id = ", ".join(list(set(center.grantId)))
+                    consortium = ", ".join(list(set(center.consortium)))
 
-            # MESH TERMS
-            mesh = soup.find(attrs={"id": "mesh-terms"})
-            try:
-                mesh = sorted({term.text.strip().rstrip("*").split(" / ")[0]
-                               for term in mesh.find_all(
-                                   attrs={"class": "keyword-actions-trigger"})})
-            except AttributeError:
-                mesh = []
-            finally:
-                mesh = convert_to_stringlist(mesh)
+                # KEYWORDS
+                abstract = soup.find(attrs={"id": "abstract"})
+                try:
+                    keywords = abstract.find(text=re.compile(
+                        "Keywords")).find_parent("p").text.replace(
+                            "Keywords:", "").strip()
+                except AttributeError:
+                    keywords = ""
 
-            # RELATED INFORMATION
-            # Contains: GEO, SRA, dbGaP
-            related_info = get_related_info(pmid)
+                # MESH TERMS
+                mesh = soup.find(attrs={"id": "mesh-terms"})
+                try:
+                    mesh = sorted({term.text.strip().rstrip("*").split(" / ")[0]
+                                   for term in mesh.find_all(
+                        attrs={"class": "keyword-actions-trigger"})})
+                except AttributeError:
+                    mesh = []
+                finally:
+                    mesh = convert_to_stringlist(mesh)
 
-            gse_ids = parse_geo(related_info.get('gds'))
-            gse_url = make_urls(
-                "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=", gse_ids)
+                # RELATED INFORMATION
+                # Contains: GEO, SRA, dbGaP
+                related_info = get_related_info(pmid)
 
-            srx, srp = parse_sra(related_info.get('sra'))
-            srx_url = make_urls("https://www.ncbi.nlm.nih.gov/sra/", srx)
-            srp_url = make_urls(
-                "https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=", srp)
+                gse_ids = parse_geo(related_info.get('gds'))
+                gse_url = make_urls(
+                    "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=", gse_ids)
 
-            dbgaps = parse_dbgap(related_info.get('gap'))
-            dbgap_url = make_urls(
-                "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=",
-                dbgaps)
+                srx, srp = parse_sra(related_info.get('sra'))
+                srx_url = make_urls("https://www.ncbi.nlm.nih.gov/sra/", srx)
+                srp_url = make_urls(
+                    "https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=", srp)
 
-            row = pd.DataFrame(
-                [[doi, journal, int(pmid), "", "", url, title, int(year),
-                  keywords, mesh, authors, consortium, grant_id,
-                  ", ".join(grants), convert_to_stringlist(gse_ids), gse_url,
-                  convert_to_stringlist(srx), srx_url,
-                  convert_to_stringlist(list(srp)), srp_url,
-                  convert_to_stringlist(dbgaps), dbgap_url,
-                  "", "", "", "", ""]],
-                columns=columns)
-            table.append(row)
+                dbgaps = parse_dbgap(related_info.get('gap'))
+                dbgap_url = make_urls(
+                    "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=",
+                    dbgaps)
+
+                row = pd.DataFrame(
+                    [[doi, journal, int(pmid), "", "", url, title, int(year),
+                      keywords, mesh, authors, consortium, grant_id,
+                      ", ".join(grants), convert_to_stringlist(
+                          gse_ids), gse_url,
+                      convert_to_stringlist(srx), srx_url,
+                      convert_to_stringlist(list(srp)), srp_url,
+                      convert_to_stringlist(dbgaps), dbgap_url,
+                      "", "", "", "", ""]],
+                    columns=columns)
+                table.append(row)
+            else:
+                print(f"{pmid} publication not found - skipping...")
             session.close()
 
             # Increment progress bar animation.
@@ -379,14 +384,11 @@ def generate_manifest(syn, table, output):
         ws.append(r)
 
     # Get latest CV terms to save as "standard_terms".
-    query = ("SELECT key, value, existing, columnType FROM syn26433610 "
-             "WHERE key IN ('assay', 'tumorType', 'tissue') "
+    query = ("SELECT key, value, columnType FROM syn26433610 "
+             "WHERE key <> '' AND columnType <> '' "
              "ORDER BY key, value")
-    cv_terms = (
-        syn.tableQuery(query).asDataFrame()
-        .fillna("")
-        .drop_duplicates()
-        .rename(columns={"value": "Use", "existing": "Used for"}))
+    cv_terms = syn.tableQuery(
+        query).asDataFrame().fillna("").drop_duplicates()
     ws2 = wb.create_sheet("standard_terms")
     for row in dataframe_to_rows(cv_terms, index=False, header=True):
         ws2.append(row)
