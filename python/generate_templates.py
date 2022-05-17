@@ -31,15 +31,12 @@ def login():
     return syn
 
 
-def download_table(syn, table_id,
-                   col_names="*",
-                   orderby="key, value",
-                   params=None):
+def download_table(syn, table_id, col_names="*", params=None):
     """Download and return Synapse table as a dataframe."""
     query = f"SELECT {col_names} FROM {table_id}"
+
     if params:
         query += f" WHERE {params}"
-    query += f" ORDER BY {orderby}"
     return syn.tableQuery(query).asDataFrame().fillna("").drop_duplicates()
 
 
@@ -59,11 +56,9 @@ def generate_latest_template(old_wb, new_wb, cv_terms):
     new_terms["A1"].font = ft
     new_terms["B1"].font = ft
     new_terms["C1"].font = ft
-    new_terms["D1"].font = ft
     new_terms.column_dimensions['A'].width = 18
-    new_terms.column_dimensions['B'].width = 40
-    new_terms.column_dimensions['C'].width = 60
-    new_terms.column_dimensions['D'].width = 12
+    new_terms.column_dimensions['B'].width = 60
+    new_terms.column_dimensions['C'].width = 12
     new_terms.protection.sheet = True
 
     # Save the updated workbook.
@@ -77,40 +72,25 @@ def main():
     file = os.path.join("manifest_templates", "files_manifest.xlsx")
     tool = os.path.join("manifest_templates", "tools_manifest.xlsx")
 
-    datasets_cv = download_table(
+    cv_terms = download_table(
         syn, "syn26433610",
-        col_names="key, value, existing, columnType",
-        params="key IN ('assay', 'species', 'tumorType', 'tissue')"
-    ).rename(columns={"value": "Use", "existing": "Used for"})
+        "key, value, columnType",
+        "key <> '' AND columnType <> '' ORDER BY key, value")
+
     generate_latest_template(
         dataset,
         os.path.join("output", "datasets_manifest.xlsx"),
-        datasets_cv
+        cv_terms
     )
-
-    files_cv = download_table(
-        syn, "syn26433610",
-        col_names="key, value, existing, columnType",
-        params=("key IN ('assay', 'platform', 'dataFormat', "
-                "'species', 'sex', 'tumorType', 'tissue')")
-    ).rename(columns={"value": "Use", "existing": "Used for"})
     generate_latest_template(
         file,
         os.path.join("output", "files_manifest.xlsx"),
-        files_cv
+        cv_terms
     )
-
-    tools_cv = download_table(
-        syn, "syn26433610",
-        col_names="key, value, existing, columnType",
-        params=("key IN ('operation', 'data', 'format', 'toolType', 'linkType'"
-                "'Topic', 'operatingSystem', 'language', 'license', 'cost',"
-                "'accessibility', 'downloadType', 'documentationType')")
-    ).rename(columns={"value": "Use", "existing": "Used for"})
     generate_latest_template(
         tool,
         os.path.join("output", "tools_manifest.xlsx"),
-        tools_cv
+        cv_terms
     )
 
 
