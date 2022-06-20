@@ -7,11 +7,11 @@ metadata.
 
 TODO:
   - include step of validating the metadata annotations
-  - auto-add institutions not currently listed in `institutions`?
 
 author: verena.chung
 """
 
+import os
 import argparse
 import getpass
 
@@ -21,19 +21,20 @@ import pandas as pd
 
 
 def login():
-    """Log into Synapse. If cached info not found, prompt user.
+    """Log into Synapse. If env variables not found, prompt user.
 
     Returns:
         syn: Synapse object
     """
-
     try:
-        syn = synapseclient.login(silent=True)
-    except Exception:
-        print("Cached credentials not found; please provide",
-              "your Synapse username and password.")
+        syn = synapseclient.login(
+            authToken=os.getenv('SYNAPSE_AUTH_TOKEN'),
+            silent=True)
+    except synapseclient.core.exceptions.SynapseNoCredentialsError:
+        print("Credentials not found; please manually provide your",
+              "Synapse username and password.")
         username = input("Synapse username: ")
-        password = getpass.getpass("Synapse password: ").encode("utf-8")
+        password = getpass.getpass("Synapse password: ")
         syn = synapseclient.login(username, password, silent=True)
     return syn
 
