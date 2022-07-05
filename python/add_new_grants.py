@@ -132,11 +132,6 @@ def upload_metadata(syn, grants, table):
     grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(",")
     grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(",")
 
-    # Add in missing columns. (TODO: remove?)
-    grants.insert(9, "ConsortiumId", "")
-    grants.insert(6, "InstitutionId", "[]")
-    grants.insert(5, "ThemeId", "")
-
     new_rows = grants.values.tolist()
     table = syn.store(Table(schema, new_rows))
 
@@ -161,8 +156,8 @@ def main():
         print("No new grants found!")
     else:
         print(f"{len(new_grants)} new grants found!\nAdding new grants...")
-        #added_grants = create_grant_projects(syn, new_grants)
-        #upload_metadata(syn, added_grants, args.grants_table)
+        added_grants = create_grant_projects(syn, new_grants)
+        upload_metadata(syn, added_grants, args.grants_table)
 
     print("DONE ✓")
 
