@@ -60,6 +60,10 @@ def get_table(syn, args):
 
 def split_table(table, parent):
     """Split table by grant number and output to CSV."""
+
+    # Some rows may have multiple grants, so split them up into separate
+    # rows so that each row is only associated with one grant number. All
+    # other column values will remain the same.
     grouped = table.explode('grantNumber').groupby('grantNumber')
     print(f"Found {len(grouped.groups)} grant numbers in table "
           "- splitting now...")
