@@ -61,6 +61,14 @@ COLNAMES = {
         'linkUrl': 'Tool Link Url',
         'linkType': 'Tool Link Type',
         'linkNote': 'Tool Link Note'
+    },
+    'project': {
+        'projectName': 'Project Name',
+        'projectType': 'Project Type',
+        'description': 'Project Description',
+        'theme': 'Project Theme Name',
+        'consortium': 'Project Consortium Name',
+        'grantNumber': 'Project Grant Number'
     }
 }
 DROP = {
@@ -75,6 +83,9 @@ DROP = {
     'tool': [
         'toolId', 'grantId', 'grantName', 'publicationTitle',
         'downloadLink', 'portalDisplay'
+    ],
+    'project': [
+        'projectId', 'themeId', 'consortiumId', 'grantId', 'grant', 'grantType'
     ]
 }
 ADD = {

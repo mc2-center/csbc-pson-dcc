@@ -41,8 +41,9 @@ def get_args():
                         help="Synapse table ID to split")
     parser.add_argument("-t", "--type",
                         type=str, required=True,
-                        choices=["publication", "dataset", "tool"],
-                        help="Table type, e.g. `publication`")
+                        choices=["publication", "dataset",
+                                 "tool", "project"],
+                        help="Table to split, e.g. `publication`")
     return parser.parse_args()
 
 
