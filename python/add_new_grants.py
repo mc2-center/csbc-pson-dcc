@@ -59,10 +59,10 @@ def create_wiki_pages(syn, project_id, grant_info):
 
     content = f"""### The {consortium} {grant_type} Research Project \@ {title}
 
-#### List of Collaborating Institutions
+# List of Collaborating Institutions
 {institutions}
 
-#### Project Description
+# Project Description
 {desc}
 
 """
@@ -97,6 +97,11 @@ def create_grant_projects(syn, grants):
         name = row["GrantName"].replace("&", "and")
         project = Project(name)
         project = syn.store(project)
+        syn.setPermissions(
+            project.id, principalId=3450948,
+            accessType=['CREATE', 'READ', 'UPDATE', 'DELETE', 'DOWNLOAD',
+                        'CHANGE_PERMISSIONS', 'CHANGE_SETTINGS', 'MODERATE'],
+        )
 
         # Update grants table with new synId
         grants.at[_, "GrantId"] = project.id
@@ -129,8 +134,10 @@ def upload_metadata(syn, grants, table):
 
     # Convert columns into STRINGLIST.
     grants.loc[:, 'GrantThemeName'] = grants.GrantThemeName.str.split(",")
-    grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(",")
-    grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(",")
+    grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(
+        ",")
+    grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(
+        ",")
 
     new_rows = grants.values.tolist()
     table = syn.store(Table(schema, new_rows))
