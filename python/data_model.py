@@ -79,7 +79,7 @@ COLNAMES = {
         'description': 'Project Description',
         'theme': 'Project Theme Name',
         'consortium': 'Project Consortium Name',
-        'grantNumber': 'Project Grant Number'
+        'grant': 'Project Grant Number'
     }
 }
 
@@ -98,7 +98,7 @@ DROP = {
         'downloadLink', 'portalDisplay'
     ],
     'project': [
-        'projectId', 'themeId', 'consortiumId', 'grantId', 'grant', 'grantType'
+        'projectId', 'themeId', 'consortiumId', 'grantId', 'grantName', 'grantType'
     ]
 }
 
