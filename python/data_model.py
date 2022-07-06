@@ -7,6 +7,7 @@ TABLE_ID = {
     'project': "syn21868602"
 }
 
+# Map schema colnames to match data model colnames.
 COLNAMES = {
     'publication': {
         'consortium': 'Publication Consortium Name',
@@ -78,6 +79,8 @@ COLNAMES = {
         'grantNumber': 'Project Grant Number'
     }
 }
+
+# Extra columns in the table schema that do not exist in the data model.
 DROP = {
     'publication': [
         'publicationId', 'pubMedLink', 'themeId', 'consortiumId',
@@ -95,6 +98,8 @@ DROP = {
         'projectId', 'themeId', 'consortiumId', 'grantId', 'grant', 'grantType'
     ]
 }
+
+# Missing columns in the table schema that exist in the data model.
 ADD = {
     'publication': [
         {'index': 15, 'colname': 'Publication Tool Name', 'value': ""},
