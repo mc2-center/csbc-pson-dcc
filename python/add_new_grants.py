@@ -97,6 +97,11 @@ def create_grant_projects(syn, grants):
         name = row["GrantName"].replace("&", "and")
         project = Project(name)
         project = syn.store(project)
+        syn.setPermissions(
+            project.id, principalId=3450948,
+            accessType=['CREATE', 'READ', 'UPDATE', 'DELETE', 'DOWNLOAD',
+                        'CHANGE_PERMISSIONS', 'CHANGE_SETTINGS', 'MODERATE'],
+        )
 
         # Update grants table with new synId
         grants.at[_, "GrantId"] = project.id
