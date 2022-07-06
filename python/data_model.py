@@ -1,5 +1,12 @@
 """Data model"""
 
+TABLE_ID = {
+    'publication': "syn21868591",
+    'dataset': "syn21897968",
+    'tool': "syn26127427",
+    'project': "syn21868602"
+}
+
 COLNAMES = {
     'publication': {
         'consortium': 'Publication Consortium Name',

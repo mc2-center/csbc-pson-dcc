@@ -11,7 +11,7 @@ import argparse
 import getpass
 
 import synapseclient
-from data_model import COLNAMES, DROP, ADD
+from data_model import TABLE_ID, COLNAMES, DROP, ADD
 
 
 def login():
@@ -36,9 +36,6 @@ def login():
 def get_args():
     """Set up command-line interface and get arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("-id", "--table_id",
-                        type=str, required=True,
-                        help="Synapse table ID to split")
     parser.add_argument("-t", "--type",
                         type=str, required=True,
                         choices=["publication", "dataset",
@@ -50,7 +47,7 @@ def get_args():
 def get_table(syn, args):
     """Get Merged table and modify the columns to match the data model."""
     table = (
-        syn.tableQuery(f"SELECT * FROM {args.table_id}")
+        syn.tableQuery(f"SELECT * FROM {TABLE_ID.get(args.type)}")
         .asDataFrame()
         .fillna("")
         .rename(columns=COLNAMES.get(args.type))
