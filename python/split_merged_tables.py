@@ -61,10 +61,13 @@ def get_table(syn, args):
 def split_table(table, parent):
     """Split table by grant number and output to CSV."""
 
+    # Column name for grant numbers depend on the manifest template type.
+    colname = f"{parent.capitalize()} Grant Number"
+
     # Some rows may have multiple grants, so split them up into separate
     # rows so that each row is only associated with one grant number. All
     # other column values will remain the same.
-    grouped = table.explode('grantNumber').groupby('grantNumber')
+    grouped = table.explode(colname).groupby(colname)
     print(f"Found {len(grouped.groups)} grant numbers in table "
           "- splitting now...")
     os.makedirs(f"{parent}")

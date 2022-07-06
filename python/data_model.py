@@ -10,6 +10,7 @@ TABLE_ID = {
 # Map schema colnames to match data model colnames.
 COLNAMES = {
     'publication': {
+        'grantNumber': 'Publication Grant Number',
         'consortium': 'Publication Consortium Name',
         'theme': 'Publication Theme Name',
         'doi': 'Publication Doi',
@@ -27,6 +28,7 @@ COLNAMES = {
     },
     'dataset': {
         'pubMedId': 'Dataset Pubmed Id',
+        'grantNumber': 'Dataset Grant Number',
         'consortium': 'Dataset Consortium Name',
         'theme': 'Dataset Theme Name',
         'datasetName': 'Dataset Name',
@@ -41,6 +43,7 @@ COLNAMES = {
     'tool': {
         'pubMedId': 'Tool Pubmed Id',
         'consortium': 'Tool Consortium Name',
+        'grantNumber': 'Tool Grant Number',
         'toolName': 'Tool Name',
         'description': 'Tool Description',
         'homepage': 'Tool Homepage',
