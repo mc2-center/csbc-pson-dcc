@@ -87,7 +87,7 @@ def split_table(table, parent):
         valid_rows.to_csv(valid_filepath, index=False)
 
         # Only create a file if there are invalid rows found.
-        invalid_rows = df[df.applymap(lambda x: len(str(x)) > 500).any(axis=1)]
+        invalid_rows = df[df.applymap(lambda x: len(str(x)) >= 500).any(axis=1)]
         if not invalid_rows.empty:
             invalid_filepath = os.path.join(
                 parent + "_to_check", grant_number + ".csv")
