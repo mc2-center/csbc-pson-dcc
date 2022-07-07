@@ -38,7 +38,7 @@ COLNAMES = {
         'assay': 'Dataset Assay',
         'species': 'Dataset Species',
         'tumorType': 'Dataset Tumor Type',
-        'externalLink': 'Dataset External Link'
+        'externalLink': 'Dataset Url'
     },
     'tool': {
         'pubMedId': 'Tool Pubmed Id',
