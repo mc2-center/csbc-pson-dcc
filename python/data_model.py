@@ -116,5 +116,7 @@ ADD = {
         {'index': 2, 'colname': 'Tool Dataset Alias', 'value': ""},
         {'index': 0, 'colname': 'Component', 'value': "ToolView"},
     ],
-    'project': []
+    'project': [
+        {'index': 0, 'colname': 'Component', 'value': "ProjectView"},
+    ]
 }
