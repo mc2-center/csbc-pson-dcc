@@ -70,10 +70,28 @@ def split_table(table, parent):
     grouped = table.explode(colname).groupby(colname)
     print(f"Found {len(grouped.groups)} grant numbers in table "
           "- splitting now...")
-    os.makedirs(f"{parent}")
-    for grant in grouped.groups:
-        filepath = os.path.join(parent, grant + ".csv")
-        grouped.get_group(grant).to_csv(filepath, index=False)
+
+    # Create directories to hold manifests if they don't already exist.
+    if not os.path.isdir(f"{parent}"):
+        os.makedirs(f"{parent}")
+    if not os.path.isdir(f"{parent}_to_check"):
+        os.makedirs(f"{parent}_to_check")
+
+    # Iterate through each grant number group, filtering out rows with any
+    # columns that have 500+ characters -- these will need to be further QC'd.
+    for grant_number in grouped.groups:
+        df = grouped.get_group(grant_number)
+
+        valid_rows = df[~df.applymap(lambda x: len(str(x)) > 500).any(axis=1)]
+        valid_filepath = os.path.join(parent, grant_number + ".csv")
+        valid_rows.to_csv(valid_filepath, index=False)
+
+        # Only create a file if there are invalid rows found.
+        invalid_rows = df[df.applymap(lambda x: len(str(x)) > 500).any(axis=1)]
+        if not invalid_rows.empty:
+            invalid_filepath = os.path.join(
+                parent + "_to_check", grant_number + ".csv")
+            invalid_rows.to_csv(invalid_filepath, index=False)
 
 
 def main():
