@@ -105,7 +105,6 @@ DROP = {
 # Missing columns in the table schema that exist in the data model.
 ADD = {
     'publication': [
-        {'index': 15, 'colname': 'Publication Tool Name', 'value': ""},
         {'index': 0, 'colname': 'Component', 'value': "PublicationView"},
     ],
     'dataset': [
@@ -113,7 +112,6 @@ ADD = {
         {'index': 0, 'colname': 'Component', 'value': "DatasetView"},
     ],
     'tool': [
-        {'index': 2, 'colname': 'Tool Dataset Alias', 'value': ""},
         {'index': 0, 'colname': 'Component', 'value': "ToolView"},
     ],
     'project': [
