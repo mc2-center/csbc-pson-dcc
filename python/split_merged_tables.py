@@ -36,8 +36,7 @@ def login():
 def get_args():
     """Set up command-line interface and get arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("-t", "--type",
-                        type=str, required=True,
+    parser.add_argument("type", type=str,
                         choices=["publication", "dataset",
                                  "tool", "project"],
                         help="Table to split, e.g. `publication`")
@@ -55,6 +54,24 @@ def get_table(syn, args):
     )
     for new in ADD.get(args.type):
         table.insert(new['index'], new['colname'], new['value'])
+    return table
+
+
+def extract_url_columns(table):
+    """Extract just the URLs from columns that contain links in markdown.
+
+    Assumptions:
+        This only applies to the "Dataset Url" column
+    """
+    if "Dataset Url" in table.columns:
+        table["Dataset Url"] = (
+            table["Dataset Url"]
+            .str.extractall(r'\((.*?)\)')
+            .unstack()
+            .fillna("")
+            .apply(", ".join, axis=1)
+            .str.rstrip(", ")
+        )
     return table
 
 
@@ -100,6 +117,7 @@ def main():
     args = get_args()
 
     table = get_table(syn, args)
+    table = extract_url_columns(table)
     split_table(table, args.type)
 
     print("DONE ✓")
