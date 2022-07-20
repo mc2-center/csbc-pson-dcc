@@ -150,10 +150,8 @@ def upload_metadata(syn, grants, table):
 
     # Convert columns into STRINGLIST.
     grants.loc[:, 'GrantThemeName'] = grants.GrantThemeName.str.split(",")
-    grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(
-        ",")
-    grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(
-        ",")
+    grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(",")
+    grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(",")
 
     new_rows = grants.values.tolist()
     table = syn.store(Table(schema, new_rows))
