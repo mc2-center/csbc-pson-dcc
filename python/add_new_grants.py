@@ -12,7 +12,7 @@ import argparse
 import getpass
 
 import synapseclient
-from synapseclient import Table, Project, Wiki
+from synapseclient import Table, Project, Wiki, Folder
 import pandas as pd
 
 
@@ -87,6 +87,21 @@ def create_wiki_pages(syn, project_id, grant_info):
     pi_wiki = syn.store(pi_wiki)
 
 
+def create_folders(syn, project_id):
+    """Create top-levels expected by the DCA.
+
+    Folders:
+        - projects
+        - publications
+        - datasets
+        - tools
+    """
+    syn.store(Folder("projects", parent=project_id))
+    syn.store(Folder("publications", parent=project_id))
+    syn.store(Folder("datasets", parent=project_id))
+    syn.store(Folder("tools", parent=project_id))
+
+
 def create_grant_projects(syn, grants):
     """Create a new Synapse project for each grant and populate its Wiki.
 
@@ -112,6 +127,7 @@ def create_grant_projects(syn, grants):
         syn.set_annotations(annots)
 
         create_wiki_pages(syn, project.id, row)
+        create_folders(syn, project.id)
 
     return grants
 
@@ -134,8 +150,10 @@ def upload_metadata(syn, grants, table):
 
     # Convert columns into STRINGLIST.
     grants.loc[:, 'GrantThemeName'] = grants.GrantThemeName.str.split(",")
-    grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(",")
-    grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(",")
+    grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(
+        ",")
+    grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(
+        ",")
 
     new_rows = grants.values.tolist()
     table = syn.store(Table(schema, new_rows))
