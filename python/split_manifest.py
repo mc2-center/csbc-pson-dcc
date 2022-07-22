@@ -1,0 +1,90 @@
+# Preliminaries
+import pandas as pd
+import argparse
+import os
+import glob
+from grant_dicts import CONSORTIUM, THEME
+
+
+### Get arguments ###
+def get_args():
+
+    parser = argparse.ArgumentParser(
+        description='Get file path of manifest csv')
+    parser.add_argument('directory_path',
+                        type=str,
+                        help='Path to directory that houses the manifest csvs')
+
+    return parser.parse_args()
+
+
+### Get list of csv files ###
+def get_files(directory):
+
+    files = glob.glob(f'{directory}**/**.csv')
+
+    return (files)
+
+
+### split manifest ###
+# split ones with multipe grants (exploded)
+# Create directories
+# filter out rows with 500+ columns - may not need
+# Create files
+
+
+def split_manifests(files, directory):
+
+    data_types = ['Publication', 'Dataset', 'File', 'Tool']
+    for item in data_types:
+        # Create directories
+        os.mkdir(f'{directory}/{item}sSplit')
+        for file in files:
+            if item in file:
+                df = pd.read_csv(file, index_col=0, keep_default_na=False)
+                grant_col = f'{item} Grant Number'
+                consortium_col = f'{item} Consortium Name'
+                theme_col = f'{item} Theme Name'
+                # Change column grant type to list
+                df[grant_col] = df[grant_col].apply(lambda x: x.split(', '))
+                # Separate out rows with multiple grants
+                df = df.explode(grant_col)
+                # Make consortium and themes match grant
+                df[consortium_col] = df[grant_col].map(CONSORTIUM)
+                df[theme_col] = df[grant_col].map(THEME)
+                # Split into multiple manifests
+                grouped = df.groupby([grant_col])
+                print(f"Found {len(grouped.groups)} grant numbers in table "
+                      "- splitting now...")
+                # Save dataframes as csvs
+                for grant_number in grouped.groups:
+                    df = grouped.get_group(grant_number)
+                    df.to_csv(f'{directory}/{item}sSplit/{grant_number}.csv',
+                              index=False)
+
+                # for value in df[grant_col].values:
+                #     consortium = CONSORTIUM.get(value)
+                #     df.loc[df[grant_col] == value, consortium_col] = consortium
+                #     print(df[5:])
+                #     theme = str(
+                #         THEME.get(value)).strip('["').strip('"]').replace(
+                #             '"', "")
+
+    # Rows that have multiple grants exploded into separate rows
+    # df = df.explode(colname).groupby(colname)
+    # print(df)
+
+
+### split_manifest_attributes.py
+
+
+def main():
+
+    args = get_args()
+    file_list = get_files(args.directory_path)
+
+    split_manifests(file_list, args.directory_path)
+
+
+if __name__ == "__main__":
+    main()
