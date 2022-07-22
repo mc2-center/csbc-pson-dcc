@@ -26,13 +26,6 @@ def get_files(directory):
     return (files)
 
 
-### split manifest ###
-# split ones with multipe grants (exploded)
-# Create directories
-# filter out rows with 500+ columns - may not need
-# Create files
-
-
 def split_manifests(files, directory):
 
     data_types = ['Publication', 'Dataset', 'File', 'Tool']
@@ -61,21 +54,6 @@ def split_manifests(files, directory):
                     df = grouped.get_group(grant_number)
                     df.to_csv(f'{directory}/{item}sSplit/{grant_number}.csv',
                               index=False)
-
-                # for value in df[grant_col].values:
-                #     consortium = CONSORTIUM.get(value)
-                #     df.loc[df[grant_col] == value, consortium_col] = consortium
-                #     print(df[5:])
-                #     theme = str(
-                #         THEME.get(value)).strip('["').strip('"]').replace(
-                #             '"', "")
-
-    # Rows that have multiple grants exploded into separate rows
-    # df = df.explode(colname).groupby(colname)
-    # print(df)
-
-
-### split_manifest_attributes.py
 
 
 def main():
