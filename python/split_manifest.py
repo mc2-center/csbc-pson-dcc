@@ -63,6 +63,8 @@ def main():
 
     split_manifests(file_list, args.directory_path)
 
+    print("Done. Manifests split by grant number.")
+
 
 if __name__ == "__main__":
     main()
