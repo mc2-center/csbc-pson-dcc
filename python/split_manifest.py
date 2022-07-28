@@ -52,8 +52,7 @@ def split_manifests(files, directory):
                 # Save dataframes as csvs
                 for grant_number in grouped.groups:
                     df = grouped.get_group(grant_number)
-                    df.to_csv(f'{directory}/{item}sSplit/{grant_number}.csv',
-                              index=False)
+                    df.to_csv(f'{directory}/{item}sSplit/{grant_number}.csv')
 
 
 def main():
