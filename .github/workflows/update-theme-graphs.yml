@@ -22,6 +22,6 @@ jobs:
 
     - name: Update portal graphs
       run: |
-        python tally_themes.py
+        python python/tally_themes.py
       env: 
         SYNAPSE_AUTH_TOKEN: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
