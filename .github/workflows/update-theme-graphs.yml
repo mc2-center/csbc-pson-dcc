@@ -3,6 +3,7 @@ name: update-theme-graphs
 on:
   schedule:
     - cron: "0 0 30 * *"
+  workflow_dispatch:
 
 jobs:
   update:
