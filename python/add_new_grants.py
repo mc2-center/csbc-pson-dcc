@@ -102,6 +102,16 @@ def create_folders(syn, project_id):
     syn.store(Folder("tools", parent=project_id))
 
 
+def syn_prettify(name):
+    """Prettify a name that will conform to Synapse naming rules.
+
+    Names can only contain letters, numbers, spaces, underscores, hyphens,
+    periods, plus signs, apostrophes, and parentheses.
+    """
+    valid = {38: 'and', 58: '-', 59: '-', 47: '_'}
+    return name.translate(valid)
+
+
 def create_grant_projects(syn, grants):
     """Create a new Synapse project for each grant and populate its Wiki.
 
@@ -109,25 +119,29 @@ def create_grant_projects(syn, grants):
         df: grants information (including their new Project IDs)
     """
     for _, row in grants.iterrows():
-        name = row["GrantName"].replace("&", "and")
-        project = Project(name)
-        project = syn.store(project)
-        syn.setPermissions(
-            project.id, principalId=3450948,
-            accessType=['CREATE', 'READ', 'UPDATE', 'DELETE', 'DOWNLOAD',
-                        'CHANGE_PERMISSIONS', 'CHANGE_SETTINGS', 'MODERATE'],
-        )
+        name = syn_prettify(row["GrantName"])
+        try:
+            project = Project(name)
+            project = syn.store(project)
+            syn.setPermissions(
+                project.id, principalId=3450948,
+                accessType=['CREATE', 'READ', 'UPDATE', 'DELETE', 'DOWNLOAD',
+                            'CHANGE_PERMISSIONS', 'CHANGE_SETTINGS', 'MODERATE'],
+            )
 
-        # Update grants table with new synId
-        grants.at[_, "GrantId"] = project.id
+            # Update grants table with new synId
+            grants.at[_, "GrantId"] = project.id
 
-        # Update `GrantId` annotation for ent.
-        annots = syn.get_annotations(row['id'])
-        annots['GrantId'] = project.id
-        syn.set_annotations(annots)
+            # Update `GrantId` annotation for ent.
+            # annots = syn.get_annotations(row['id'])
+            # annots['GrantId'] = project.id
+            # syn.set_annotations(annots)
 
-        create_wiki_pages(syn, project.id, row)
-        create_folders(syn, project.id)
+            create_wiki_pages(syn, project.id, row)
+            create_folders(syn, project.id)
+        except synapseclient.core.exceptions.SynapseHTTPError:
+            print(f"Skipping: {name}")
+            grants.at[_, "GrantId"] = ""
 
     return grants
 
@@ -149,9 +163,9 @@ def upload_metadata(syn, grants, table):
     grants = grants[col_order]
 
     # Convert columns into STRINGLIST.
-    grants.loc[:, 'GrantThemeName'] = grants.GrantThemeName.str.split(",")
-    grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(",")
-    grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(",")
+    grants.loc[:, 'GrantThemeName'] = grants.GrantThemeName.str.split(", ")
+    grants.loc[:, 'GrantInstitutionName'] = grants.GrantInstitutionName.str.split(", ")
+    grants.loc[:, 'GrantInstitutionAlias'] = grants.GrantInstitutionAlias.str.split(", ")
 
     new_rows = grants.values.tolist()
     table = syn.store(Table(schema, new_rows))
