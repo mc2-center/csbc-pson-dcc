@@ -12,7 +12,7 @@ import pandas as pd
 
 # Source table IDs
 GRANTS = "syn21918972"
-THEMES = "syn21630087"
+THEMES = "syn35369899"
 PUBS = "syn21868591"
 DATASETS = "syn21897968"
 TOOLS = "syn26127427"
